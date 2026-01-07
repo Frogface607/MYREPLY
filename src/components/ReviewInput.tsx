@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Sparkles, Loader2, AlertCircle, Star } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Sparkles, Loader2, AlertCircle, Star, ImagePlus, X, Camera } from 'lucide-react';
 
 interface ReviewInputProps {
-  onSubmit: (reviewText: string, rating?: number, context?: string) => void;
+  onSubmit: (reviewText: string, rating?: number, context?: string, imageBase64?: string) => void;
   isLoading: boolean;
   error?: string | null;
 }
@@ -15,11 +15,45 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [context, setContext] = useState('');
   const [showContext, setShowContext] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      setImage(base64);
+      setImagePreview(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleImageUpload(file);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) handleImageUpload(file);
+        break;
+      }
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (text.trim() && !isLoading) {
-      onSubmit(text.trim(), rating || undefined, context.trim() || undefined);
+    if ((text.trim() || image) && !isLoading) {
+      onSubmit(text.trim(), rating || undefined, context.trim() || undefined, image || undefined);
     }
   };
 
@@ -30,18 +64,80 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
+      <div
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+        className="relative"
+      >
         <label htmlFor="review" className="block text-sm font-medium mb-2">
-          Текст отзыва
+          Текст отзыва или скриншот
         </label>
+        
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="mb-3 relative inline-block">
+            <img 
+              src={imagePreview} 
+              alt="Screenshot" 
+              className="max-h-48 rounded-xl border border-border"
+            />
+            <button
+              type="button"
+              onClick={() => { setImage(null); setImagePreview(null); }}
+              className="absolute -top-2 -right-2 p-1 bg-danger text-white rounded-full hover:bg-danger/80 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <p className="text-xs text-muted mt-1">
+              AI извлечёт текст из скриншота
+            </p>
+          </div>
+        )}
+        
         <textarea
           id="review"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={placeholderText}
-          className="review-input"
-          rows={6}
+          onPaste={handlePaste}
+          placeholder={imagePreview ? 'Можете добавить комментарий к скриншоту...' : placeholderText}
+          className={`review-input ${isDragging ? 'border-primary bg-primary-light' : ''}`}
+          rows={imagePreview ? 3 : 6}
           disabled={isLoading}
+        />
+        
+        {/* Drag overlay */}
+        {isDragging && (
+          <div className="absolute inset-0 bg-primary-light border-2 border-dashed border-primary rounded-xl flex items-center justify-center">
+            <div className="text-center">
+              <Camera className="w-8 h-8 text-primary mx-auto mb-2" />
+              <p className="font-medium text-primary">Отпустите для загрузки</p>
+            </div>
+          </div>
+        )}
+        
+        {/* Upload button */}
+        {!imagePreview && (
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm text-muted hover:text-foreground flex items-center gap-1.5 transition-colors"
+              disabled={isLoading}
+            >
+              <ImagePlus className="w-4 h-4" />
+              Загрузить скриншот
+            </button>
+            <span className="text-xs text-muted">или перетащите / вставьте (Ctrl+V)</span>
+          </div>
+        )}
+        
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+          className="hidden"
         />
       </div>
 
@@ -121,7 +217,7 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
 
       <button
         type="submit"
-        disabled={!text.trim() || isLoading}
+        disabled={(!text.trim() && !image) || isLoading}
         className="w-full py-3.5 px-4 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
       >
         {isLoading ? (

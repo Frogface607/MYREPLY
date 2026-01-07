@@ -5,7 +5,7 @@ import { ReviewInput } from '@/components/ReviewInput';
 import { ResponseCard } from '@/components/ResponseCard';
 import { AdjustmentInput } from '@/components/AdjustmentInput';
 import type { GeneratedResponse } from '@/types';
-import { ArrowLeft, MessageSquareText, Settings } from 'lucide-react';
+import { ArrowLeft, MessageSquareText, Settings, History, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface ReviewAnalysis {
@@ -28,6 +28,7 @@ export default function QuickReplyPage() {
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
   const [businessSettings, setBusinessSettings] = useState<BusinessSettings | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Загружаем настройки из localStorage
   useEffect(() => {
@@ -41,10 +42,10 @@ export default function QuickReplyPage() {
     }
   }, []);
 
-  const handleSubmit = async (text: string, rating?: number, context?: string) => {
+  const handleSubmit = async (text: string, rating?: number, context?: string, imageBase64?: string) => {
     setIsLoading(true);
     setError(null);
-    setReviewText(text);
+    setReviewText(text || '(из скриншота)');
 
     try {
       const res = await fetch('/api/generate', {
@@ -54,7 +55,8 @@ export default function QuickReplyPage() {
           reviewText: text, 
           rating, 
           context,
-          businessSettings 
+          businessSettings,
+          imageBase64
         }),
       });
 
@@ -117,6 +119,10 @@ export default function QuickReplyPage() {
     } catch {
       // ignore
     }
+    
+    // Показываем toast
+    setToast('Скопировано и сохранено в историю');
+    setTimeout(() => setToast(null), 3000);
   };
 
   const handleFeedback = async (responseId: string, feedback: 'liked' | 'disliked') => {
@@ -143,6 +149,15 @@ export default function QuickReplyPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <div className="flex items-center gap-2 px-4 py-3 bg-success text-white rounded-xl shadow-lg">
+            <CheckCircle className="w-5 h-5" />
+            <span className="font-medium">{toast}</span>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -157,12 +172,22 @@ export default function QuickReplyPage() {
             <MessageSquareText className="w-5 h-5 text-primary" />
             <span className="font-semibold">Quick Reply</span>
           </div>
-          <Link
-            href="/settings"
-            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/history"
+              className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
+              title="История"
+            >
+              <History className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/settings"
+              className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
+              title="Настройки"
+            >
+              <Settings className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </header>
 
