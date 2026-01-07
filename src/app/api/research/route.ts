@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { researchBusiness } from '@/lib/tavily';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Проверяем авторизацию
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Необходима авторизация' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
     const { businessName, city } = body;
 

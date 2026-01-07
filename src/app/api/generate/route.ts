@@ -1,24 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { generateResponses } from '@/lib/openrouter';
 import type { Business } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Проверяем авторизацию
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Необходима авторизация' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { reviewText, rating, context, adjustment, previousResponses } = body;
+    const { reviewText, rating, context, adjustment, previousResponses, businessSettings } = body;
 
     if (!reviewText || typeof reviewText !== 'string') {
       return NextResponse.json(
@@ -27,18 +14,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Получаем настройки бизнеса пользователя
-    const { data: business } = await supabase
-      .from('businesses')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
+    // Используем настройки из запроса (localStorage на клиенте) или null
+    const business: Business | null = businessSettings ? {
+      id: 'demo',
+      user_id: 'demo',
+      name: businessSettings.name || 'Мой бизнес',
+      type: businessSettings.type || 'other',
+      tone_settings: businessSettings.tone_settings || { formality: 50, empathy: 50, brevity: 50 },
+      rules: businessSettings.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    } : null;
 
     // Генерируем ответы
     const result = await generateResponses(
       reviewText,
-      business as Business | null,
-      adjustment || context, // context используется как adjustment при первой генерации
+      business,
+      adjustment || context,
       previousResponses,
       rating
     );

@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -17,7 +15,7 @@ import {
   TrendingUp,
   AlertCircle
 } from 'lucide-react';
-import type { Business, ToneSettings, BusinessRules, BusinessType } from '@/types';
+import type { ToneSettings, BusinessRules, BusinessType } from '@/types';
 
 const businessTypeLabels: Record<BusinessType, string> = {
   restaurant: 'Ресторан',
@@ -39,10 +37,6 @@ interface ResearchInsights {
 }
 
 export default function SettingsPage() {
-  const router = useRouter();
-  const supabase = createClient();
-  
-  const [business, setBusiness] = useState<Business | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -65,46 +59,26 @@ export default function SettingsPage() {
     canOfferCallback: true,
   });
 
+  // Load from localStorage
   useEffect(() => {
-    const loadBusiness = async () => {
+    const saved = localStorage.getItem('myreply_business');
+    if (saved) {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          router.push('/auth');
-          return;
-        }
-
-        const { data } = await supabase
-          .from('businesses')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (data) {
-          const b = data as Business;
-          setBusiness(b);
-          setName(b.name);
-          setType(b.type);
-          setTone(b.tone_settings);
-          setRules(b.rules);
-          
-          if (b.custom_instructions) {
-            setDescription(b.custom_instructions);
-            const issuesMatch = b.custom_instructions.match(/Частые проблемы: (.+?)(\n|$)/);
-            const strengthsMatch = b.custom_instructions.match(/Сильные стороны: (.+?)(\n|$)/);
-            if (issuesMatch) setCommonIssues(issuesMatch[1].split(', '));
-            if (strengthsMatch) setStrengths(strengthsMatch[1].split(', '));
-          }
-        }
-      } catch (error) {
-        console.error('Error loading business:', error);
-      } finally {
-        setIsLoading(false);
+        const data = JSON.parse(saved);
+        setName(data.name || '');
+        setCity(data.city || '');
+        setType(data.type || 'other');
+        setDescription(data.description || '');
+        setCommonIssues(data.commonIssues || []);
+        setStrengths(data.strengths || []);
+        setTone(data.tone_settings || { formality: 50, empathy: 50, brevity: 50 });
+        setRules(data.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true });
+      } catch {
+        // ignore
       }
-    };
-
-    loadBusiness();
-  }, [supabase, router]);
+    }
+    setIsLoading(false);
+  }, []);
 
   const handleResearch = async () => {
     if (!name.trim() || !city.trim()) {
@@ -144,39 +118,25 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSave = async () => {
-    if (!business) return;
-    
+  const handleSave = () => {
     setIsSaving(true);
-    setSaved(false);
-
-    try {
-      const customInstructions = [
-        description ? `Описание: ${description}` : '',
-        commonIssues.length ? `Частые проблемы: ${commonIssues.join(', ')}` : '',
-        strengths.length ? `Сильные стороны: ${strengths.join(', ')}` : '',
-      ].filter(Boolean).join('\n\n');
-
-      const { error } = await supabase
-        .from('businesses')
-        .update({
-          name,
-          type,
-          tone_settings: tone,
-          rules,
-          custom_instructions: customInstructions || null,
-        })
-        .eq('id', business.id);
-
-      if (error) throw error;
-      
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (error) {
-      console.error('Error saving:', error);
-    } finally {
-      setIsSaving(false);
-    }
+    
+    // Save to localStorage
+    const data = {
+      name,
+      city,
+      type,
+      description,
+      commonIssues,
+      strengths,
+      tone_settings: tone,
+      rules,
+    };
+    localStorage.setItem('myreply_business', JSON.stringify(data));
+    
+    setSaved(true);
+    setIsSaving(false);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   if (isLoading) {
@@ -193,7 +153,7 @@ export default function SettingsPage() {
       <header className="border-b border-border bg-card">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
-            href="/dashboard"
+            href="/quick-reply"
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -336,7 +296,7 @@ export default function SettingsPage() {
 
                 {insights?.summary && (
                   <div className="p-4 bg-primary-light rounded-xl">
-                    <p className="text-sm font-medium text-primary mb-1">Рекомендация</p>
+                    <p className="text-sm font-medium text-primary mb-1">💡 Рекомендация</p>
                     <p className="text-sm">{insights.summary}</p>
                   </div>
                 )}
@@ -346,24 +306,17 @@ export default function SettingsPage() {
 
           {/* Business Info */}
           <section className="bg-card border border-border rounded-xl p-6">
-            <h2 className="font-semibold text-lg mb-4">Информация о бизнесе</h2>
+            <h2 className="font-semibold text-lg mb-4">Тип бизнеса</h2>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Тип бизнеса
-                </label>
-                <select
-                  value={type}
-                  onChange={(e) => setType(e.target.value as BusinessType)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary outline-none"
-                >
-                  {Object.entries(businessTypeLabels).map(([value, label]) => (
-                    <option key={value} value={value}>{label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as BusinessType)}
+              className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary outline-none"
+            >
+              {Object.entries(businessTypeLabels).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
           </section>
 
           {/* Tone Settings */}

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ReviewInput } from '@/components/ReviewInput';
 import { ResponseCard } from '@/components/ResponseCard';
 import { AdjustmentInput } from '@/components/AdjustmentInput';
 import type { GeneratedResponse } from '@/types';
-import { ArrowLeft, MessageSquareText } from 'lucide-react';
+import { ArrowLeft, MessageSquareText, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 interface ReviewAnalysis {
@@ -14,25 +14,48 @@ interface ReviewAnalysis {
   urgency: 'low' | 'medium' | 'high';
 }
 
+interface BusinessSettings {
+  name: string;
+  type: string;
+  tone_settings: { formality: number; empathy: number; brevity: number };
+  rules: { canApologize: boolean; canOfferPromocode: boolean; canOfferCompensation: boolean; canOfferCallback: boolean };
+}
+
 export default function QuickReplyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
-  const [reviewRating, setReviewRating] = useState<number | undefined>();
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
+  const [businessSettings, setBusinessSettings] = useState<BusinessSettings | null>(null);
+
+  // Загружаем настройки из localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('myreply_business');
+    if (saved) {
+      try {
+        setBusinessSettings(JSON.parse(saved));
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
 
   const handleSubmit = async (text: string, rating?: number, context?: string) => {
     setIsLoading(true);
     setError(null);
     setReviewText(text);
-    setReviewRating(rating);
 
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewText: text, rating, context }),
+        body: JSON.stringify({ 
+          reviewText: text, 
+          rating, 
+          context,
+          businessSettings 
+        }),
       });
 
       if (!res.ok) {
@@ -62,6 +85,7 @@ export default function QuickReplyPage() {
           reviewText,
           adjustment,
           previousResponses: responses,
+          businessSettings,
         }),
       });
 
@@ -80,48 +104,28 @@ export default function QuickReplyPage() {
   };
 
   const handleCopy = async (text: string) => {
-    // Сохраняем в историю
+    // Сохраняем в localStorage историю
     try {
-      const response = responses.find(r => r.text === text);
-      await fetch('/api/history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reviewText,
-          chosenResponse: text,
-          responseAccent: response?.accent,
-        }),
+      const history = JSON.parse(localStorage.getItem('myreply_history') || '[]');
+      history.unshift({
+        id: Date.now().toString(),
+        review_text: reviewText,
+        chosen_response: text,
+        created_at: new Date().toISOString(),
       });
+      localStorage.setItem('myreply_history', JSON.stringify(history.slice(0, 50)));
     } catch {
-      // Не критично, просто логируем
-      console.error('Failed to save to history');
+      // ignore
     }
   };
 
   const handleFeedback = async (responseId: string, feedback: 'liked' | 'disliked') => {
-    const response = responses.find(r => r.id === responseId);
-    if (!response) return;
-
-    try {
-      await fetch('/api/history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reviewText,
-          chosenResponse: response.text,
-          responseAccent: response.accent,
-          feedback,
-        }),
-      });
-    } catch {
-      console.error('Failed to save feedback');
-    }
+    console.log('Feedback:', responseId, feedback);
   };
 
   const handleRegenerate = async (responseId: string) => {
     const response = responses.find(r => r.id === responseId);
     if (!response) return;
-    
     await handleAdjustment(`Перегенерируй ${response.accent} вариант, сделай его другим`);
   };
 
@@ -143,21 +147,37 @@ export default function QuickReplyPage() {
       <header className="border-b border-border bg-card">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
-            href="/dashboard"
+            href="/"
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Назад</span>
+            <span className="hidden sm:inline">Главная</span>
           </Link>
           <div className="flex items-center gap-2">
             <MessageSquareText className="w-5 h-5 text-primary" />
             <span className="font-semibold">Quick Reply</span>
           </div>
-          <div className="w-16" /> {/* Spacer for centering */}
+          <Link
+            href="/settings"
+            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
+          >
+            <Settings className="w-5 h-5" />
+          </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* Demo Banner */}
+        {!businessSettings && (
+          <div className="mb-6 p-4 bg-primary-light border border-primary/20 rounded-xl">
+            <p className="text-sm">
+              <strong>Demo режим:</strong> Настройте профиль бизнеса в{' '}
+              <Link href="/settings" className="text-primary underline">Настройках</Link>
+              {' '}для более точных ответов.
+            </p>
+          </div>
+        )}
+
         {/* Input Section */}
         <section className="mb-8">
           <ReviewInput
@@ -243,4 +263,3 @@ export default function QuickReplyPage() {
     </div>
   );
 }
-

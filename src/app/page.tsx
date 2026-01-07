@@ -22,10 +22,10 @@ export default function LandingPage() {
             <span className="font-semibold text-lg">MyReply</span>
           </div>
           <Link
-            href="/auth"
+            href="/quick-reply"
             className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors"
           >
-            Войти
+            Попробовать
           </Link>
         </div>
       </header>
@@ -50,16 +50,16 @@ export default function LandingPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth"
+              href="/quick-reply"
               className="px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover transition-all flex items-center justify-center gap-2 text-lg"
             >
-              Попробовать бесплатно
+              Попробовать сейчас
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
           
           <p className="text-sm text-muted mt-4">
-            Без привязки карты • Бесплатный старт
+            Без регистрации • Бесплатно
           </p>
         </div>
       </section>
@@ -230,10 +230,10 @@ export default function LandingPage() {
             Попробуйте MyReply прямо сейчас — это бесплатно
           </p>
           <Link
-            href="/auth"
+            href="/quick-reply"
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover transition-all text-lg"
           >
-            Начать бесплатно
+            Попробовать сейчас
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
