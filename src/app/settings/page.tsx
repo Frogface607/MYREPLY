@@ -33,6 +33,8 @@ interface ResearchInsights {
   commonIssues: string[];
   strengths: string[];
   recommendedTone: ToneSettings;
+  recentReviews: string[];
+  averageRating: string;
   summary: string;
 }
 
@@ -177,7 +179,7 @@ export default function SettingsPage() {
                 <Search className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">🔍 Smart Research v2</h2>
+                <h2 className="font-semibold text-lg">🔍 Smart Research (Perplexity)</h2>
                 <p className="text-sm text-muted">AI изучит ваш бизнес и настроит профиль</p>
               </div>
             </div>
@@ -235,7 +237,7 @@ export default function SettingsPage() {
 
             {isResearching && (
               <p className="text-xs text-muted text-center mt-2">
-                Ищем в Яндекс.Картах, 2ГИС, Google...
+                🔎 Perplexity ищет отзывы в интернете...
               </p>
             )}
           </section>
@@ -293,6 +295,27 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Rating & Recent Reviews */}
+                {insights?.averageRating && insights.averageRating !== 'Не найден' && (
+                  <div className="p-4 bg-warning-light rounded-xl">
+                    <p className="text-sm font-medium text-warning mb-1">⭐ Рейтинг</p>
+                    <p className="text-sm">{insights.averageRating}</p>
+                  </div>
+                )}
+
+                {insights?.recentReviews && insights.recentReviews.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">📝 Недавние отзывы</label>
+                    <div className="space-y-2">
+                      {insights.recentReviews.slice(0, 3).map((review, i) => (
+                        <div key={i} className="text-sm p-3 bg-muted-light rounded-lg italic">
+                          &ldquo;{review}&rdquo;
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {insights?.summary && (
                   <div className="p-4 bg-primary-light rounded-xl">

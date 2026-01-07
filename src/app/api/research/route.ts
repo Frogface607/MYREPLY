@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { researchBusiness } from '@/lib/tavily';
+import { researchBusiness } from '@/lib/research';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Запускаем research
+    // Запускаем research через Perplexity
     const insights = await researchBusiness(businessName, city);
 
     return NextResponse.json({
@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
         commonIssues: insights.commonIssues,
         strengths: insights.strengths,
         recommendedTone: insights.recommendedTone,
-        competitorInsights: insights.competitorInsights,
+        recentReviews: insights.recentReviews,
+        averageRating: insights.averageRating,
         summary: insights.summary,
       },
-      sourcesCount: insights.searchResults.length,
     });
   } catch (error) {
     console.error('Research API error:', error);
@@ -37,4 +37,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
