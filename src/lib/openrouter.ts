@@ -1,4 +1,4 @@
-import type { Business, GeneratedResponse } from '@/types';
+import type { GeneratedResponse } from '@/types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -191,7 +191,7 @@ function buildUserPrompt(reviewText: string, options?: {
 
 export async function generateResponses(
   reviewText: string,
-  business: Business | null,
+  business: BusinessProfile | null,
   options?: {
     adjustment?: string;
     context?: string;
