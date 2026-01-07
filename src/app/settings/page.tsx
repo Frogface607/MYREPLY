@@ -88,10 +88,8 @@ export default function SettingsPage() {
           setTone(b.tone_settings);
           setRules(b.rules);
           
-          // Parse custom_instructions if exists
           if (b.custom_instructions) {
             setDescription(b.custom_instructions);
-            // Try to extract issues and strengths from custom_instructions
             const issuesMatch = b.custom_instructions.match(/Частые проблемы: (.+?)(\n|$)/);
             const strengthsMatch = b.custom_instructions.match(/Сильные стороны: (.+?)(\n|$)/);
             if (issuesMatch) setCommonIssues(issuesMatch[1].split(', '));
@@ -219,7 +217,7 @@ export default function SettingsPage() {
                 <Search className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">🔍 Smart Research</h2>
+                <h2 className="font-semibold text-lg">Smart Research</h2>
                 <p className="text-sm text-muted">AI изучит ваш бизнес и настроит профиль</p>
               </div>
             </div>
@@ -338,7 +336,7 @@ export default function SettingsPage() {
 
                 {insights?.summary && (
                   <div className="p-4 bg-primary-light rounded-xl">
-                    <p className="text-sm font-medium text-primary mb-1">💡 Рекомендация</p>
+                    <p className="text-sm font-medium text-primary mb-1">Рекомендация</p>
                     <p className="text-sm">{insights.summary}</p>
                   </div>
                 )}
@@ -407,7 +405,7 @@ export default function SettingsPage() {
 
               <div>
                 <div className="flex justify-between mb-3">
-                  <span className="text-sm text-muted">Развёрнуто</span>
+                  <span className="text-sm text-muted">Развернуто</span>
                   <span className="text-sm font-medium">Длина</span>
                   <span className="text-sm text-muted">Кратко</span>
                 </div>
