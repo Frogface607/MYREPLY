@@ -1,0 +1,12 @@
+# MyReply Robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://myreply.app/sitemap.xml
+
+# Disallow admin/api routes
+Disallow: /api/
+Disallow: /auth/callback
+
