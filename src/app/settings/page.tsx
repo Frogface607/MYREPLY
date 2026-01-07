@@ -217,7 +217,7 @@ export default function SettingsPage() {
                 <Search className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">Smart Research</h2>
+                <h2 className="font-semibold text-lg">🔍 Smart Research v2</h2>
                 <p className="text-sm text-muted">AI изучит ваш бизнес и настроит профиль</p>
               </div>
             </div>

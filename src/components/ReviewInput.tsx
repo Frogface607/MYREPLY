@@ -90,7 +90,7 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
             onClick={() => setShowContext(true)}
             className="text-sm text-primary hover:text-primary-hover flex items-center gap-1"
           >
-            + Добавить контекст или пожелания
+            + Добавить контекст (NEW!)
           </button>
         ) : (
           <div className="animate-fade-in">
