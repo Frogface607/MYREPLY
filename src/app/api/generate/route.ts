@@ -131,9 +131,12 @@ export async function POST(request: NextRequest) {
     const result = await generateResponses(
       reviewText,
       business,
-      adjustment || context,
-      previousResponses,
-      rating
+      {
+        adjustment,
+        context,
+        rating,
+        previousResponses,
+      }
     );
 
     return NextResponse.json(result);

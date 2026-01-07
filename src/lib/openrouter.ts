@@ -152,10 +152,14 @@ function buildSystemPrompt(business: Business | null): string {
 }`;
 }
 
-function buildUserPrompt(reviewText: string, adjustment?: string, rating?: number): string {
+function buildUserPrompt(reviewText: string, options?: { 
+  adjustment?: string; 
+  rating?: number; 
+  context?: string;
+}): string {
   let prompt = '';
   
-  if (rating) {
+  if (options?.rating) {
     const ratingDescriptions: Record<number, string> = {
       1: '1 из 5 (очень негативный)',
       2: '2 из 5 (негативный)',
@@ -163,13 +167,19 @@ function buildUserPrompt(reviewText: string, adjustment?: string, rating?: numbe
       4: '4 из 5 (положительный)',
       5: '5 из 5 (очень положительный)',
     };
-    prompt += `Рейтинг: ${ratingDescriptions[rating] || `${rating} из 5`}\n\n`;
+    prompt += `Рейтинг: ${ratingDescriptions[options.rating] || `${options.rating} из 5`}\n\n`;
   }
   
   prompt += `Отзыв клиента:\n\n"${reviewText}"`;
   
-  if (adjustment) {
-    prompt += `\n\nДополнительное пожелание к ответам: ${adjustment}`;
+  // ВАЖНО: Контекст от владельца — реальная ситуация, которую нужно учесть!
+  if (options?.context) {
+    prompt += `\n\n⚠️ ВАЖНЫЙ КОНТЕКСТ ОТ ВЛАДЕЛЬЦА БИЗНЕСА (учти это при составлении ответов!):\n"${options.context}"`;
+    prompt += `\n\nЭто информация от владельца о реальной ситуации. Если владелец говорит, что клиент был неправ или неадекватен — НЕ извиняйся и НЕ признавай вину. Формулируй ответ с учётом этой информации.`;
+  }
+  
+  if (options?.adjustment) {
+    prompt += `\n\nДополнительное пожелание к ответам: ${options.adjustment}`;
   }
   
   return prompt;
@@ -178,9 +188,12 @@ function buildUserPrompt(reviewText: string, adjustment?: string, rating?: numbe
 export async function generateResponses(
   reviewText: string,
   business: Business | null,
-  adjustment?: string,
-  previousResponses?: GeneratedResponse[],
-  rating?: number
+  options?: {
+    adjustment?: string;
+    context?: string;
+    rating?: number;
+    previousResponses?: GeneratedResponse[];
+  }
 ): Promise<{
   responses: GeneratedResponse[];
   analysis: {
@@ -197,19 +210,19 @@ export async function generateResponses(
   ];
 
   // Если есть предыдущие ответы (для перегенерации с учётом контекста)
-  if (previousResponses && previousResponses.length > 0) {
+  if (options?.previousResponses && options.previousResponses.length > 0) {
     messages.push({
       role: 'assistant',
-      content: JSON.stringify({ responses: previousResponses }),
+      content: JSON.stringify({ responses: options.previousResponses }),
     });
     messages.push({
       role: 'user',
-      content: `Пользователь попросил: "${adjustment || 'другие варианты'}". Сгенерируй новые 3 ответа с учётом этого пожелания.`,
+      content: `Пользователь попросил: "${options?.adjustment || 'другие варианты'}". Сгенерируй новые 3 ответа с учётом этого пожелания.`,
     });
   } else {
     messages.push({
       role: 'user',
-      content: buildUserPrompt(reviewText, adjustment, rating),
+      content: buildUserPrompt(reviewText, options),
     });
   }
 
