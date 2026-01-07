@@ -67,18 +67,37 @@ export default function LandingPage() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              '«Не знаю, что ответить»',
-              '«Боюсь выглядеть виноватым»',
-              '«Негатив портит весь день»',
-              '«На каждый ответ — 15 минут»',
-              '«Извиняться или защищаться?»',
-              '«Не хочу этим заниматься»',
+              {
+                quote: '«Не знаю, что ответить»',
+                pain: 'Страх написать лишнее и сделать только хуже',
+              },
+              {
+                quote: '«Боюсь выглядеть виноватым»',
+                pain: 'Лишние извинения там, где ты не виноват',
+              },
+              {
+                quote: '«Негатив портит весь день»',
+                pain: 'Один злой отзыв — и настроение на нуле',
+              },
+              {
+                quote: '«На это уходит вечность»',
+                pain: '15 минут на ответ, который никто не оценит',
+              },
+              {
+                quote: '«Давать скидку или нет?»',
+                pain: 'Каждый раз заново решать одну и ту же дилемму',
+              },
+              {
+                quote: '«Не хочу этим заниматься»',
+                pain: 'Но приходится, потому что репутация важна',
+              },
             ].map((problem, i) => (
               <div 
                 key={i} 
-                className="p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 transition-colors text-center"
+                className="p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 transition-colors"
               >
-                <p className="text-lg font-medium">{problem}</p>
+                <p className="text-lg font-semibold mb-2">{problem.quote}</p>
+                <p className="text-sm text-muted">{problem.pain}</p>
               </div>
             ))}
           </div>
