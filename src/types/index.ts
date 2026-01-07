@@ -78,6 +78,7 @@ export interface ResponseHistory {
   business_id: string;
   review_text: string;
   chosen_response: string;
+  response_accent?: 'neutral' | 'empathetic' | 'solution-focused';
   feedback?: 'liked' | 'disliked';
   adjustment?: string;
   created_at: string;
