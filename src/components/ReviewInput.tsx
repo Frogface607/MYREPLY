@@ -184,23 +184,26 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
           <button
             type="button"
             onClick={() => setShowContext(true)}
-            className="text-sm text-primary hover:text-primary-hover flex items-center gap-1"
+            className="text-sm text-primary hover:text-primary-hover flex items-center gap-1.5"
           >
-            + Добавить контекст (NEW!)
+            <span>💬</span> Рассказать, как было на самом деле
           </button>
         ) : (
           <div className="animate-fade-in">
             <label className="block text-sm font-medium mb-2">
-              Контекст / пожелания <span className="text-muted font-normal">(необязательно)</span>
+              Как всё было на самом деле? <span className="text-muted font-normal">(ваша версия событий)</span>
             </label>
             <textarea
               value={context}
               onChange={(e) => setContext(e.target.value)}
-              placeholder="Например: клиент постоянный, это повторная жалоба, не предлагать скидку, ответить короче..."
+              placeholder="Например: Гость пришёл в час пик, ждал 15 минут — это нормально при полной посадке. Но он начал скандалить. В итоге мы угостили десертом, он ушёл довольный, но отзыв не удалил..."
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary-light outline-none resize-none text-sm"
-              rows={2}
+              rows={3}
               disabled={isLoading}
             />
+            <p className="text-xs text-muted mt-1.5">
+              AI учтёт вашу версию и не будет извиняться там, где вы не виноваты
+            </p>
           </div>
         )}
       </div>
