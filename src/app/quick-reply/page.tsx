@@ -22,7 +22,7 @@ export default function QuickReplyPage() {
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
 
-  const handleSubmit = async (text: string, rating?: number) => {
+  const handleSubmit = async (text: string, rating?: number, context?: string) => {
     setIsLoading(true);
     setError(null);
     setReviewText(text);
@@ -32,7 +32,7 @@ export default function QuickReplyPage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewText: text, rating }),
+        body: JSON.stringify({ reviewText: text, rating, context }),
       });
 
       if (!res.ok) {

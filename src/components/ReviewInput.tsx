@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Sparkles, Loader2, AlertCircle, Star } from 'lucide-react';
 
 interface ReviewInputProps {
-  onSubmit: (reviewText: string, rating?: number) => void;
+  onSubmit: (reviewText: string, rating?: number, context?: string) => void;
   isLoading: boolean;
   error?: string | null;
 }
@@ -13,11 +13,13 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
   const [text, setText] = useState('');
   const [rating, setRating] = useState<number | null>(null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [context, setContext] = useState('');
+  const [showContext, setShowContext] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (text.trim() && !isLoading) {
-      onSubmit(text.trim(), rating || undefined);
+      onSubmit(text.trim(), rating || undefined, context.trim() || undefined);
     }
   };
 
@@ -78,6 +80,33 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
             </span>
           )}
         </div>
+      </div>
+
+      {/* Context / Special instructions */}
+      <div>
+        {!showContext ? (
+          <button
+            type="button"
+            onClick={() => setShowContext(true)}
+            className="text-sm text-primary hover:text-primary-hover flex items-center gap-1"
+          >
+            + Добавить контекст или пожелания
+          </button>
+        ) : (
+          <div className="animate-fade-in">
+            <label className="block text-sm font-medium mb-2">
+              Контекст / пожелания <span className="text-muted font-normal">(необязательно)</span>
+            </label>
+            <textarea
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder="Например: клиент постоянный, это повторная жалоба, не предлагать скидку, ответить короче..."
+              className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary-light outline-none resize-none text-sm"
+              rows={2}
+              disabled={isLoading}
+            />
+          </div>
+        )}
       </div>
 
       {error && (

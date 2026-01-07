@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { reviewText, rating, adjustment, previousResponses } = body;
+    const { reviewText, rating, context, adjustment, previousResponses } = body;
 
     if (!reviewText || typeof reviewText !== 'string') {
       return NextResponse.json(
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const result = await generateResponses(
       reviewText,
       business as Business | null,
-      adjustment,
+      adjustment || context, // context используется как adjustment при первой генерации
       previousResponses,
       rating
     );
