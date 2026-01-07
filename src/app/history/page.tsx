@@ -8,7 +8,8 @@ import {
   Copy, 
   Check, 
   Trash2,
-  MessageSquareText
+  MessageSquareText,
+  Sparkles
 } from 'lucide-react';
 
 interface HistoryItem {
@@ -101,19 +102,23 @@ export default function HistoryPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         {history.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-muted-light rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquareText className="w-8 h-8 text-muted" />
+          <div className="text-center py-16 animate-fade-in">
+            <div className="w-20 h-20 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
+              <MessageSquareText className="w-10 h-10 text-primary" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">История пуста</h2>
-            <p className="text-muted mb-6">
-              Здесь появятся ответы, которые вы скопировали
+            <h2 className="text-2xl font-semibold mb-3">История пуста</h2>
+            <p className="text-muted mb-2 max-w-md mx-auto">
+              Здесь появятся ответы, которые вы скопировали.
+            </p>
+            <p className="text-sm text-muted mb-8">
+              Это удобно — можно использовать удачные формулировки повторно.
             </p>
             <Link
               href="/quick-reply"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium"
             >
-              Перейти в Quick Reply
+              <Sparkles className="w-5 h-5" />
+              Создать первый ответ
             </Link>
           </div>
         ) : (

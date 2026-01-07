@@ -142,9 +142,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Generate API error:', error);
+    
+    // User-friendly error messages
+    let userMessage = 'Произошла ошибка при генерации ответов';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      const msg = error.message.toLowerCase();
+      
+      if (msg.includes('rate limit') || msg.includes('429')) {
+        userMessage = 'Слишком много запросов. Подождите минуту и попробуйте снова.';
+        statusCode = 429;
+      } else if (msg.includes('api key') || msg.includes('unauthorized') || msg.includes('401')) {
+        userMessage = 'Ошибка авторизации сервиса. Обратитесь в поддержку.';
+        statusCode = 401;
+      } else if (msg.includes('timeout') || msg.includes('network')) {
+        userMessage = 'Проблема с подключением. Проверьте интернет и попробуйте снова.';
+        statusCode = 503;
+      } else if (msg.includes('content policy') || msg.includes('safety')) {
+        userMessage = 'Текст не может быть обработан. Попробуйте другую формулировку.';
+        statusCode = 400;
+      } else if (error.message && error.message !== 'Ошибка генерации') {
+        userMessage = error.message;
+      }
+    }
+    
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка генерации' },
-      { status: 500 }
+      { error: userMessage },
+      { status: statusCode }
     );
   }
 }

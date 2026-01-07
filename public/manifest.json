@@ -1,0 +1,21 @@
+{
+  "name": "MyReply — Умные ответы на отзывы",
+  "short_name": "MyReply",
+  "description": "Профессиональные ответы на отзывы клиентов за секунды",
+  "start_url": "/quick-reply",
+  "display": "standalone",
+  "background_color": "#faf9f7",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "ru"
+}
+

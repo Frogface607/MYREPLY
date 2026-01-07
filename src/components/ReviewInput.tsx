@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Sparkles, Loader2, AlertCircle, Star, ImagePlus, X, Camera } from 'lucide-react';
 
 interface ReviewInputProps {
@@ -19,6 +19,22 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-focus textarea on mount
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
+  // Keyboard shortcut: Ctrl+Enter to submit
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if ((text.trim() || image) && !isLoading) {
+        onSubmit(text.trim(), rating || undefined, context.trim() || undefined, image || undefined);
+      }
+    }
+  }, [text, image, isLoading, rating, context, onSubmit]);
 
   const handleImageUpload = (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -96,14 +112,17 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
         )}
         
         <textarea
+          ref={textareaRef}
           id="review"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onPaste={handlePaste}
+          onKeyDown={handleKeyDown}
           placeholder={imagePreview ? 'Можете добавить комментарий к скриншоту...' : placeholderText}
           className={`review-input ${isDragging ? 'border-primary bg-primary-light' : ''}`}
           rows={imagePreview ? 3 : 6}
           disabled={isLoading}
+          aria-describedby="review-hint"
         />
         
         {/* Drag overlay */}
@@ -236,8 +255,9 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
         )}
       </button>
 
-      <p className="text-center text-sm text-muted">
+      <p id="review-hint" className="text-center text-sm text-muted">
         Вставьте отзыв с любой площадки: Яндекс, Google, 2ГИС, Ozon, Wildberries...
+        <span className="hidden sm:inline"> • Ctrl+Enter для отправки</span>
       </p>
     </form>
   );

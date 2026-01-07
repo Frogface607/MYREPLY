@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ReviewInput } from '@/components/ReviewInput';
 import { ResponseCard } from '@/components/ResponseCard';
 import { AdjustmentInput } from '@/components/AdjustmentInput';
+import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import type { GeneratedResponse } from '@/types';
 import { ArrowLeft, MessageSquareText, Settings, History, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -211,6 +212,13 @@ export default function QuickReplyPage() {
             error={error}
           />
         </section>
+
+        {/* Loading Skeleton */}
+        {isLoading && responses.length === 0 && (
+          <section className="mb-8">
+            <ResponseSkeletonGroup />
+          </section>
+        )}
 
         {/* Results Section */}
         {responses.length > 0 && (
