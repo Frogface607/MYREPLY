@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateResponses } from '@/lib/openrouter';
-import type { Business } from '@/types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -115,16 +114,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Используем настройки из запроса (localStorage на клиенте) или null
-    const business: Business | null = businessSettings ? {
-      id: 'demo',
-      user_id: 'demo',
+    // Собираем профиль бизнеса из настроек
+    const business = businessSettings ? {
       name: businessSettings.name || 'Мой бизнес',
       type: businessSettings.type || 'other',
-      tone_settings: businessSettings.tone_settings || { formality: 50, empathy: 50, brevity: 50 },
+      description: businessSettings.description,
+      specialties: businessSettings.specialties,
+      commonIssues: businessSettings.commonIssues,
+      strengths: businessSettings.strengths,
+      tone_settings: businessSettings.tone_settings || { formality: 50, empathy: 60, brevity: 50 },
       rules: businessSettings.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      customRules: businessSettings.customRules,
     } : null;
 
     // Генерируем ответы
