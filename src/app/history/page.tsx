@@ -152,9 +152,31 @@ export default function HistoryPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted mb-4">
-              {history.length} {history.length === 1 ? 'ответ' : history.length < 5 ? 'ответа' : 'ответов'} сохранено
+          <div className="space-y-6">
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="bg-card border border-border rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-primary">{history.length}</div>
+                <div className="text-sm text-muted">
+                  {history.length === 1 ? 'ответ' : history.length < 5 ? 'ответа' : 'ответов'}
+                </div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-success">
+                  {Math.round(history.reduce((acc, h) => acc + h.chosen_response.length, 0) / history.length)}
+                </div>
+                <div className="text-sm text-muted">символов в среднем</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4 text-center hidden sm:block">
+                <div className="text-2xl font-bold text-foreground">
+                  ~{Math.round(history.length * 5)}
+                </div>
+                <div className="text-sm text-muted">минут сэкономлено</div>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted">
+              История сохраняется локально в браузере
             </p>
             
             {history.map((item) => (
