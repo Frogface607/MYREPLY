@@ -9,7 +9,13 @@ import {
   Settings, 
   Loader2, 
   Check,
-  Save
+  Save,
+  Search,
+  Sparkles,
+  MapPin,
+  TrendingDown,
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react';
 import type { Business, ToneSettings, BusinessRules, BusinessType } from '@/types';
 
@@ -23,6 +29,15 @@ const businessTypeLabels: Record<BusinessType, string> = {
   other: 'Другое',
 };
 
+interface ResearchInsights {
+  description: string;
+  businessType: string;
+  commonIssues: string[];
+  strengths: string[];
+  recommendedTone: ToneSettings;
+  summary: string;
+}
+
 export default function SettingsPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -31,10 +46,17 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isResearching, setIsResearching] = useState(false);
+  const [researchError, setResearchError] = useState<string | null>(null);
+  const [insights, setInsights] = useState<ResearchInsights | null>(null);
   
   // Form state
   const [name, setName] = useState('');
+  const [city, setCity] = useState('');
   const [type, setType] = useState<BusinessType>('other');
+  const [description, setDescription] = useState('');
+  const [commonIssues, setCommonIssues] = useState<string[]>([]);
+  const [strengths, setStrengths] = useState<string[]>([]);
   const [tone, setTone] = useState<ToneSettings>({ formality: 50, empathy: 50, brevity: 50 });
   const [rules, setRules] = useState<BusinessRules>({
     canApologize: true,
@@ -65,6 +87,16 @@ export default function SettingsPage() {
           setType(b.type);
           setTone(b.tone_settings);
           setRules(b.rules);
+          
+          // Parse custom_instructions if exists
+          if (b.custom_instructions) {
+            setDescription(b.custom_instructions);
+            // Try to extract issues and strengths from custom_instructions
+            const issuesMatch = b.custom_instructions.match(/Частые проблемы: (.+?)(\n|$)/);
+            const strengthsMatch = b.custom_instructions.match(/Сильные стороны: (.+?)(\n|$)/);
+            if (issuesMatch) setCommonIssues(issuesMatch[1].split(', '));
+            if (strengthsMatch) setStrengths(strengthsMatch[1].split(', '));
+          }
         }
       } catch (error) {
         console.error('Error loading business:', error);
@@ -76,6 +108,44 @@ export default function SettingsPage() {
     loadBusiness();
   }, [supabase, router]);
 
+  const handleResearch = async () => {
+    if (!name.trim() || !city.trim()) {
+      setResearchError('Введите название бизнеса и город');
+      return;
+    }
+
+    setIsResearching(true);
+    setResearchError(null);
+
+    try {
+      const res = await fetch('/api/research', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessName: name.trim(), city: city.trim() }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Ошибка исследования');
+      }
+
+      const data = await res.json();
+      const ins = data.insights as ResearchInsights;
+      
+      setInsights(ins);
+      setDescription(ins.description);
+      setType(ins.businessType as BusinessType || type);
+      setCommonIssues(ins.commonIssues || []);
+      setStrengths(ins.strengths || []);
+      setTone(ins.recommendedTone || tone);
+      
+    } catch (err) {
+      setResearchError(err instanceof Error ? err.message : 'Произошла ошибка');
+    } finally {
+      setIsResearching(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!business) return;
     
@@ -83,6 +153,12 @@ export default function SettingsPage() {
     setSaved(false);
 
     try {
+      const customInstructions = [
+        description ? `Описание: ${description}` : '',
+        commonIssues.length ? `Частые проблемы: ${commonIssues.join(', ')}` : '',
+        strengths.length ? `Сильные стороны: ${strengths.join(', ')}` : '',
+      ].filter(Boolean).join('\n\n');
+
       const { error } = await supabase
         .from('businesses')
         .update({
@@ -90,6 +166,7 @@ export default function SettingsPage() {
           type,
           tone_settings: tone,
           rules,
+          custom_instructions: customInstructions || null,
         })
         .eq('id', business.id);
 
@@ -134,23 +211,146 @@ export default function SettingsPage() {
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <div className="space-y-8">
+          
+          {/* Smart Research Section */}
+          <section className="bg-primary-light border border-primary/20 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <Search className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-lg">🔍 Smart Research</h2>
+                <p className="text-sm text-muted">AI изучит ваш бизнес и настроит профиль</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Название</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Пиццерия Мама Миа"
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:border-primary outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Город</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Москва"
+                    className="w-full pl-9 pr-3 py-2 bg-background border border-border rounded-lg focus:border-primary outline-none text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {researchError && (
+              <div className="flex items-center gap-2 p-2 bg-danger-light text-danger rounded-lg text-sm mb-3">
+                <AlertCircle className="w-4 h-4" />
+                {researchError}
+              </div>
+            )}
+
+            <button
+              onClick={handleResearch}
+              disabled={isResearching || !name.trim() || !city.trim()}
+              className="w-full py-2.5 px-4 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+            >
+              {isResearching ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Изучаем бизнес...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Найти и проанализировать
+                </>
+              )}
+            </button>
+
+            {isResearching && (
+              <p className="text-xs text-muted text-center mt-2">
+                Ищем в Яндекс.Картах, 2ГИС, Google...
+              </p>
+            )}
+          </section>
+
+          {/* Research Results */}
+          {(insights || commonIssues.length > 0 || strengths.length > 0) && (
+            <section className="bg-card border border-border rounded-xl p-6">
+              <h2 className="font-semibold text-lg mb-4">Анализ бизнеса</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Описание</label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Краткое описание вашего бизнеса..."
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary outline-none resize-none"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                      <TrendingDown className="w-4 h-4 text-danger" />
+                      Частые проблемы
+                    </label>
+                    <div className="space-y-1">
+                      {commonIssues.length > 0 ? (
+                        commonIssues.map((issue, i) => (
+                          <div key={i} className="text-sm px-3 py-1.5 bg-danger-light text-danger rounded-lg">
+                            {issue}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted">Запустите анализ</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                      <TrendingUp className="w-4 h-4 text-success" />
+                      Сильные стороны
+                    </label>
+                    <div className="space-y-1">
+                      {strengths.length > 0 ? (
+                        strengths.map((s, i) => (
+                          <div key={i} className="text-sm px-3 py-1.5 bg-success-light text-success rounded-lg">
+                            {s}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted">Запустите анализ</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {insights?.summary && (
+                  <div className="p-4 bg-primary-light rounded-xl">
+                    <p className="text-sm font-medium text-primary mb-1">💡 Рекомендация</p>
+                    <p className="text-sm">{insights.summary}</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Business Info */}
           <section className="bg-card border border-border rounded-xl p-6">
             <h2 className="font-semibold text-lg mb-4">Информация о бизнесе</h2>
             
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Название
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary-light outline-none"
-                />
-              </div>
-
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Тип бизнеса
@@ -292,4 +492,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
