@@ -40,17 +40,17 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 text-center relative">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-success-light text-success rounded-full text-sm font-medium mb-6">
             <Star className="w-4 h-4" />
-            Ваша правда — достойный ответ
+            Для любого бизнеса с отзывами
           </div>
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Ответы на отзывы<br />
-            <span className="text-primary">без стресса и унижений</span>
+            Сохраняем нервы<br />
+            <span className="text-primary">и репутацию</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-muted max-w-2xl mx-auto mb-8">
-            Расскажите как было на самом деле — AI превратит вашу правду в достойный ответ, 
-            который защитит репутацию и не признает вину там, где её нет.
+            Клиент написал отзыв — вы знаете как было на самом деле. 
+            AI превратит вашу правду в достойный ответ без лишних извинений.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -100,16 +100,15 @@ export default function LandingPage() {
               <div className="w-full md:w-80 bg-background rounded-2xl p-4 border border-border">
                 <div className="text-xs text-muted mb-2 uppercase tracking-wide">Пример</div>
                 <div className="text-sm mb-3 p-3 bg-danger-light/50 rounded-xl">
-                  <strong>Отзыв:</strong> "Ждали час, еда холодная!"
+                  <strong>Отзыв:</strong> "Заказ пришёл с браком, деньги не вернули!"
                 </div>
                 <div className="text-sm mb-3 p-3 bg-primary-light/50 rounded-xl">
-                  <strong>Ваша правда:</strong> "Гости пришли без брони в час пик, 
-                  отказались от столика у окна, ждали конкретный стол 40 мин по своему желанию"
+                  <strong>Ваша правда:</strong> "Клиент сам повредил товар, прислал фото через неделю. 
+                  Мы предложили скидку на следующий заказ, он отказался"
                 </div>
                 <div className="text-sm p-3 bg-success-light/50 rounded-xl">
-                  <strong>Ответ AI:</strong> "Благодарим за визит! Действительно, 
-                  в субботу вечером у нас высокая загрузка. Мы предлагали свободный столик, 
-                  но вы предпочли дождаться конкретное место..."
+                  <strong>Ответ AI:</strong> "Благодарим за обратную связь. По нашим данным, 
+                  мы предложили решение ситуации. Готовы обсудить детали в личных сообщениях..."
                 </div>
               </div>
             </div>
