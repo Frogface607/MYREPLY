@@ -219,6 +219,16 @@ export default function SettingsPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6">
+        {/* Intro tip for new users */}
+        {!name && (
+          <div className="mb-6 p-4 bg-primary-light border border-primary/20 rounded-xl animate-fade-in">
+            <p className="text-sm">
+              <strong>Совет:</strong> Чем подробнее профиль — тем точнее ответы. 
+              Укажите название, опишите специфику и добавьте известные проблемы.
+            </p>
+          </div>
+        )}
+
         <div className="space-y-6">
           
           {/* Basic Info */}

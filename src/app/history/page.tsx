@@ -9,7 +9,8 @@ import {
   Check, 
   Trash2,
   MessageSquareText,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react';
 
 interface HistoryItem {
@@ -53,6 +54,25 @@ export default function HistoryPage() {
     }
   };
 
+  const handleExport = () => {
+    if (history.length === 0) return;
+    
+    const content = history.map(item => {
+      const date = new Date(item.created_at).toLocaleString('ru-RU');
+      return `---\nДата: ${date}\n\nОтзыв:\n${item.review_text}\n\nОтвет:\n${item.chosen_response}\n`;
+    }).join('\n');
+    
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `myreply-history-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -88,15 +108,25 @@ export default function HistoryPage() {
             <History className="w-5 h-5 text-primary" />
             <span className="font-semibold">MyReply</span>
           </Link>
-          {history.length > 0 && (
-            <button
-              onClick={handleClearAll}
-              className="text-sm text-muted hover:text-danger transition-colors"
-            >
-              Очистить
-            </button>
+          {history.length > 0 ? (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleExport}
+                className="p-2 text-muted hover:text-foreground hover:bg-muted-light rounded-lg transition-all"
+                title="Экспорт"
+              >
+                <Download className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleClearAll}
+                className="text-sm text-muted hover:text-danger transition-colors"
+              >
+                Очистить
+              </button>
+            </div>
+          ) : (
+            <div className="w-16" />
           )}
-          {history.length === 0 && <div className="w-16" />}
         </div>
       </header>
 
