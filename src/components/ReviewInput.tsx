@@ -118,7 +118,7 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
         
         {/* Upload button */}
         {!imagePreview && (
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -126,9 +126,9 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
               disabled={isLoading}
             >
               <ImagePlus className="w-4 h-4" />
-              Загрузить скриншот
+              📷 Скриншот
             </button>
-            <span className="text-xs text-muted">или перетащите / вставьте (Ctrl+V)</span>
+            <span className="text-xs text-muted hidden sm:inline">или перетащите / Ctrl+V</span>
           </div>
         )}
         
@@ -167,12 +167,12 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
             </button>
           ))}
           {rating && (
-            <span className="ml-3 text-sm text-muted">
-              {rating === 1 && '😠 Очень плохо'}
-              {rating === 2 && '😕 Плохо'}
-              {rating === 3 && '😐 Нормально'}
+            <span className="ml-2 sm:ml-3 text-xs sm:text-sm text-muted">
+              {rating === 1 && '😠 Плохо'}
+              {rating === 2 && '😕 Слабо'}
+              {rating === 3 && '😐 Норм'}
               {rating === 4 && '🙂 Хорошо'}
-              {rating === 5 && '😊 Отлично'}
+              {rating === 5 && '😊 Супер'}
             </span>
           )}
         </div>
