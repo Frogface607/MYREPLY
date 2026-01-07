@@ -58,38 +58,27 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
-              Знакомая ситуация
+              Знакомо?
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
-              Работа с отзывами — это стресс
+              Каждый отзыв — это стресс
             </h2>
           </div>
           
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              {
-                title: 'Страх ошибки',
-                desc: 'Не знаю что ответить. Боюсь написать лишнее и сделать хуже.',
-              },
-              {
-                title: 'Потеря времени',
-                desc: 'На каждый ответ уходит 10-15 минут. А отзывов много.',
-              },
-              {
-                title: 'Эмоциональное выгорание',
-                desc: 'Негатив от клиентов портит настроение и отнимает силы.',
-              },
-              {
-                title: 'Сложный выбор',
-                desc: 'Непонятно: извиняться, защищаться, давать скидку?',
-              },
+              '«Не знаю, что ответить»',
+              '«Боюсь выглядеть виноватым»',
+              '«Негатив портит весь день»',
+              '«На каждый ответ — 15 минут»',
+              '«Извиняться или защищаться?»',
+              '«Не хочу этим заниматься»',
             ].map((problem, i) => (
               <div 
                 key={i} 
-                className="p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-border transition-colors"
+                className="p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 transition-colors text-center"
               >
-                <h3 className="font-semibold text-lg mb-2">{problem.title}</h3>
-                <p className="text-muted leading-relaxed">{problem.desc}</p>
+                <p className="text-lg font-medium">{problem}</p>
               </div>
             ))}
           </div>
