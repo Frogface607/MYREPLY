@@ -1,7 +1,8 @@
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-// Используем Perplexity через OpenRouter — модель с доступом к интернету
-const PERPLEXITY_MODEL = 'perplexity/llama-3.1-sonar-large-128k-online';
+// Perplexity для поиска, Claude как fallback
+const PERPLEXITY_MODEL = 'perplexity/sonar-pro';
+const FALLBACK_MODEL = 'anthropic/claude-sonnet-4';
 
 export interface BusinessInsights {
   description: string;
@@ -18,12 +19,8 @@ export interface BusinessInsights {
   summary: string;
 }
 
-export async function researchBusiness(
-  businessName: string,
-  city: string
-): Promise<BusinessInsights> {
-  // Один умный запрос к Perplexity — она сама найдёт информацию в интернете
-  const response = await fetch(OPENROUTER_API_URL, {
+async function tryModel(model: string, messages: { role: string; content: string }[]): Promise<Response> {
+  return fetch(OPENROUTER_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,58 +29,64 @@ export async function researchBusiness(
       'X-Title': 'MyReply',
     },
     body: JSON.stringify({
-      model: PERPLEXITY_MODEL,
-      messages: [
-        {
-          role: 'system',
-          content: `Ты — аналитик бизнеса с доступом к интернету. Твоя задача — найти и проанализировать информацию о бизнесе.
-
-ВАЖНО: Ищи реальную информацию на площадках отзывов: Яндекс Карты, 2ГИС, Google Maps, TripAdvisor, Flamp, Zoon.
-
-Верни результат СТРОГО в формате JSON:
-{
-  "description": "Описание бизнеса на основе найденной информации (2-3 предложения)",
-  "businessType": "restaurant|delivery|cafe|marketplace|service|hotel|other",
-  "commonIssues": ["Реальная проблема из отзывов 1", "Проблема 2", "Проблема 3"],
-  "strengths": ["Реальная сильная сторона 1", "Сильная сторона 2", "Сильная сторона 3"],
-  "recommendedTone": {
-    "formality": число от 0 до 100,
-    "empathy": число от 0 до 100,
-    "brevity": число от 0 до 100
-  },
-  "recentReviews": ["Краткое содержание недавнего отзыва 1", "Отзыв 2", "Отзыв 3"],
-  "averageRating": "Средний рейтинг на площадках, например: 4.2 на Яндекс, 4.5 на 2ГИС",
-  "summary": "Главный совет для владельца по работе с отзывами на основе анализа (2-3 предложения)"
-}
-
-Где:
-- formality: 0 = дружелюбный, 100 = формальный (оцени по стилю бизнеса)
-- empathy: 0 = сдержанный, 100 = эмпатичный
-- brevity: 0 = развёрнутые ответы, 100 = краткие
-
-Если бизнес не найден — так и скажи в description и дай общие рекомендации для этого типа бизнеса.
-Отвечай ТОЛЬКО валидным JSON, без markdown.`,
-        },
-        {
-          role: 'user',
-          content: `Найди и проанализируй бизнес: "${businessName}" в городе ${city}.
-
-Что нужно найти:
-1. Рейтинги на Яндекс Картах, 2ГИС, Google Maps
-2. Типичные жалобы клиентов из отзывов
-3. За что хвалят
-4. Примеры недавних отзывов
-5. Как лучше отвечать на отзывы для этого бизнеса`,
-        },
-      ],
+      model,
+      messages,
       temperature: 0.3,
       max_tokens: 2500,
     }),
   });
+}
+
+export async function researchBusiness(
+  businessName: string,
+  city: string
+): Promise<BusinessInsights> {
+  const systemPrompt = `Ты — аналитик бизнеса. Найди информацию о бизнесе в интернете.
+
+Ищи на площадках: Яндекс Карты, 2ГИС, Google Maps, TripAdvisor, Flamp, Zoon.
+
+Верни ТОЛЬКО JSON:
+{
+  "description": "Описание бизнеса (2-3 предложения)",
+  "businessType": "restaurant|delivery|cafe|marketplace|service|hotel|other",
+  "commonIssues": ["Проблема 1", "Проблема 2"],
+  "strengths": ["Сильная сторона 1", "Сильная сторона 2"],
+  "recommendedTone": { "formality": 50, "empathy": 60, "brevity": 50 },
+  "recentReviews": ["Краткий отзыв 1", "Отзыв 2"],
+  "averageRating": "4.2 на Яндекс, 4.5 на 2ГИС",
+  "summary": "Совет владельцу (2-3 предложения)"
+}
+
+formality: 0=дружелюбный, 100=формальный
+empathy: 0=сдержанный, 100=эмпатичный
+brevity: 0=развёрнуто, 100=кратко
+
+Если не найден — укажи это. Отвечай ТОЛЬКО JSON.`;
+
+  const userPrompt = `Найди: "${businessName}" в городе ${city}.
+
+Нужно:
+1. Рейтинги
+2. Жалобы клиентов
+3. За что хвалят
+4. Примеры отзывов`;
+
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt },
+  ];
+
+  // Пробуем Perplexity, если ошибка — Claude
+  let response = await tryModel(PERPLEXITY_MODEL, messages);
+  
+  if (!response.ok) {
+    console.log('Perplexity unavailable, trying Claude...');
+    response = await tryModel(FALLBACK_MODEL, messages);
+  }
 
   if (!response.ok) {
     const error = await response.text();
-    console.error('Perplexity API error:', error);
+    console.error('Research API error:', error);
     throw new Error('Не удалось выполнить исследование');
   }
 
@@ -95,43 +98,37 @@ export async function researchBusiness(
   }
 
   try {
-    // Парсим JSON из ответа
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('JSON не найден в ответе');
+      throw new Error('JSON не найден');
     }
     
     const parsed = JSON.parse(jsonMatch[0]);
     
-    // Валидация и дефолты
     return {
-      description: parsed.description || `${businessName} — бизнес в городе ${city}`,
+      description: parsed.description || `${businessName} — бизнес в ${city}`,
       businessType: parsed.businessType || 'other',
       commonIssues: Array.isArray(parsed.commonIssues) ? parsed.commonIssues : [],
       strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
       recommendedTone: {
         formality: parsed.recommendedTone?.formality ?? 50,
-        empathy: parsed.recommendedTone?.empathy ?? 50,
+        empathy: parsed.recommendedTone?.empathy ?? 60,
         brevity: parsed.recommendedTone?.brevity ?? 50,
       },
       recentReviews: Array.isArray(parsed.recentReviews) ? parsed.recentReviews : [],
       averageRating: parsed.averageRating || 'Не найден',
-      summary: parsed.summary || 'Рекомендуем отвечать на все отзывы в течение 24 часов.',
+      summary: parsed.summary || 'Отвечайте на отзывы в течение 24 часов.',
     };
-  } catch (e) {
-    console.error('Failed to parse Perplexity response:', content);
-    
-    // Возвращаем дефолтные значения
+  } catch {
     return {
-      description: `${businessName} — бизнес в городе ${city}. Не удалось найти подробную информацию.`,
+      description: `${businessName} — бизнес в ${city}. Информация не найдена.`,
       businessType: 'other',
-      commonIssues: ['Качество обслуживания', 'Время ожидания', 'Коммуникация'],
+      commonIssues: ['Качество обслуживания', 'Время ожидания'],
       strengths: ['Локация', 'Ассортимент'],
       recommendedTone: { formality: 50, empathy: 60, brevity: 50 },
       recentReviews: [],
       averageRating: 'Не найден',
-      summary: 'Не удалось найти достаточно информации. Заполните профиль вручную для лучших результатов.',
+      summary: 'Заполните профиль вручную для лучших результатов.',
     };
   }
 }
-
