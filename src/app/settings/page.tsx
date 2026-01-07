@@ -199,10 +199,10 @@ export default function SettingsPage() {
             <ArrowLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Назад</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Settings className="w-5 h-5 text-primary" />
-            <span className="font-semibold">Профиль бизнеса</span>
-          </div>
+            <span className="font-semibold">MyReply</span>
+          </Link>
           <button
             onClick={handleSave}
             disabled={isSaving}

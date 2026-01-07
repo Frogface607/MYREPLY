@@ -83,10 +83,10 @@ export default function HistoryPage() {
             <ArrowLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Назад</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <History className="w-5 h-5 text-primary" />
-            <span className="font-semibold">История</span>
-          </div>
+            <span className="font-semibold">MyReply</span>
+          </Link>
           {history.length > 0 && (
             <button
               onClick={handleClearAll}
