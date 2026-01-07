@@ -4,15 +4,27 @@ import { ArrowRight, Clock, Shield, Sparkles, Check } from 'lucide-react';
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Skip to main content - accessibility */}
+      <a 
+        href="#main" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg"
+      >
+        Перейти к содержимому
+      </a>
+
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            aria-label="MyReply - На главную"
+          >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+              <Sparkles className="w-4 h-4 text-white" aria-hidden="true" />
             </div>
             <span className="font-semibold text-lg tracking-tight">MyReply</span>
-          </div>
+          </Link>
           <Link
             href="/quick-reply"
             className="text-sm font-medium text-muted hover:text-foreground transition-colors"
@@ -23,7 +35,8 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="min-h-screen flex items-center justify-center px-6 pt-16">
+      <main id="main" role="main">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-primary font-medium mb-6 tracking-wide uppercase text-sm">
             Для бизнеса с отзывами
@@ -54,7 +67,7 @@ export default function LandingPage() {
       </section>
 
       {/* Problems */}
-      <section className="py-32 px-6 border-t border-border/50">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
@@ -105,7 +118,7 @@ export default function LandingPage() {
       </section>
 
       {/* Solution */}
-      <section className="py-32 px-6 bg-card border-y border-border/50">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
         <div className="max-w-4xl mx-auto">
           <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
             Решение
@@ -145,7 +158,7 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits */}
-      <section className="py-32 px-6">
+      <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
             Почему MyReply
@@ -156,21 +169,21 @@ export default function LandingPage() {
           
           <div className="grid sm:grid-cols-3 gap-12">
             <div>
-              <Clock className="w-8 h-8 text-primary mb-4" />
+              <Clock className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
               <h3 className="text-lg font-semibold mb-2">Секунды, не минуты</h3>
               <p className="text-muted text-sm leading-relaxed">
                 Готовый ответ быстрее, чем вы успеете расстроиться
               </p>
             </div>
             <div>
-              <Shield className="w-8 h-8 text-primary mb-4" />
+              <Shield className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
               <h3 className="text-lg font-semibold mb-2">Репутация защищена</h3>
               <p className="text-muted text-sm leading-relaxed">
                 Ответы не признают вину там, где её нет
               </p>
             </div>
             <div>
-              <Sparkles className="w-8 h-8 text-primary mb-4" />
+              <Sparkles className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
               <h3 className="text-lg font-semibold mb-2">Ваш стиль</h3>
               <p className="text-muted text-sm leading-relaxed">
                 Настройте тон и правила — AI их соблюдает
@@ -181,7 +194,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features list */}
-      <section className="py-32 px-6 bg-card border-y border-border/50">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
         <div className="max-w-4xl mx-auto">
           <div className="grid sm:grid-cols-2 gap-6">
             {[
@@ -193,7 +206,7 @@ export default function LandingPage() {
               'Тёмная тема',
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
-                <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                <Check className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
                 <span>{feature}</span>
               </div>
             ))}
@@ -202,7 +215,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-32 px-6">
+      <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
             Попробуйте сейчас.
@@ -215,13 +228,14 @@ export default function LandingPage() {
             className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all"
           >
             Начать бесплатно
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border/50">
+      <footer className="py-8 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
