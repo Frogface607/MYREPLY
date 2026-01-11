@@ -8,8 +8,6 @@ import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import type { GeneratedResponse } from '@/types';
 import { ArrowLeft, MessageSquareText, Settings, History, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { getBusinessProfile } from '@/lib/supabase/business';
-import { saveResponseToHistory } from '@/lib/supabase/history';
 import { useToast } from '@/components/ToastProvider';
 
 interface ReviewAnalysis {
@@ -30,9 +28,12 @@ export default function QuickReplyPage() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const profile = await getBusinessProfile();
-        if (profile) {
-          setBusinessSettings(profile);
+        const res = await fetch('/api/business');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.profile) {
+            setBusinessSettings(data.profile);
+          }
         }
       } catch (error) {
         console.error('Error loading business profile:', error);
@@ -113,25 +114,34 @@ export default function QuickReplyPage() {
     const response = responses.find(r => r.text === text);
     const accent = response?.accent;
     
-    // Сохраняем в Supabase
+    // Копируем в буфер обмена
     try {
-      const result = await saveResponseToHistory(
-        reviewText,
-        text,
-        accent,
-        undefined, // feedback можно добавить позже
-        undefined  // adjustment можно добавить позже
-      );
-
-      if (result.success) {
-        toast.showSuccess('Скопировано и сохранено в историю');
-      } else {
+      await navigator.clipboard.writeText(text);
+      
+      // Сохраняем в историю через API
+      try {
+        const saveRes = await fetch('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            reviewText,
+            chosenResponse: text,
+            responseAccent: accent,
+          }),
+        });
+        
+        if (saveRes.ok) {
+          toast.showSuccess('Скопировано и сохранено в историю');
+        } else {
+          toast.showWarning('Скопировано, но не удалось сохранить в историю');
+        }
+      } catch (error) {
         toast.showWarning('Скопировано, но не удалось сохранить в историю');
-        console.error('Error saving to history:', result.error);
+        console.error('Error saving to history:', error);
       }
     } catch (error) {
-      toast.showWarning('Скопировано, но не удалось сохранить в историю');
-      console.error('Error saving to history:', error);
+      toast.showError('Не удалось скопировать текст');
+      console.error('Error copying text:', error);
     }
   };
 

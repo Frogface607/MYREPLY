@@ -24,7 +24,6 @@ import {
   ChevronUp
 } from 'lucide-react';
 import type { ToneSettings, BusinessRules, BusinessType } from '@/types';
-import { getBusinessProfile, saveBusinessProfile } from '@/lib/supabase/business';
 import { useToast } from '@/components/ToastProvider';
 
 const businessTypeLabels: Record<BusinessType, string> = {
@@ -90,19 +89,23 @@ export default function SettingsPage() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const profile = await getBusinessProfile();
-        
-        if (profile) {
-          setName(profile.name || '');
-          setCity(profile.city || '');
-          setType(profile.type || 'restaurant');
-          setDescription(profile.description || '');
-          setSpecialties(profile.specialties || '');
-          setCommonIssues(profile.commonIssues || []);
-          setStrengths(profile.strengths || []);
-          setTone(profile.tone_settings || { formality: 50, empathy: 60, brevity: 50 });
-          setRules(profile.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true });
-          setCustomRules(profile.customRules || '');
+        const res = await fetch('/api/business');
+        if (res.ok) {
+          const data = await res.json();
+          const profile = data.profile;
+          
+          if (profile) {
+            setName(profile.name || '');
+            setCity(profile.city || '');
+            setType(profile.type || 'restaurant');
+            setDescription(profile.description || '');
+            setSpecialties(profile.specialties || '');
+            setCommonIssues(profile.commonIssues || []);
+            setStrengths(profile.strengths || []);
+            setTone(profile.tone_settings || { formality: 50, empathy: 60, brevity: 50 });
+            setRules(profile.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true });
+            setCustomRules(profile.customRules || '');
+          }
         }
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -172,21 +175,27 @@ export default function SettingsPage() {
     setIsSaving(true);
     
     try {
-      const result = await saveBusinessProfile({
-        name: name.trim() || 'Мой бизнес',
-        city,
-        type,
-        description,
-        specialties,
-        commonIssues,
-        strengths,
-        tone_settings: tone,
-        rules,
-        customRules,
+      const res = await fetch('/api/business', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim() || 'Мой бизнес',
+          city,
+          type,
+          description,
+          specialties,
+          commonIssues,
+          strengths,
+          tone_settings: tone,
+          rules,
+          customRules,
+        }),
       });
 
-      if (!result.success) {
-        toast.showError('Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.showError('Ошибка сохранения: ' + (data.error || 'Неизвестная ошибка'));
         return;
       }
       

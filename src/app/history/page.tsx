@@ -13,7 +13,6 @@ import {
   Download,
   Loader2
 } from 'lucide-react';
-import { getResponseHistory, deleteResponseFromHistory } from '@/lib/supabase/history';
 import type { ResponseHistory } from '@/types';
 import { useToast } from '@/components/ToastProvider';
 import { Dialog } from '@/components/Dialog';
@@ -31,16 +30,20 @@ export default function HistoryPage() {
     const loadHistory = async () => {
       setIsLoading(true);
       try {
-        const data = await getResponseHistory(100);
-        setHistory(data);
+        const res = await fetch('/api/history');
+        if (!res.ok) throw new Error('Failed to load history');
+        const data = await res.json();
+        setHistory(data.history || []);
       } catch (error) {
         console.error('Error loading history:', error);
+        toast.showError('Не удалось загрузить историю');
       } finally {
         setIsLoading(false);
       }
     };
 
     loadHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCopy = async (id: string, text: string) => {
@@ -64,12 +67,16 @@ export default function HistoryPage() {
     
     setDeletingId(itemToDelete);
     try {
-      const result = await deleteResponseFromHistory(itemToDelete);
-      if (result.success) {
+      const res = await fetch(`/api/history?id=${itemToDelete}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
         setHistory(history.filter(h => h.id !== itemToDelete));
         toast.showSuccess('Ответ удалён из истории');
       } else {
-        toast.showError('Ошибка удаления: ' + (result.error || 'Неизвестная ошибка'));
+        toast.showError('Ошибка удаления: ' + (data.error || 'Неизвестная ошибка'));
       }
     } catch (error) {
       console.error('Error deleting history item:', error);
