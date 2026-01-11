@@ -1,0 +1,8 @@
+﻿{
+  "mcpServers": {
+    "cursor-chat-history": {
+      "command": "npx",
+      "args": ["-y", "--package=cursor-chat-history-mcp", "cursor-chat-history-mcp"]
+    }
+  }
+}

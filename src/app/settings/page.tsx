@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, 
   Settings, 
@@ -23,6 +24,8 @@ import {
   ChevronUp
 } from 'lucide-react';
 import type { ToneSettings, BusinessRules, BusinessType } from '@/types';
+import { getBusinessProfile, saveBusinessProfile } from '@/lib/supabase/business';
+import { useToast } from '@/components/ToastProvider';
 
 const businessTypeLabels: Record<BusinessType, string> = {
   restaurant: 'Ресторан',
@@ -56,11 +59,12 @@ interface ResearchInsights {
 }
 
 export default function SettingsPage() {
+  const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isResearching, setIsResearching] = useState(false);
-  const [researchError, setResearchError] = useState<string | null>(null);
   const [showResearch, setShowResearch] = useState(false);
   
   // Form state
@@ -82,37 +86,42 @@ export default function SettingsPage() {
   });
   const [customRules, setCustomRules] = useState('');
 
-  // Load from localStorage
+  // Load from Supabase
   useEffect(() => {
-    const saved = localStorage.getItem('myreply_business');
-    if (saved) {
+    const loadProfile = async () => {
       try {
-        const data = JSON.parse(saved);
-        setName(data.name || '');
-        setCity(data.city || '');
-        setType(data.type || 'restaurant');
-        setDescription(data.description || '');
-        setSpecialties(data.specialties || '');
-        setCommonIssues(data.commonIssues || []);
-        setStrengths(data.strengths || []);
-        setTone(data.tone_settings || { formality: 50, empathy: 60, brevity: 50 });
-        setRules(data.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true });
-        setCustomRules(data.customRules || '');
-      } catch {
-        // ignore
+        const profile = await getBusinessProfile();
+        
+        if (profile) {
+          setName(profile.name || '');
+          setCity(profile.city || '');
+          setType(profile.type || 'restaurant');
+          setDescription(profile.description || '');
+          setSpecialties(profile.specialties || '');
+          setCommonIssues(profile.commonIssues || []);
+          setStrengths(profile.strengths || []);
+          setTone(profile.tone_settings || { formality: 50, empathy: 60, brevity: 50 });
+          setRules(profile.rules || { canApologize: true, canOfferPromocode: false, canOfferCompensation: false, canOfferCallback: true });
+          setCustomRules(profile.customRules || '');
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        // Продолжаем работу, показываем пустую форму
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+
+    loadProfile();
   }, []);
 
   const handleResearch = async () => {
     if (!name.trim() || !city.trim()) {
-      setResearchError('Введите название бизнеса и город');
+      toast.showWarning('Введите название бизнеса и город');
       return;
     }
 
     setIsResearching(true);
-    setResearchError(null);
 
     try {
       const res = await fetch('/api/research', {
@@ -136,8 +145,10 @@ export default function SettingsPage() {
       if (ins.recommendedTone) setTone(ins.recommendedTone);
       
       setShowResearch(false);
+      toast.showSuccess('Информация о бизнесе найдена и обновлена');
     } catch (err) {
-      setResearchError(err instanceof Error ? err.message : 'Произошла ошибка');
+      const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
+      toast.showError('Ошибка исследования: ' + errorMessage);
     } finally {
       setIsResearching(false);
     }
@@ -157,26 +168,37 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
     
-    const data = {
-      name,
-      city,
-      type,
-      description,
-      specialties,
-      commonIssues,
-      strengths,
-      tone_settings: tone,
-      rules,
-      customRules,
-    };
-    localStorage.setItem('myreply_business', JSON.stringify(data));
-    
-    setSaved(true);
-    setIsSaving(false);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      const result = await saveBusinessProfile({
+        name: name.trim() || 'Мой бизнес',
+        city,
+        type,
+        description,
+        specialties,
+        commonIssues,
+        strengths,
+        tone_settings: tone,
+        rules,
+        customRules,
+      });
+
+      if (!result.success) {
+        toast.showError('Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
+        return;
+      }
+      
+      setSaved(true);
+      toast.showSuccess('Настройки сохранены');
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка';
+      toast.showError('Ошибка сохранения: ' + errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading) {
@@ -534,13 +556,6 @@ export default function SettingsPage() {
             
             {showResearch && (
               <div className="px-4 pb-4 border-t border-border pt-4">
-                {researchError && (
-                  <div className="flex items-center gap-2 p-2 bg-danger-light text-danger rounded-lg text-sm mb-3">
-                    <AlertTriangle className="w-4 h-4" />
-                    {researchError}
-                  </div>
-                )}
-
                 <button
                   onClick={handleResearch}
                   disabled={isResearching || !name.trim() || !city.trim()}

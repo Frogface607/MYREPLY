@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Clock, Shield, Sparkles, Check } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -157,8 +157,59 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Smart Profile */}
       <section className="py-24 sm:py-32 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+            Умный профиль
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
+            Настройка один раз — идеальные ответы всегда.
+          </h2>
+          <p className="text-muted text-lg mb-16 max-w-2xl">
+            Создайте умный профиль бизнеса, и AI будет учитывать ваши особенности при генерации ответов
+          </p>
+          
+          <div className="space-y-12">
+            {[
+              {
+                num: '00',
+                icon: Search,
+                title: 'Шаг ноль: Найдём ваш бизнес',
+                desc: 'Укажите название и город — AI изучит информацию о вашем бизнесе, проанализирует специфику и предложит оптимальные настройки',
+              },
+              {
+                num: '01',
+                icon: Settings,
+                title: 'Проверьте и дополните профиль',
+                desc: 'Просмотрите найденную информацию, скорректируйте описание, добавьте сильные стороны и известные особенности вашего бизнеса',
+              },
+              {
+                num: '02',
+                icon: MessageSquare,
+                title: 'Настройте тон общения',
+                desc: 'Выберите стиль ответов: дружелюбный или официальный, с эмпатией или по делу, кратко или развёрнуто. AI запомнит ваш выбор',
+              },
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-primary-light rounded-xl flex items-center justify-center">
+                  <step.icon className="w-6 h-6 text-primary" aria-hidden="true" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl font-bold text-border">{step.num}</span>
+                    <h3 className="text-xl font-semibold">{step.title}</h3>
+                  </div>
+                  <p className="text-muted leading-relaxed">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
         <div className="max-w-4xl mx-auto">
           <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
             Почему MyReply

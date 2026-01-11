@@ -10,67 +10,106 @@ import {
   Trash2,
   MessageSquareText,
   Sparkles,
-  Download
+  Download,
+  Loader2
 } from 'lucide-react';
-
-interface HistoryItem {
-  id: string;
-  review_text: string;
-  chosen_response: string;
-  created_at: string;
-}
+import { getResponseHistory, deleteResponseFromHistory } from '@/lib/supabase/history';
+import type { ResponseHistory } from '@/types';
+import { useToast } from '@/components/ToastProvider';
+import { Dialog } from '@/components/Dialog';
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<ResponseHistory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
-    const saved = localStorage.getItem('myreply_history');
-    if (saved) {
+    const loadHistory = async () => {
+      setIsLoading(true);
       try {
-        setHistory(JSON.parse(saved));
-      } catch {
-        // ignore
+        const data = await getResponseHistory(100);
+        setHistory(data);
+      } catch (error) {
+        console.error('Error loading history:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+
+    loadHistory();
   }, []);
 
   const handleCopy = async (id: string, text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const handleDelete = (id: string) => {
-    const newHistory = history.filter(h => h.id !== id);
-    setHistory(newHistory);
-    localStorage.setItem('myreply_history', JSON.stringify(newHistory));
-  };
-
-  const handleClearAll = () => {
-    if (confirm('Очистить всю историю?')) {
-      setHistory([]);
-      localStorage.removeItem('myreply_history');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      toast.showSuccess('Скопировано в буфер обмена');
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      toast.showError('Не удалось скопировать текст');
     }
   };
 
+  const handleDeleteClick = (id: string) => {
+    setItemToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    
+    setDeletingId(itemToDelete);
+    try {
+      const result = await deleteResponseFromHistory(itemToDelete);
+      if (result.success) {
+        setHistory(history.filter(h => h.id !== itemToDelete));
+        toast.showSuccess('Ответ удалён из истории');
+      } else {
+        toast.showError('Ошибка удаления: ' + (result.error || 'Неизвестная ошибка'));
+      }
+    } catch (error) {
+      console.error('Error deleting history item:', error);
+      toast.showError('Ошибка удаления');
+    } finally {
+      setDeletingId(null);
+      setItemToDelete(null);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  const handleClearAll = () => {
+    toast.showInfo('Функция массового удаления пока недоступна. Удаляйте записи по одной.');
+  };
+
   const handleExport = () => {
-    if (history.length === 0) return;
+    if (history.length === 0) {
+      toast.showWarning('Нет данных для экспорта');
+      return;
+    }
     
-    const content = history.map(item => {
-      const date = new Date(item.created_at).toLocaleString('ru-RU');
-      return `---\nДата: ${date}\n\nОтзыв:\n${item.review_text}\n\nОтвет:\n${item.chosen_response}\n`;
-    }).join('\n');
-    
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `myreply-history-${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      const content = history.map(item => {
+        const date = new Date(item.created_at).toLocaleString('ru-RU');
+        return `---\nДата: ${date}\n\nОтзыв:\n${item.review_text}\n\nОтвет:\n${item.chosen_response}\n`;
+      }).join('\n');
+      
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `myreply-history-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.showSuccess('История экспортирована');
+    } catch (error) {
+      toast.showError('Ошибка при экспорте истории');
+    }
   };
 
   const formatDate = (dateStr: string) => {
@@ -131,7 +170,11 @@ export default function HistoryPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {history.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : history.length === 0 ? (
           <div className="text-center py-16 animate-fade-in">
             <div className="w-20 h-20 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
               <MessageSquareText className="w-10 h-10 text-primary" />
@@ -176,7 +219,7 @@ export default function HistoryPage() {
             </div>
 
             <p className="text-sm text-muted">
-              История сохраняется локально в браузере
+              История синхронизируется между устройствами
             </p>
             
             {history.map((item) => (
@@ -205,11 +248,16 @@ export default function HistoryPage() {
                   </span>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleDelete(item.id)}
-                      className="p-2 text-muted hover:text-danger hover:bg-danger-light rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      onClick={() => handleDeleteClick(item.id)}
+                      disabled={deletingId === item.id}
+                      className="p-2 text-muted hover:text-danger hover:bg-danger-light rounded-lg transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
                       title="Удалить"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {deletingId === item.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
                     </button>
                     <button
                       onClick={() => handleCopy(item.id, item.chosen_response)}
@@ -238,6 +286,22 @@ export default function HistoryPage() {
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setItemToDelete(null);
+        }}
+        title="Удалить ответ?"
+        message="Это действие нельзя отменить. Ответ будет удалён из истории."
+        type="confirm"
+        variant="danger"
+        confirmText="Удалить"
+        cancelText="Отмена"
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }

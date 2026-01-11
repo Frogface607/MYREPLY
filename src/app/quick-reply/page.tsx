@@ -8,6 +8,9 @@ import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import type { GeneratedResponse } from '@/types';
 import { ArrowLeft, MessageSquareText, Settings, History, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { getBusinessProfile } from '@/lib/supabase/business';
+import { saveResponseToHistory } from '@/lib/supabase/history';
+import { useToast } from '@/components/ToastProvider';
 
 interface ReviewAnalysis {
   sentiment: 'positive' | 'neutral' | 'negative';
@@ -15,37 +18,33 @@ interface ReviewAnalysis {
   urgency: 'low' | 'medium' | 'high';
 }
 
-interface BusinessSettings {
-  name: string;
-  type: string;
-  tone_settings: { formality: number; empathy: number; brevity: number };
-  rules: { canApologize: boolean; canOfferPromocode: boolean; canOfferCompensation: boolean; canOfferCallback: boolean };
-}
-
 export default function QuickReplyPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
-  const [businessSettings, setBusinessSettings] = useState<BusinessSettings | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [businessSettings, setBusinessSettings] = useState<any>(null);
+  const toast = useToast();
 
-  // Загружаем настройки из localStorage
+  // Загружаем настройки из Supabase
   useEffect(() => {
-    const saved = localStorage.getItem('myreply_business');
-    if (saved) {
+    const loadProfile = async () => {
       try {
-        setBusinessSettings(JSON.parse(saved));
-      } catch {
-        // ignore
+        const profile = await getBusinessProfile();
+        if (profile) {
+          setBusinessSettings(profile);
+        }
+      } catch (error) {
+        console.error('Error loading business profile:', error);
+        // Продолжаем работу без настроек (demo режим)
       }
-    }
+    };
+
+    loadProfile();
   }, []);
 
   const handleSubmit = async (text: string, rating?: number, context?: string, imageBase64?: string) => {
     setIsLoading(true);
-    setError(null);
     setReviewText(text || '(из скриншота)');
 
     try {
@@ -69,8 +68,10 @@ export default function QuickReplyPage() {
       const data = await res.json();
       setResponses(data.responses);
       setAnalysis(data.analysis);
+      toast.showSuccess('Ответы сгенерированы!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка');
+      const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
+      toast.showError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +79,6 @@ export default function QuickReplyPage() {
 
   const handleAdjustment = async (adjustment: string) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const res = await fetch('/api/generate', {
@@ -99,31 +99,40 @@ export default function QuickReplyPage() {
 
       const data = await res.json();
       setResponses(data.responses);
+      toast.showSuccess('Ответы обновлены');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка');
+      const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
+      toast.showError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCopy = async (text: string) => {
-    // Сохраняем в localStorage историю
-    try {
-      const history = JSON.parse(localStorage.getItem('myreply_history') || '[]');
-      history.unshift({
-        id: Date.now().toString(),
-        review_text: reviewText,
-        chosen_response: text,
-        created_at: new Date().toISOString(),
-      });
-      localStorage.setItem('myreply_history', JSON.stringify(history.slice(0, 50)));
-    } catch {
-      // ignore
-    }
+    // Находим accent текущего ответа (если есть)
+    const response = responses.find(r => r.text === text);
+    const accent = response?.accent;
     
-    // Показываем toast
-    setToast('Скопировано и сохранено в историю');
-    setTimeout(() => setToast(null), 3000);
+    // Сохраняем в Supabase
+    try {
+      const result = await saveResponseToHistory(
+        reviewText,
+        text,
+        accent,
+        undefined, // feedback можно добавить позже
+        undefined  // adjustment можно добавить позже
+      );
+
+      if (result.success) {
+        toast.showSuccess('Скопировано и сохранено в историю');
+      } else {
+        toast.showWarning('Скопировано, но не удалось сохранить в историю');
+        console.error('Error saving to history:', result.error);
+      }
+    } catch (error) {
+      toast.showWarning('Скопировано, но не удалось сохранить в историю');
+      console.error('Error saving to history:', error);
+    }
   };
 
   const handleFeedback = async (responseId: string, feedback: 'liked' | 'disliked') => {
@@ -150,15 +159,6 @@ export default function QuickReplyPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-          <div className="flex items-center gap-2 px-4 py-3 bg-success text-white rounded-xl shadow-lg">
-            <CheckCircle className="w-5 h-5" />
-            <span className="font-medium">{toast}</span>
-          </div>
-        </div>
-      )}
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -209,7 +209,6 @@ export default function QuickReplyPage() {
           <ReviewInput
             onSubmit={handleSubmit}
             isLoading={isLoading}
-            error={error}
           />
         </section>
 
@@ -283,7 +282,6 @@ export default function QuickReplyPage() {
                   setResponses([]);
                   setAnalysis(null);
                   setReviewText('');
-                  setError(null);
                 }}
                 className="text-primary hover:text-primary-hover font-medium"
               >
