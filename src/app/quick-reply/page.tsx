@@ -5,8 +5,9 @@ import { ReviewInput } from '@/components/ReviewInput';
 import { ResponseCard } from '@/components/ResponseCard';
 import { AdjustmentInput } from '@/components/AdjustmentInput';
 import { ResponseSkeletonGroup } from '@/components/Skeleton';
-import type { GeneratedResponse } from '@/types';
-import { ArrowLeft, MessageSquareText, Settings, History, CheckCircle } from 'lucide-react';
+import { Paywall, UsageCounter, UpsellBanner } from '@/components/Paywall';
+import type { GeneratedResponse, Subscription, PlanType } from '@/types';
+import { ArrowLeft, MessageSquareText, Settings, History, Crown } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
 
@@ -22,29 +23,81 @@ export default function QuickReplyPage() {
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
   const [businessSettings, setBusinessSettings] = useState<any>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [showUpsell, setShowUpsell] = useState(false);
   const toast = useToast();
 
-  // Загружаем настройки из Supabase
+  // Загружаем настройки и подписку
   useEffect(() => {
-    const loadProfile = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetch('/api/business');
-        if (res.ok) {
-          const data = await res.json();
+        // Параллельно загружаем профиль и подписку
+        const [profileRes, subRes] = await Promise.all([
+          fetch('/api/business'),
+          fetch('/api/subscription'),
+        ]);
+
+        if (profileRes.ok) {
+          const data = await profileRes.json();
           if (data.profile) {
             setBusinessSettings(data.profile);
           }
         }
+
+        if (subRes.ok) {
+          const data = await subRes.json();
+          if (data.subscription) {
+            setSubscription(data.subscription);
+          }
+        }
       } catch (error) {
-        console.error('Error loading business profile:', error);
-        // Продолжаем работу без настроек (demo режим)
+        console.error('Error loading data:', error);
       }
     };
 
-    loadProfile();
+    loadData();
   }, []);
 
+  const checkAndUpdateUsage = async (): Promise<boolean> => {
+    // Проверяем лимит перед генерацией
+    if (subscription) {
+      if (subscription.usage_count >= subscription.usage_limit) {
+        setShowPaywall(true);
+        return false;
+      }
+    }
+
+    // Увеличиваем счётчик
+    try {
+      const res = await fetch('/api/subscription', { method: 'POST' });
+      const data = await res.json();
+
+      if (data.limitReached) {
+        setShowPaywall(true);
+        return false;
+      }
+
+      // Обновляем локальное состояние
+      if (subscription) {
+        setSubscription({
+          ...subscription,
+          usage_count: data.usage_count || subscription.usage_count + 1,
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating usage:', error);
+      return true; // Продолжаем работу в случае ошибки
+    }
+  };
+
   const handleSubmit = async (text: string, rating?: number, context?: string, imageBase64?: string) => {
+    // Проверяем лимит
+    const canProceed = await checkAndUpdateUsage();
+    if (!canProceed) return;
+
     setIsLoading(true);
     setReviewText(text || '(из скриншота)');
 
@@ -70,6 +123,11 @@ export default function QuickReplyPage() {
       setResponses(data.responses);
       setAnalysis(data.analysis);
       toast.showSuccess('Ответы сгенерированы!');
+
+      // Показываем upsell для free пользователей (не всегда)
+      if (subscription?.plan === 'free' && !businessSettings && Math.random() > 0.5) {
+        setTimeout(() => setShowUpsell(true), 2000);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Произошла ошибка';
       toast.showError(errorMessage);
@@ -110,15 +168,12 @@ export default function QuickReplyPage() {
   };
 
   const handleCopy = async (text: string) => {
-    // Находим accent текущего ответа (если есть)
     const response = responses.find(r => r.text === text);
     const accent = response?.accent;
     
-    // Копируем в буфер обмена
     try {
       await navigator.clipboard.writeText(text);
       
-      // Сохраняем в историю через API
       try {
         const saveRes = await fetch('/api/history', {
           method: 'POST',
@@ -184,6 +239,14 @@ export default function QuickReplyPage() {
             <span className="font-semibold">MyReply</span>
           </Link>
           <div className="flex items-center gap-3">
+            {/* Usage Counter */}
+            {subscription && (
+              <UsageCounter
+                used={subscription.usage_count}
+                limit={subscription.usage_limit}
+                plan={subscription.plan as PlanType}
+              />
+            )}
             <Link
               href="/history"
               className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
@@ -203,14 +266,43 @@ export default function QuickReplyPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Demo Banner */}
-        {!businessSettings && (
-          <div className="mb-6 p-4 bg-primary-light border border-primary/20 rounded-xl">
+        {/* Trial Banner */}
+        {subscription?.status === 'trialing' && (
+          <div className="mb-6 p-4 bg-primary-light border border-primary/20 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Crown className="w-5 h-5 text-primary" />
+              <p className="text-sm">
+                <strong>Пробный период:</strong> У вас полный доступ ещё{' '}
+                {subscription.trial_end 
+                  ? Math.max(0, Math.ceil((new Date(subscription.trial_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+                  : 7
+                } дней
+              </p>
+            </div>
+            <Link href="/pricing" className="text-sm text-primary font-medium hover:underline">
+              Тарифы
+            </Link>
+          </div>
+        )}
+
+        {/* Demo Banner (only for free without profile) */}
+        {!businessSettings && subscription?.plan === 'free' && subscription?.status !== 'trialing' && (
+          <div className="mb-6 p-4 bg-muted-light border border-border rounded-xl">
             <p className="text-sm">
               <strong>Demo режим:</strong> Настройте профиль бизнеса в{' '}
               <Link href="/settings" className="text-primary underline">Настройках</Link>
               {' '}для более точных ответов.
             </p>
+          </div>
+        )}
+
+        {/* Upsell Banner */}
+        {showUpsell && (
+          <div className="mb-6">
+            <UpsellBanner
+              message="С профилем бизнеса ответы становятся персональными и попадают в точку"
+              onClose={() => setShowUpsell(false)}
+            />
           </div>
         )}
 
@@ -301,6 +393,16 @@ export default function QuickReplyPage() {
           </section>
         )}
       </main>
+
+      {/* Paywall Modal */}
+      {showPaywall && (
+        <Paywall
+          type="limit"
+          usageCount={subscription?.usage_count}
+          usageLimit={subscription?.usage_limit}
+          onClose={() => setShowPaywall(false)}
+        />
+      )}
     </div>
   );
 }

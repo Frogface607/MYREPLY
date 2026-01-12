@@ -109,3 +109,69 @@ export interface OnboardingData {
   rules: BusinessRules;
 }
 
+// =====================
+// ПОДПИСКИ И ПЛАТЕЖИ
+// =====================
+
+// Тарифные планы
+export type PlanType = 'free' | 'start' | 'pro' | 'business';
+
+// Статус подписки
+export type SubscriptionStatus = 'active' | 'trialing' | 'cancelled' | 'past_due' | 'expired';
+
+// Лимиты по тарифам
+export const PLAN_LIMITS: Record<PlanType, number> = {
+  free: 10,
+  start: 100,
+  pro: 500,
+  business: 999999, // безлимит
+};
+
+// Цены в копейках
+export const PLAN_PRICES: Record<PlanType, number> = {
+  free: 0,
+  start: 49000,    // 490 ₽
+  pro: 99000,      // 990 ₽
+  business: 249000, // 2490 ₽
+};
+
+// Названия тарифов
+export const PLAN_NAMES: Record<PlanType, string> = {
+  free: 'Free',
+  start: 'Старт',
+  pro: 'Про',
+  business: 'Бизнес',
+};
+
+// Подписка пользователя
+export interface Subscription {
+  id: string;
+  user_id: string;
+  plan: PlanType;
+  status: SubscriptionStatus;
+  usage_count: number;
+  usage_limit: number;
+  current_period_start: string;
+  current_period_end: string;
+  trial_start?: string;
+  trial_end?: string;
+  yukassa_subscription_id?: string;
+  cancelled_at?: string;
+  cancel_reason?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Платёж
+export interface Payment {
+  id: string;
+  user_id: string;
+  subscription_id?: string;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded';
+  yukassa_payment_id?: string;
+  payment_method?: string;
+  description?: string;
+  created_at: string;
+}
