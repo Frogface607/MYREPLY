@@ -32,11 +32,14 @@ export async function updateSession(request: NextRequest) {
   // Refreshing the auth token
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Защищённые маршруты
+  // Защищённые маршруты (требуют авторизации)
   const protectedRoutes = ['/dashboard', '/quick-reply', '/onboarding', '/history', '/settings'];
   const isProtectedRoute = protectedRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
   );
+  
+  // Публичные маршруты (доступны всем)
+  // /, /auth, /pricing, /payment/success
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
