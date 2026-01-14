@@ -39,14 +39,18 @@ interface BusinessProfile {
   customRules?: string;
 }
 
-function buildSystemPrompt(business: BusinessProfile | null): string {
+function buildSystemPrompt(business: BusinessProfile | null, includeHardcore: boolean = false): string {
+  const modes = includeHardcore ? 5 : 4;
+  
   const jsonFormat = `
 Отвечай ТОЛЬКО в формате JSON:
 {
   "responses": [
     { "id": "1", "text": "текст ответа", "accent": "neutral", "explanation": "почему такой ответ" },
     { "id": "2", "text": "текст ответа", "accent": "empathetic", "explanation": "почему" },
-    { "id": "3", "text": "текст ответа", "accent": "solution-focused", "explanation": "почему" }
+    { "id": "3", "text": "текст ответа", "accent": "solution-focused", "explanation": "почему" },
+    { "id": "4", "text": "текст ответа", "accent": "passive-aggressive", "explanation": "почему" }${includeHardcore ? `,
+    { "id": "5", "text": "текст ответа", "accent": "hardcore", "explanation": "почему" }` : ''}
   ],
   "analysis": {
     "sentiment": "positive/neutral/negative",
@@ -55,16 +59,20 @@ function buildSystemPrompt(business: BusinessProfile | null): string {
   }
 }`;
 
+  const modesDescription = `
+Предлагай ${modes} вариантов ответа:
+1. **Нейтральный** (neutral) — сбалансированный, профессиональный
+2. **Эмпатичный** (empathetic) — с пониманием чувств клиента, тёплый
+3. **С решением** (solution-focused) — конкретные действия, предложения
+4. **Формально-холодный** (passive-aggressive) — вежливый, но твёрдый и холодный. Без извинений, фиксация позиции бизнеса. Для несправедливых/манипулятивных отзывов. Юридически безопасен.${includeHardcore ? `
+5. **Дерзкий** (hardcore) — ироничный, с сарказмом, провокационный. ТОЛЬКО ДЛЯ РАЗВЛЕЧЕНИЯ, не для публикации! Можно троллить, но без мата и оскорблений.` : ''}`;
+
   if (!business) {
     return `Ты — помощник владельца бизнеса для ответов на отзывы.
-
-Предлагай 3 варианта ответа:
-1. Нейтральный — сбалансированный, профессиональный
-2. Эмпатичный — с пониманием чувств клиента
-3. С решением — конкретные действия
+${modesDescription}
 
 Правила:
-- Вежливо и профессионально
+- Вежливо и профессионально (кроме hardcore)
 - Не признавай вину без причины
 - Не оправдывайся чрезмерно
 - Предлагай решения когда уместно
@@ -139,11 +147,7 @@ ${rulesText}`;
   }
 
   prompt += `
-
-ЗАДАЧА: 3 варианта ответа
-1. Нейтральный — сбалансированный
-2. Эмпатичный — с пониманием
-3. С решением — конкретные действия
+${modesDescription}
 
 ВАЖНО:
 - Соблюдай ВСЕ правила выше
@@ -151,6 +155,8 @@ ${rulesText}`;
 - Если клиент хвалит наши сильные стороны — поблагодари
 - Звучи как реальный человек, не шаблонно
 - Защищай достоинство бизнеса
+- Passive-aggressive: НЕ извиняйся, будь формален и холоден${includeHardcore ? `
+- Hardcore: можешь троллить и иронизировать, но БЕЗ мата и прямых оскорблений` : ''}
 ${jsonFormat}`;
 
   return prompt;
@@ -197,6 +203,7 @@ export async function generateResponses(
     context?: string;
     rating?: number;
     previousResponses?: GeneratedResponse[];
+    includeHardcore?: boolean;
   }
 ): Promise<{
   responses: GeneratedResponse[];
@@ -209,7 +216,7 @@ export async function generateResponses(
   const messages: OpenRouterMessage[] = [
     {
       role: 'system',
-      content: buildSystemPrompt(business),
+      content: buildSystemPrompt(business, options?.includeHardcore ?? false),
     },
   ];
 

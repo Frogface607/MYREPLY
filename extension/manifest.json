@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "MyReply — Ответы на отзывы",
+  "description": "Генерируйте профессиональные ответы на отзывы прямо на WB, Ozon и Яндекс.Маркете",
+  "version": "1.0.0",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "MyReply"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://seller.wildberries.ru/*",
+    "https://seller.ozon.ru/*",
+    "https://partner.market.yandex.ru/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://seller.wildberries.ru/*"],
+      "js": ["content/wildberries.js"],
+      "css": ["content/styles.css"]
+    },
+    {
+      "matches": ["https://seller.ozon.ru/*"],
+      "js": ["content/ozon.js"],
+      "css": ["content/styles.css"]
+    },
+    {
+      "matches": ["https://partner.market.yandex.ru/*"],
+      "js": ["content/yandex-market.js"],
+      "css": ["content/styles.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

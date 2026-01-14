@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Star, Flame, Snowflake } from 'lucide-react';
+import { ExamplesSection } from '@/components/ExamplesSection';
 
 export default function LandingPage() {
   return (
@@ -207,6 +208,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Examples */}
+      <ExamplesSection />
 
       {/* Benefits */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">

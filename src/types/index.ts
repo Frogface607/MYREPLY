@@ -64,11 +64,19 @@ export interface Review {
   created_at: string;
 }
 
+// Типы акцентов ответов
+export type ResponseAccent = 
+  | 'neutral'           // Нейтральный — сбалансированный
+  | 'empathetic'        // Эмпатичный — с пониманием
+  | 'solution-focused'  // С решением — конкретные действия
+  | 'passive-aggressive' // Формально-холодный — вежливо, но твёрдо
+  | 'hardcore';         // Дерзкий — только для развлечения!
+
 // Сгенерированный ответ
 export interface GeneratedResponse {
   id: string;
   text: string;
-  accent: 'neutral' | 'empathetic' | 'solution-focused';
+  accent: ResponseAccent;
   explanation: string;
 }
 
@@ -78,7 +86,7 @@ export interface ResponseHistory {
   business_id: string;
   review_text: string;
   chosen_response: string;
-  response_accent?: 'neutral' | 'empathetic' | 'solution-focused';
+  response_accent?: ResponseAccent;
   feedback?: 'liked' | 'disliked';
   adjustment?: string;
   created_at: string;

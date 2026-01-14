@@ -1,5 +1,5 @@
 import { createClient } from './server';
-import type { ResponseHistory } from '@/types';
+import type { ResponseHistory, ResponseAccent } from '@/types';
 
 /**
  * Получить историю ответов для текущего пользователя
@@ -37,7 +37,7 @@ export async function getResponseHistory(limit: number = 50): Promise<ResponseHi
 export async function saveResponseToHistory(
   reviewText: string,
   chosenResponse: string,
-  responseAccent?: 'neutral' | 'empathetic' | 'solution-focused',
+  responseAccent?: ResponseAccent,
   feedback?: 'liked' | 'disliked',
   adjustment?: string
 ): Promise<{ success: boolean; error?: string }> {

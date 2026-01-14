@@ -77,7 +77,7 @@ async function extractTextFromImage(imageBase64: string): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64 } = body;
+    let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
 
     // If image provided, extract text first
     if (imageBase64) {
@@ -136,6 +136,7 @@ export async function POST(request: NextRequest) {
         context,
         rating,
         previousResponses,
+        includeHardcore: includeHardcore ?? false,
       }
     );
 

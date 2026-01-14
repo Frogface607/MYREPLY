@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check, ThumbsUp, ThumbsDown, RefreshCw } from 'lucide-react';
+import { Copy, Check, ThumbsUp, ThumbsDown, RefreshCw, AlertTriangle } from 'lucide-react';
 import type { GeneratedResponse } from '@/types';
 
 interface ResponseCardProps {
@@ -12,10 +12,12 @@ interface ResponseCardProps {
   isSelected?: boolean;
 }
 
-const accentLabels: Record<string, { label: string; color: string }> = {
+const accentLabels: Record<string, { label: string; color: string; icon?: string }> = {
   neutral: { label: 'Нейтральный', color: 'bg-muted-light text-muted' },
   empathetic: { label: 'Эмпатичный', color: 'bg-primary-light text-primary' },
   'solution-focused': { label: 'С решением', color: 'bg-success-light text-success' },
+  'passive-aggressive': { label: '🧊 Формально-холодный', color: 'bg-blue-100 text-blue-700' },
+  'hardcore': { label: '🔥 Дерзкий', color: 'bg-orange-100 text-orange-700', icon: 'warning' },
 };
 
 export function ResponseCard({ 
@@ -42,8 +44,18 @@ export function ResponseCard({
 
   const accent = accentLabels[response.accent] || accentLabels.neutral;
 
+  const isHardcore = response.accent === 'hardcore';
+
   return (
-    <div className={`response-card relative group ${isSelected ? 'ring-2 ring-primary' : ''}`}>
+    <div className={`response-card relative group ${isSelected ? 'ring-2 ring-primary' : ''} ${isHardcore ? 'border-orange-300 bg-orange-50/50' : ''}`}>
+      {/* Hardcore Warning */}
+      {isHardcore && (
+        <div className="flex items-center gap-2 mb-3 p-2 bg-orange-100 rounded-lg text-orange-700 text-xs">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+          <span>Только для развлечения! Не публикуйте от имени бизнеса.</span>
+        </div>
+      )}
+      
       {/* Accent Badge */}
       <div className="flex items-center justify-between mb-3">
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${accent.color}`}>

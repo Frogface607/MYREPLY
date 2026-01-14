@@ -7,7 +7,7 @@ import { AdjustmentInput } from '@/components/AdjustmentInput';
 import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import { Paywall, UsageCounter, UpsellBanner } from '@/components/Paywall';
 import type { GeneratedResponse, Subscription, PlanType } from '@/types';
-import { ArrowLeft, MessageSquareText, Settings, History, Crown } from 'lucide-react';
+import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLeft, ToggleRight } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
 
@@ -26,6 +26,7 @@ export default function QuickReplyPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showUpsell, setShowUpsell] = useState(false);
+  const [includeHardcore, setIncludeHardcore] = useState(false);
   const toast = useToast();
 
   // Загружаем настройки и подписку
@@ -110,7 +111,8 @@ export default function QuickReplyPage() {
           rating, 
           context,
           businessSettings,
-          imageBase64
+          imageBase64,
+          includeHardcore,
         }),
       });
 
@@ -148,6 +150,7 @@ export default function QuickReplyPage() {
           adjustment,
           previousResponses: responses,
           businessSettings,
+          includeHardcore,
         }),
       });
 
@@ -305,6 +308,26 @@ export default function QuickReplyPage() {
             />
           </div>
         )}
+
+        {/* Mode Toggle */}
+        <div className="mb-4 flex items-center justify-end">
+          <button
+            onClick={() => setIncludeHardcore(!includeHardcore)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              includeHardcore 
+                ? 'bg-orange-100 text-orange-700 border border-orange-300' 
+                : 'bg-muted-light text-muted hover:bg-muted-light/80'
+            }`}
+          >
+            <Flame className={`w-4 h-4 ${includeHardcore ? 'text-orange-500' : ''}`} />
+            <span>{includeHardcore ? 'Все режимы + Дерзкий' : '4 рабочих режима'}</span>
+            {includeHardcore ? (
+              <ToggleRight className="w-5 h-5 text-orange-500" />
+            ) : (
+              <ToggleLeft className="w-5 h-5" />
+            )}
+          </button>
+        </div>
 
         {/* Input Section */}
         <section className="mb-8">
