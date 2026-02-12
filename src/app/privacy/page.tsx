@@ -44,7 +44,7 @@ export default function PrivacyPage() {
               </a>.
             </p>
             <p className="leading-relaxed">
-              Оператором персональных данных является ИП {'{ФИО}'} (ИНН: {'{ИНН}'}).
+              Оператором персональных данных является ИП Орлов Сергей Артёмович (ИНН: 381019554275).
               Используя Сервис, вы даёте согласие на обработку данных в соответствии
               с настоящей Политикой.
             </p>
@@ -215,8 +215,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold mb-3">10. Контакты</h2>
             <div className="bg-card border border-border rounded-xl p-6 space-y-2">
-              <p><span className="text-muted">Оператор:</span> ИП {'{ФИО}'}</p>
-              <p><span className="text-muted">ИНН:</span> {'{ИНН}'}</p>
+              <p><span className="text-muted">Оператор:</span> ИП Орлов Сергей Артёмович</p>
+              <p><span className="text-muted">ИНН:</span> 381019554275</p>
               <p><span className="text-muted">Email:</span>{' '}
                 <a href="mailto:hello@myreply.ru" className="text-primary hover:underline">
                   hello@myreply.ru

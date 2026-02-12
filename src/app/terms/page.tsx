@@ -37,7 +37,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold mb-3">1. Общие положения</h2>
             <p className="leading-relaxed mb-2">
               Настоящая публичная оферта (далее — «Оферта») является официальным предложением
-              ИП {'{ФИО}'} (ИНН: {'{ИНН}'}, ОГРНИП: {'{ОГРНИП}'}), именуемого в дальнейшем
+              ИП Орлов Сергей Артёмович (ИНН: 381019554275, ОГРНИП: 314385006500046), именуемого в дальнейшем
               «Исполнитель», адресованным неограниченному кругу лиц (далее — «Пользователь»),
               заключить договор на условиях, изложенных ниже.
             </p>
@@ -251,9 +251,9 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold mb-3">13. Реквизиты Исполнителя</h2>
             <div className="bg-card border border-border rounded-xl p-6 space-y-2">
-              <p><span className="text-muted">Исполнитель:</span> ИП {'{ФИО}'}</p>
-              <p><span className="text-muted">ИНН:</span> {'{ИНН}'}</p>
-              <p><span className="text-muted">ОГРНИП:</span> {'{ОГРНИП}'}</p>
+              <p><span className="text-muted">Исполнитель:</span> ИП Орлов Сергей Артёмович</p>
+              <p><span className="text-muted">ИНН:</span> 381019554275</p>
+              <p><span className="text-muted">ОГРНИП:</span> 314385006500046</p>
               <p><span className="text-muted">Email:</span>{' '}
                 <a href="mailto:hello@myreply.ru" className="text-primary hover:underline">
                   hello@myreply.ru
