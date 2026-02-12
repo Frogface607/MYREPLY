@@ -20,7 +20,9 @@ import {
   Shield,
   Zap,
   Check,
-  ExternalLink
+  ExternalLink,
+  Gift,
+  Tag
 } from 'lucide-react';
 import type { Subscription, PlanType } from '@/types';
 import { PLAN_NAMES, PLAN_LIMITS } from '@/types';
@@ -37,6 +39,9 @@ export default function DashboardPage() {
   const [businessName, setBusinessName] = useState<string>('');
   const [totalResponses, setTotalResponses] = useState(0);
   const [memberSince, setMemberSince] = useState<string>('');
+  const [promoCode, setPromoCode] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Передаём access_token в Chrome-расширение (если установлено)
   useEffect(() => {
@@ -105,6 +110,37 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
+  };
+
+  const handlePromoActivate = async () => {
+    if (!promoCode.trim()) return;
+    setPromoLoading(true);
+    setPromoMessage(null);
+
+    try {
+      const res = await fetch('/api/promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoCode.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPromoMessage({ type: 'error', text: data.error || 'Ошибка активации' });
+      } else {
+        setPromoMessage({ type: 'success', text: data.message });
+        setPromoCode('');
+        // Обновляем подписку
+        const subRes = await fetch('/api/subscription');
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          setSubscription(subData.subscription);
+        }
+      }
+    } catch {
+      setPromoMessage({ type: 'error', text: 'Ошибка сети' });
+    } finally {
+      setPromoLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -298,6 +334,37 @@ export default function DashboardPage() {
               <ChevronRight className="w-4 h-4 text-muted shrink-0" />
             </Link>
           ))}
+        </section>
+
+        {/* Promo Code */}
+        <section className="bg-card border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <Tag className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-sm">Промокод</h2>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handlePromoActivate()}
+              placeholder="Введите промокод"
+              className="flex-1 px-3 py-2 bg-background border border-border rounded-xl focus:border-primary outline-none text-sm"
+            />
+            <button
+              onClick={handlePromoActivate}
+              disabled={promoLoading || !promoCode.trim()}
+              className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 transition-colors"
+            >
+              {promoLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
+              {promoLoading ? '...' : 'Активировать'}
+            </button>
+          </div>
+          {promoMessage && (
+            <p className={`text-xs mt-2 ${promoMessage.type === 'success' ? 'text-success' : 'text-danger'}`}>
+              {promoMessage.text}
+            </p>
+          )}
         </section>
 
         {/* Legal */}

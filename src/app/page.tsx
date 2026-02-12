@@ -29,6 +29,12 @@ export default function LandingPage() {
           </Link>
           <nav className="flex items-center gap-4">
             <Link
+              href="/challenge"
+              className="text-sm font-medium text-danger hover:text-danger/80 transition-colors hidden sm:block"
+            >
+              🔥 Челлендж
+            </Link>
+            <Link
               href="/pricing"
               className="text-sm font-medium text-muted hover:text-foreground transition-colors hidden sm:block"
             >
