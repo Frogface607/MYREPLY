@@ -11,6 +11,7 @@ const plans: {
   price: number;
   period: string;
   description: string;
+  pricePerReply?: string;
   features: string[];
   highlighted?: boolean;
   badge?: string;
@@ -20,12 +21,12 @@ const plans: {
     name: 'Free',
     price: 0,
     period: '',
-    description: 'Попробовать сервис',
+    description: 'Попробовать и оценить',
     features: [
       '10 ответов в месяц',
+      'Все режимы ответов',
+      'Загрузка скриншотов',
       'Базовая генерация',
-      'Без профиля бизнеса',
-      'Без истории',
     ],
   },
   {
@@ -34,6 +35,7 @@ const plans: {
     price: 490,
     period: '/мес',
     description: 'Для небольшого бизнеса',
+    pricePerReply: '~5 ₽ за ответ',
     features: [
       '100 ответов в месяц',
       'Умный профиль бизнеса',
@@ -43,7 +45,7 @@ const plans: {
       'Приоритетная генерация',
     ],
     highlighted: true,
-    badge: '⭐ Популярный',
+    badge: 'Популярный',
   },
   {
     id: 'pro',
@@ -51,6 +53,7 @@ const plans: {
     price: 990,
     period: '/мес',
     description: 'Для активного бизнеса',
+    pricePerReply: '~2 ₽ за ответ',
     features: [
       '500 ответов в месяц',
       'Всё из тарифа Старт',
@@ -156,7 +159,7 @@ export default function PricingPage() {
             Простые и понятные тарифы
           </h1>
           <p className="text-muted text-lg max-w-2xl mx-auto">
-            Выберите подходящий план. Отмена в любой момент, без скрытых платежей.
+            7 дней полного доступа при регистрации. Отмена в любой момент, без скрытых платежей.
           </p>
         </div>
 
@@ -190,11 +193,16 @@ export default function PricingPage() {
 
                 {/* Price */}
                 <div className="mb-6">
-                  <span className="text-4xl font-bold">
-                    {plan.price === 0 ? 'Бесплатно' : `${plan.price} ₽`}
-                  </span>
-                  {plan.period && (
-                    <span className="text-muted">{plan.period}</span>
+                  <div>
+                    <span className="text-4xl font-bold">
+                      {plan.price === 0 ? 'Бесплатно' : `${plan.price} ₽`}
+                    </span>
+                    {plan.period && (
+                      <span className="text-muted">{plan.period}</span>
+                    )}
+                  </div>
+                  {plan.pricePerReply && (
+                    <p className="text-xs text-primary font-medium mt-1">{plan.pricePerReply}</p>
                   )}
                 </div>
 
@@ -231,11 +239,11 @@ export default function PricingPage() {
                       Текущий план
                     </>
                   ) : plan.id === 'free' ? (
-                    'Текущий план'
-                  ) : currentPlan === 'free' || !currentPlan ? (
-                    'Попробовать 7 дней бесплатно'
+                    'Начать бесплатно'
+                  ) : isHighlighted ? (
+                    'Начать сейчас'
                   ) : (
-                    'Выбрать план'
+                    `Выбрать ${plan.name}`
                   )}
                 </button>
               </div>
@@ -272,6 +280,19 @@ export default function PricingPage() {
               Напишите нам
             </a>
           </p>
+        </div>
+
+        {/* Legal links */}
+        <div className="mt-12 pt-8 border-t border-border flex flex-wrap justify-center gap-6 text-sm text-muted">
+          <Link href="/terms" className="hover:text-foreground transition-colors">
+            Публичная оферта
+          </Link>
+          <Link href="/privacy" className="hover:text-foreground transition-colors">
+            Политика конфиденциальности
+          </Link>
+          <a href="mailto:hello@myreply.ru" className="hover:text-foreground transition-colors">
+            hello@myreply.ru
+          </a>
         </div>
       </main>
     </div>

@@ -206,9 +206,13 @@ export default function AuthPage() {
 
           <p className="text-center text-sm text-muted mt-6">
             Нажимая кнопку, вы соглашаетесь с{' '}
-            <a href="#" className="text-primary hover:underline">
-              условиями использования
-            </a>
+            <Link href="/terms" className="text-primary hover:underline">
+              публичной офертой
+            </Link>
+            {' '}и{' '}
+            <Link href="/privacy" className="text-primary hover:underline">
+              политикой конфиденциальности
+            </Link>
           </p>
 
           {/* Бонус за регистрацию */}

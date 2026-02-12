@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Sparkles, Loader2, Check, Crown, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { PLAN_NAMES, type PlanType } from '@/types';
+import { PLAN_NAMES, PLAN_PRICES, type PlanType } from '@/types';
 
 interface PaywallProps {
   type: 'limit' | 'feature' | 'trial-ended';
@@ -87,10 +87,10 @@ export function Paywall({
           {type === 'limit' && (
             <>
               <h2 className="text-xl font-semibold mb-2">
-                Вы использовали все {usageLimit} бесплатных ответов
+                {usageLimit} ответов использованы
               </h2>
               <p className="text-muted">
-                Это было быстро! Похоже, MyReply вам пригодился.
+                Видно, что MyReply экономит вам время. Продолжайте — подключите тариф и отвечайте на отзывы без ограничений.
               </p>
             </>
           )}
@@ -107,24 +107,24 @@ export function Paywall({
           {type === 'trial-ended' && (
             <>
               <h2 className="text-xl font-semibold mb-2">
-                Пробный период закончился
+                Пробный период завершён
               </h2>
               <p className="text-muted">
-                За {trialDaysUsed} дней вы сгенерировали {usageCount} ответов и сэкономили время.
+                За {trialDaysUsed} дней вы сгенерировали {usageCount} ответов. Подключите тариф, чтобы продолжить работу.
               </p>
             </>
           )}
         </div>
 
-        {/* Plan Card */}
+        {/* Plan Card — тариф Старт из единого источника */}
         <div className="bg-primary-light border-2 border-primary rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Crown className="w-5 h-5 text-primary" />
-              <span className="font-semibold">СТАРТ</span>
+              <span className="font-semibold">{PLAN_NAMES.start.toUpperCase()}</span>
             </div>
             <div>
-              <span className="text-2xl font-bold">490 ₽</span>
+              <span className="text-2xl font-bold">{PLAN_PRICES.start / 100} ₽</span>
               <span className="text-muted">/мес</span>
             </div>
           </div>
@@ -157,13 +157,13 @@ export function Paywall({
             ) : (
               <>
                 <Sparkles className="w-5 h-5" />
-                Попробовать 7 дней бесплатно
+                Подключить за {PLAN_PRICES.start / 100} ₽/мес
               </>
             )}
           </button>
 
           <p className="text-xs text-center text-muted mt-2">
-            Потом 490 ₽/мес • Отмена в любой момент
+            ~5 ₽ за ответ • Отмена в любой момент
           </p>
         </div>
 
@@ -197,7 +197,7 @@ interface UpsellBannerProps {
 }
 
 export function UpsellBanner({ 
-  message = 'С профилем бизнеса ответы становятся персональными',
+  message = 'С профилем бизнеса ответы становятся персональными и попадают в точку',
   onClose 
 }: UpsellBannerProps) {
   return (
@@ -213,7 +213,7 @@ export function UpsellBanner({
           href="/pricing"
           className="text-sm font-medium text-primary hover:underline whitespace-nowrap"
         >
-          Попробовать бесплатно
+          Смотреть тарифы
         </Link>
         {onClose && (
           <button

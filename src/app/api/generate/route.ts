@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { generateResponses } from '@/lib/openrouter';
+import { PLAN_LIMITS } from '@/types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -76,6 +78,68 @@ async function extractTextFromImage(imageBase64: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
+    // =====================
+    // AUTH + ЛИМИТ ПРОВЕРКА
+    // =====================
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Необходима авторизация' },
+        { status: 401 }
+      );
+    }
+
+    // Проверяем подписку и лимит
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('id, usage_count, usage_limit, status, plan, trial_end')
+      .eq('user_id', user.id)
+      .single();
+
+    if (subscription) {
+      // Проверяем, не истёк ли триал
+      if (subscription.status === 'trialing' && subscription.trial_end) {
+        const trialEnd = new Date(subscription.trial_end);
+        if (trialEnd < new Date()) {
+          await supabase
+            .from('subscriptions')
+            .update({
+              status: 'active',
+              plan: 'free',
+              usage_limit: PLAN_LIMITS.free,
+              usage_count: 0,
+            })
+            .eq('id', subscription.id);
+
+          subscription.usage_limit = PLAN_LIMITS.free;
+          subscription.usage_count = 0;
+        }
+      }
+
+      if (subscription.usage_count >= subscription.usage_limit) {
+        return NextResponse.json(
+          {
+            error: 'Лимит ответов исчерпан. Перейдите на платный тариф для продолжения.',
+            limitReached: true,
+            usage_count: subscription.usage_count,
+            usage_limit: subscription.usage_limit,
+          },
+          { status: 403 }
+        );
+      }
+
+      // Инкрементируем счётчик ДО генерации (чтобы не потратить квоту без учёта)
+      await supabase
+        .from('subscriptions')
+        .update({ usage_count: subscription.usage_count + 1 })
+        .eq('id', subscription.id);
+    }
+
+    // =====================
+    // ГЕНЕРАЦИЯ
+    // =====================
     const body = await request.json();
     let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
 

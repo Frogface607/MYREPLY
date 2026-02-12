@@ -14,14 +14,59 @@ function getSupabaseAdmin() {
   return createClient(url, key);
 }
 
+// IP-адреса ЮKassa для верификации webhook
+// Источник: https://yookassa.ru/developers/using-api/webhooks
+const YUKASSA_IPS = [
+  '185.71.76.0/27',
+  '185.71.77.0/27',
+  '77.75.153.0/25',
+  '77.75.156.11',
+  '77.75.156.35',
+  '77.75.154.128/25',
+  '2a02:5180::/32',
+];
+
+function ipInCIDR(ip: string, cidr: string): boolean {
+  if (!cidr.includes('/')) return ip === cidr;
+  
+  const [range, bits] = cidr.split('/');
+  const mask = ~(2 ** (32 - parseInt(bits)) - 1);
+  
+  const ipParts = ip.split('.').map(Number);
+  const rangeParts = range.split('.').map(Number);
+  
+  const ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
+  const rangeNum = (rangeParts[0] << 24) | (rangeParts[1] << 16) | (rangeParts[2] << 8) | rangeParts[3];
+  
+  return (ipNum & mask) === (rangeNum & mask);
+}
+
+function isYukassaIP(ip: string): boolean {
+  // Пропускаем IPv6 адреса из YUKASSA_IPS для простоты
+  // и localhost для тестирования
+  if (ip === '127.0.0.1' || ip === '::1') {
+    return process.env.NODE_ENV === 'development';
+  }
+  
+  return YUKASSA_IPS.some(cidr => {
+    if (cidr.includes(':')) return false; // Skip IPv6 ranges for now
+    return ipInCIDR(ip, cidr);
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Верификация IP-адреса ЮKassa
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const clientIp = forwardedFor?.split(',')[0]?.trim() || realIp || '';
     
-    // Верификация webhook от ЮKassa (опционально, но рекомендуется)
-    // const signature = request.headers.get('x-yookassa-signature');
-    // TODO: Добавить верификацию подписи в продакшене
+    if (clientIp && !isYukassaIP(clientIp)) {
+      console.warn(`Webhook rejected: untrusted IP ${clientIp}`);
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
+    const body = await request.json();
     const { event, object: payment } = body;
 
     console.log('ЮKassa webhook received:', event, payment?.id);

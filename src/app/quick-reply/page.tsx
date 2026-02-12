@@ -60,44 +60,18 @@ export default function QuickReplyPage() {
     loadData();
   }, []);
 
-  const checkAndUpdateUsage = async (): Promise<boolean> => {
-    // Проверяем лимит перед генерацией
-    if (subscription) {
-      if (subscription.usage_count >= subscription.usage_limit) {
-        setShowPaywall(true);
-        return false;
-      }
+  const checkUsageLimit = (): boolean => {
+    // Клиентская проверка лимита (бэкенд /api/generate тоже проверяет и инкрементирует)
+    if (subscription && subscription.usage_count >= subscription.usage_limit) {
+      setShowPaywall(true);
+      return false;
     }
-
-    // Увеличиваем счётчик
-    try {
-      const res = await fetch('/api/subscription', { method: 'POST' });
-      const data = await res.json();
-
-      if (data.limitReached) {
-        setShowPaywall(true);
-        return false;
-      }
-
-      // Обновляем локальное состояние
-      if (subscription) {
-        setSubscription({
-          ...subscription,
-          usage_count: data.usage_count || subscription.usage_count + 1,
-        });
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error updating usage:', error);
-      return true; // Продолжаем работу в случае ошибки
-    }
+    return true;
   };
 
   const handleSubmit = async (text: string, rating?: number, context?: string, imageBase64?: string) => {
-    // Проверяем лимит
-    const canProceed = await checkAndUpdateUsage();
-    if (!canProceed) return;
+    // Быстрая клиентская проверка лимита (бэкенд тоже проверит)
+    if (!checkUsageLimit()) return;
 
     setIsLoading(true);
     setReviewText(text || '(из скриншота)');
@@ -118,6 +92,10 @@ export default function QuickReplyPage() {
 
       if (!res.ok) {
         const data = await res.json();
+        if (res.status === 403 && data.limitReached) {
+          setShowPaywall(true);
+          return;
+        }
         throw new Error(data.error || 'Ошибка генерации');
       }
 
@@ -125,6 +103,14 @@ export default function QuickReplyPage() {
       setResponses(data.responses);
       setAnalysis(data.analysis);
       toast.showSuccess('Ответы сгенерированы!');
+
+      // Обновляем локальный счётчик (бэкенд уже инкрементировал)
+      if (subscription) {
+        setSubscription({
+          ...subscription,
+          usage_count: subscription.usage_count + 1,
+        });
+      }
 
       // Показываем upsell для free пользователей (не всегда)
       if (subscription?.plan === 'free' && !businessSettings && Math.random() > 0.5) {

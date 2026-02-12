@@ -32,13 +32,27 @@ npm install
 # Supabase (найдите в Project Settings → API)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key    # Для webhook (Project Settings → API → service_role)
 
 # OpenRouter API (получите на openrouter.ai)
 OPENROUTER_API_KEY=sk-or-v1-your-api-key
 
+# ЮKassa (получите в ЛК yookassa.ru → Настройки → Ключи API)
+YUKASSA_SHOP_ID=your-shop-id
+YUKASSA_SECRET_KEY=your-secret-key
+
 # App URL
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Яндекс.Метрика (создайте счётчик на metrika.yandex.ru)
+NEXT_PUBLIC_METRIKA_ID=your-counter-id
+
+# Chrome Extension ID (после публикации в Chrome Web Store)
+# NEXT_PUBLIC_EXTENSION_ID=your-extension-id
 ```
+
+> **На Vercel:** добавьте все переменные в Settings → Environment Variables.
+> **Webhook ЮKassa:** укажите URL `https://your-domain.vercel.app/api/payment/webhook` в ЛК ЮKassa → Интеграция → HTTP-уведомления.
 
 ### 4. Запуск
 

@@ -62,7 +62,7 @@ export default function LandingPage() {
               Попробовать бесплатно
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <span className="text-sm text-muted">Без регистрации</span>
+            <span className="text-sm text-muted">7 дней полного доступа</span>
           </div>
         </div>
       </section>
@@ -290,15 +290,33 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 px-4 sm:px-6 border-t border-border/50">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
-              <Sparkles className="w-3 h-3 text-primary" />
+      <footer className="py-10 px-4 sm:px-6 border-t border-border/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-primary" />
+              </div>
+              <span className="font-medium">MyReply</span>
             </div>
-            <span>MyReply</span>
+            <nav className="flex flex-wrap items-center gap-6 text-sm text-muted">
+              <Link href="/pricing" className="hover:text-foreground transition-colors">
+                Тарифы
+              </Link>
+              <Link href="/terms" className="hover:text-foreground transition-colors">
+                Публичная оферта
+              </Link>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">
+                Политика конфиденциальности
+              </Link>
+              <a href="mailto:hello@myreply.ru" className="hover:text-foreground transition-colors">
+                Контакты
+              </a>
+            </nav>
           </div>
-          <p>© 2026. Сделано для тех, кто ценит время и репутацию.</p>
+          <div className="text-center sm:text-left text-xs text-muted">
+            <p>© 2026 MyReply. Сделано для тех, кто ценит время и репутацию.</p>
+          </div>
         </div>
       </footer>
     </div>

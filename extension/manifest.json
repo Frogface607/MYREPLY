@@ -46,6 +46,12 @@
   "background": {
     "service_worker": "background.js"
   },
+  "externally_connectable": {
+    "matches": [
+      "https://myreply.vercel.app/*",
+      "http://localhost:3000/*"
+    ]
+  },
   "web_accessible_resources": [
     {
       "resources": ["icons/*"],

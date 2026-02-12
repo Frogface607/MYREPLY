@@ -25,6 +25,37 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>('');
 
+  // Передаём access_token в Chrome-расширение (если установлено)
+  useEffect(() => {
+    const sendTokenToExtension = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) return;
+
+        // ID расширения нужно будет заменить на реальный после публикации
+        const extensionId = process.env.NEXT_PUBLIC_EXTENSION_ID;
+        if (!extensionId) return;
+
+        // chrome.runtime.sendMessage доступен только если расширение установлено
+        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+          chrome.runtime.sendMessage(
+            extensionId,
+            { type: 'SET_AUTH_TOKEN', token: session.access_token },
+            () => {
+              // Ответ от расширения (или ошибка если не установлено — это нормально)
+              if (chrome.runtime.lastError) {
+                // Расширение не установлено — молча игнорируем
+              }
+            }
+          );
+        }
+      } catch {
+        // Не критично — расширение может быть не установлено
+      }
+    };
+    sendTokenToExtension();
+  }, [supabase]);
+
   useEffect(() => {
     const loadData = async () => {
       try {
