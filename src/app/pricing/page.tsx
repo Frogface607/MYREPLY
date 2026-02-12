@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Sparkles, Loader2, Crown } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Loader2, Crown, X, Shield, Clock, Zap } from 'lucide-react';
 import { PLAN_LIMITS, PLAN_PRICES, PLAN_NAMES, type PlanType, type Subscription } from '@/types';
 
 const plans: {
@@ -11,8 +11,9 @@ const plans: {
   price: number;
   period: string;
   description: string;
-  pricePerReply?: string;
+  subtitle?: string;
   features: string[];
+  notIncluded?: string[];
   highlighted?: boolean;
   badge?: string;
 }[] = [
@@ -22,11 +23,18 @@ const plans: {
     price: 0,
     period: '',
     description: 'Попробовать и оценить',
+    subtitle: 'Навсегда бесплатно',
     features: [
-      '10 ответов в месяц',
-      'Все режимы ответов',
+      '15 ответов в месяц',
+      '5 режимов ответов',
       'Загрузка скриншотов',
-      'Базовая генерация',
+      'Базовая генерация AI',
+    ],
+    notIncluded: [
+      'Профиль бизнеса',
+      'Настройка тона',
+      'История ответов',
+      'Chrome-расширение',
     ],
   },
   {
@@ -34,14 +42,15 @@ const plans: {
     name: 'Старт',
     price: 490,
     period: '/мес',
-    description: 'Для небольшого бизнеса',
-    pricePerReply: '~5 ₽ за ответ',
+    description: 'Для селлеров и малого бизнеса',
+    subtitle: 'Самый популярный',
     features: [
-      '100 ответов в месяц',
+      'Безлимитные ответы',
       'Умный профиль бизнеса',
       'Deep Research — AI изучит вас',
       'Настройка тона общения',
-      'История всех ответов',
+      'Вся история ответов',
+      'Chrome-расширение для WB/Ozon',
       'Приоритетная генерация',
     ],
     highlighted: true,
@@ -50,31 +59,16 @@ const plans: {
   {
     id: 'pro',
     name: 'Про',
-    price: 990,
+    price: 1490,
     period: '/мес',
-    description: 'Для активного бизнеса',
-    pricePerReply: '~2 ₽ за ответ',
+    description: 'Для команд и сетей магазинов',
     features: [
-      '500 ответов в месяц',
       'Всё из тарифа Старт',
-      'Шаблоны быстрых ответов',
-      'Экспорт истории',
-      'Приоритетная поддержка',
-    ],
-  },
-  {
-    id: 'business',
-    name: 'Бизнес',
-    price: 2490,
-    period: '/мес',
-    description: 'Для команд и сетей',
-    features: [
-      'Безлимитные ответы',
-      'Всё из тарифа Про',
+      'До 5 профилей бизнеса',
       'До 3 пользователей',
-      'API доступ',
-      'Выделенная поддержка',
-      'Оплата по счёту',
+      'Оплата по счёту для юрлиц',
+      'Приоритетная поддержка',
+      'Выделенный менеджер',
     ],
   },
 ];
@@ -119,7 +113,6 @@ export default function PricingPage() {
       const data = await res.json();
 
       if (data.paymentUrl) {
-        // Редирект на страницу оплаты ЮKassa
         window.location.href = data.paymentUrl;
       } else {
         throw new Error(data.error || 'Ошибка создания платежа');
@@ -138,11 +131,11 @@ export default function PricingPage() {
       <header className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
-            href="/quick-reply"
+            href="/"
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Назад</span>
+            <span className="hidden sm:inline">На главную</span>
           </Link>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Sparkles className="w-5 h-5 text-primary" />
@@ -152,19 +145,21 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
+      <main className="max-w-5xl mx-auto px-4 py-12">
         {/* Title */}
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold mb-4">
-            Простые и понятные тарифы
+            Базовые ответы — бесплатно.
+            <br />
+            <span className="text-muted">Персональные — от 490 ₽.</span>
           </h1>
           <p className="text-muted text-lg max-w-2xl mx-auto">
-            7 дней полного доступа при регистрации. Отмена в любой момент, без скрытых платежей.
+            Генерация работает бесплатно и навсегда. Подключите профиль бизнеса — и ответы будут звучать как ваши.
           </p>
         </div>
 
         {/* Plans Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan) => {
             const isCurrent = currentPlan === plan.id;
             const isHighlighted = plan.highlighted;
@@ -178,36 +173,33 @@ export default function PricingPage() {
                     : 'border-border hover:border-primary/50'
                 }`}
               >
-                {/* Badge */}
                 {plan.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full whitespace-nowrap">
                     {plan.badge}
                   </div>
                 )}
 
-                {/* Plan Header */}
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold mb-1">{plan.name}</h3>
                   <p className="text-sm text-muted">{plan.description}</p>
                 </div>
 
-                {/* Price */}
                 <div className="mb-6">
                   <div>
                     <span className="text-4xl font-bold">
-                      {plan.price === 0 ? 'Бесплатно' : `${plan.price} ₽`}
+                      {plan.price === 0 ? '0 ₽' : `${plan.price.toLocaleString('ru-RU')} ₽`}
                     </span>
                     {plan.period && (
                       <span className="text-muted">{plan.period}</span>
                     )}
                   </div>
-                  {plan.pricePerReply && (
-                    <p className="text-xs text-primary font-medium mt-1">{plan.pricePerReply}</p>
+                  {plan.subtitle && (
+                    <p className="text-xs text-primary font-medium mt-1">{plan.subtitle}</p>
                   )}
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-3 mb-8 flex-1">
+                <ul className="space-y-3 mb-4 flex-1">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
                       <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
@@ -215,6 +207,18 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
+
+                {/* Not included */}
+                {plan.notIncluded && (
+                  <ul className="space-y-2 mb-6 pt-3 border-t border-border">
+                    {plan.notIncluded.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-muted">
+                        <X className="w-4 h-4 flex-shrink-0 mt-0.5 opacity-40" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
                 {/* Button */}
                 <button
@@ -241,18 +245,46 @@ export default function PricingPage() {
                   ) : plan.id === 'free' ? (
                     'Начать бесплатно'
                   ) : isHighlighted ? (
-                    'Начать сейчас'
+                    'Подключить за 490 ₽/мес'
                   ) : (
                     `Выбрать ${plan.name}`
                   )}
                 </button>
+                {plan.id === 'start' && !isCurrent && (
+                  <p className="text-xs text-center text-muted mt-2">
+                    7 дней полного доступа при регистрации
+                  </p>
+                )}
               </div>
             );
           })}
         </div>
 
-        {/* FAQ / Trust badges */}
-        <div className="bg-card border border-border rounded-2xl p-8">
+        {/* Comparison: Base vs Profile */}
+        <div className="bg-card border border-border rounded-2xl p-8 mb-8">
+          <h3 className="text-xl font-semibold text-center mb-6">Базовый ответ vs С профилем бизнеса</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="p-5 bg-muted-light rounded-xl">
+              <p className="text-xs font-medium text-muted uppercase tracking-wider mb-3">Free — базовый</p>
+              <p className="text-sm leading-relaxed italic text-muted">
+                «Благодарим за отзыв. Нам жаль, что вы остались недовольны. 
+                Мы учтём ваши замечания и постараемся стать лучше. Будем рады видеть вас снова.»
+              </p>
+            </div>
+            <div className="p-5 bg-primary-light rounded-xl border border-primary/20">
+              <p className="text-xs font-medium text-primary uppercase tracking-wider mb-3">Старт — с профилем</p>
+              <p className="text-sm leading-relaxed italic">
+                «Здравствуйте! Благодарим за обратную связь. Понимаем ваше разочарование — 
+                для нас важно, чтобы каждый заказ соответствовал ожиданиям. Мы уже передали информацию 
+                на склад для проверки упаковки. Будем рады, если дадите нам шанс исправиться — 
+                качество нашей продукции обычно радует покупателей.»
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Trust badges */}
+        <div className="bg-card border border-border rounded-2xl p-8 mb-8">
           <div className="grid sm:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-2xl mb-2">🔒</div>
@@ -273,9 +305,9 @@ export default function PricingPage() {
         </div>
 
         {/* B2B */}
-        <div className="mt-8 text-center">
+        <div className="text-center">
           <p className="text-muted">
-            Нужен счёт для юрлица или кастомный план?{' '}
+            Нужен счёт для юрлица или индивидуальный план?{' '}
             <a href="mailto:hello@myreply.ru" className="text-primary hover:underline">
               Напишите нам
             </a>

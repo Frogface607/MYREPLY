@@ -19,7 +19,7 @@ export function Paywall({
   type,
   feature,
   usageCount = 0,
-  usageLimit = 10,
+  usageLimit = 15,
   trialDaysUsed = 7,
   onClose,
   onUpgrade,
@@ -53,7 +53,6 @@ export function Paywall({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-scale-in relative">
-        {/* Close button */}
         {onClose && (
           <button
             onClick={onClose}
@@ -67,7 +66,7 @@ export function Paywall({
         <div className="text-center mb-6">
           {type === 'limit' && (
             <div className="w-16 h-16 bg-warning-light rounded-full flex items-center justify-center mx-auto">
-              <span className="text-3xl">😊</span>
+              <span className="text-3xl">😌</span>
             </div>
           )}
           {type === 'feature' && (
@@ -82,46 +81,52 @@ export function Paywall({
           )}
         </div>
 
-        {/* Title & Description */}
+        {/* Title & Description — emotional copy */}
         <div className="text-center mb-6">
           {type === 'limit' && (
             <>
-              <h2 className="text-xl font-semibold mb-2">
-                {usageLimit} ответов использованы
+              <h2 className="text-xl font-semibold mb-3">
+                {usageLimit} ответов — готово!
               </h2>
-              <p className="text-muted">
-                Видно, что MyReply экономит вам время. Продолжайте — подключите тариф и отвечайте на отзывы без ограничений.
+              <p className="text-muted leading-relaxed">
+                Помните, как раньше тратили 15 минут на один ответ и нервничали? 
+                Теперь это занимает секунды. <strong>Подключите профиль бизнеса</strong> — 
+                и ответы будут звучать именно как ваши. Без лимитов.
               </p>
             </>
           )}
           {type === 'feature' && (
             <>
-              <h2 className="text-xl font-semibold mb-2">
-                {feature || 'Умный профиль'} — это суперсила
+              <h2 className="text-xl font-semibold mb-3">
+                {feature || 'Умный профиль'} — ваша суперсила
               </h2>
-              <p className="text-muted">
-                AI изучит ваш бизнес и будет генерировать ответы, которые звучат именно как вы.
+              <p className="text-muted leading-relaxed">
+                AI изучит ваш бизнес и будет генерировать ответы, 
+                которые звучат так, будто их написали вы сами. 
+                Клиенты почувствуют разницу.
               </p>
             </>
           )}
           {type === 'trial-ended' && (
             <>
-              <h2 className="text-xl font-semibold mb-2">
+              <h2 className="text-xl font-semibold mb-3">
                 Пробный период завершён
               </h2>
-              <p className="text-muted">
-                За {trialDaysUsed} дней вы сгенерировали {usageCount} ответов. Подключите тариф, чтобы продолжить работу.
+              <p className="text-muted leading-relaxed">
+                За {trialDaysUsed} дней вы сгенерировали {usageCount} ответов. 
+                Вы уже знаете, каково это — не нервничать из-за отзывов. 
+                <strong> Сохраните это чувство.</strong>
               </p>
             </>
           )}
         </div>
 
-        {/* Plan Card — тариф Старт из единого источника */}
+        {/* Plan Card */}
         <div className="bg-primary-light border-2 border-primary rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Crown className="w-5 h-5 text-primary" />
-              <span className="font-semibold">{PLAN_NAMES.start.toUpperCase()}</span>
+              <span className="font-semibold">СТАРТ</span>
             </div>
             <div>
               <span className="text-2xl font-bold">{PLAN_PRICES.start / 100} ₽</span>
@@ -131,11 +136,11 @@ export function Paywall({
 
           <ul className="space-y-2 mb-4">
             {[
-              '100 ответов в месяц',
+              'Безлимитные ответы',
               'Умный профиль бизнеса',
               'Deep Research — AI изучит вас',
               'Настройка тона общения',
-              'История всех ответов',
+              'Chrome-расширение для WB/Ozon',
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-2 text-sm">
                 <Check className="w-4 h-4 text-primary flex-shrink-0" />
@@ -163,7 +168,7 @@ export function Paywall({
           </button>
 
           <p className="text-xs text-center text-muted mt-2">
-            ~5 ₽ за ответ • Отмена в любой момент
+            Отмена в любой момент • Возврат 14 дней
           </p>
         </div>
 
@@ -173,7 +178,7 @@ export function Paywall({
             href="/pricing"
             className="text-sm text-primary hover:underline"
           >
-            Смотреть все тарифы →
+            Сравнить все тарифы →
           </Link>
 
           {onClose && (
@@ -197,7 +202,7 @@ interface UpsellBannerProps {
 }
 
 export function UpsellBanner({ 
-  message = 'С профилем бизнеса ответы становятся персональными и попадают в точку',
+  message = 'С профилем бизнеса ответы звучат так, будто их написали вы сами',
   onClose 
 }: UpsellBannerProps) {
   return (
@@ -236,9 +241,19 @@ interface UsageCounterProps {
 }
 
 export function UsageCounter({ used, limit, plan }: UsageCounterProps) {
-  const percentage = Math.min((used / limit) * 100, 100);
-  const isLow = percentage >= 80;
-  const isOut = used >= limit;
+  const isUnlimited = limit >= 999999;
+  const percentage = isUnlimited ? 0 : Math.min((used / limit) * 100, 100);
+  const isLow = !isUnlimited && percentage >= 80;
+  const isOut = !isUnlimited && used >= limit;
+
+  if (isUnlimited) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-primary-light text-primary">
+        <Sparkles className="w-3.5 h-3.5" />
+        <span className="font-medium">{PLAN_NAMES[plan]}</span>
+      </div>
+    );
+  }
 
   return (
     <Link
@@ -260,7 +275,7 @@ export function UsageCounter({ used, limit, plan }: UsageCounterProps) {
         />
       </div>
       <span className="font-medium whitespace-nowrap">
-        {used}/{limit === 999999 ? '∞' : limit}
+        {used}/{limit}
       </span>
     </Link>
   );

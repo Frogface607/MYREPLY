@@ -87,19 +87,15 @@ export default function TermsPage() {
             <div className="bg-card border border-border rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-border">
                 <span className="font-medium">Free</span>
-                <span>Бесплатно — 10 ответов/мес</span>
+                <span>Бесплатно — 15 ответов/мес, базовая генерация</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-border">
                 <span className="font-medium">Старт</span>
-                <span>490 ₽/мес — 100 ответов/мес</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-border">
-                <span className="font-medium">Про</span>
-                <span>990 ₽/мес — 500 ответов/мес</span>
+                <span>490 ₽/мес — безлимитные ответы, профиль бизнеса</span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="font-medium">Бизнес</span>
-                <span>2 490 ₽/мес — безлимитные ответы</span>
+                <span className="font-medium">Про</span>
+                <span>1 490 ₽/мес — до 5 профилей, до 3 пользователей</span>
               </div>
             </div>
             <p className="text-sm text-muted mt-2">

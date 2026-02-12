@@ -127,20 +127,20 @@ export type PlanType = 'free' | 'start' | 'pro' | 'business';
 // Статус подписки
 export type SubscriptionStatus = 'active' | 'trialing' | 'cancelled' | 'past_due' | 'expired';
 
-// Лимиты по тарифам
+// Лимиты по тарифам (ответов в месяц)
 export const PLAN_LIMITS: Record<PlanType, number> = {
-  free: 10,
-  start: 100,
-  pro: 500,
+  free: 15,
+  start: 999999,   // безлимит
+  pro: 999999,     // безлимит
   business: 999999, // безлимит
 };
 
 // Цены в копейках
 export const PLAN_PRICES: Record<PlanType, number> = {
   free: 0,
-  start: 49000,    // 490 ₽
-  pro: 99000,      // 990 ₽
-  business: 249000, // 2490 ₽
+  start: 49000,     // 490 ₽
+  pro: 149000,      // 1 490 ₽
+  business: 149000,  // legacy, не показываем
 };
 
 // Названия тарифов
@@ -148,7 +148,60 @@ export const PLAN_NAMES: Record<PlanType, string> = {
   free: 'Free',
   start: 'Старт',
   pro: 'Про',
-  business: 'Бизнес',
+  business: 'Про', // legacy
+};
+
+// Фичи по тарифам (feature-gated модель)
+export const PLAN_FEATURES: Record<PlanType, {
+  businessProfile: boolean;
+  deepResearch: boolean;
+  toneSettings: boolean;
+  history: boolean | number; // true = вся, number = последние N
+  chromeExtension: boolean;
+  multipleBusinesses: number; // кол-во профилей
+  multipleUsers: number;     // кол-во пользователей
+  invoicePayment: boolean;   // оплата по счёту
+}> = {
+  free: {
+    businessProfile: false,
+    deepResearch: false, // 1 раз на онбординге, потом блок
+    toneSettings: false,
+    history: 5,
+    chromeExtension: false,
+    multipleBusinesses: 0,
+    multipleUsers: 1,
+    invoicePayment: false,
+  },
+  start: {
+    businessProfile: true,
+    deepResearch: true,
+    toneSettings: true,
+    history: true,
+    chromeExtension: true,
+    multipleBusinesses: 1,
+    multipleUsers: 1,
+    invoicePayment: false,
+  },
+  pro: {
+    businessProfile: true,
+    deepResearch: true,
+    toneSettings: true,
+    history: true,
+    chromeExtension: true,
+    multipleBusinesses: 5,
+    multipleUsers: 3,
+    invoicePayment: true,
+  },
+  business: { // legacy
+    businessProfile: true,
+    deepResearch: true,
+    toneSettings: true,
+    history: true,
+    chromeExtension: true,
+    multipleBusinesses: 5,
+    multipleUsers: 3,
+    invoicePayment: true,
+  },
 };
 
 // Подписка пользователя

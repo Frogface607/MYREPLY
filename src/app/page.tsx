@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Star, Flame, Snowflake } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Chrome, Zap, Crown } from 'lucide-react';
 import { ExamplesSection } from '@/components/ExamplesSection';
 
 export default function LandingPage() {
@@ -26,12 +26,20 @@ export default function LandingPage() {
             </div>
             <span className="font-semibold text-lg tracking-tight">MyReply</span>
           </Link>
-          <Link
-            href="/quick-reply"
-            className="text-sm font-medium text-muted hover:text-foreground transition-colors"
-          >
-            Войти
-          </Link>
+          <nav className="flex items-center gap-6">
+            <Link
+              href="/pricing"
+              className="text-sm font-medium text-muted hover:text-foreground transition-colors hidden sm:block"
+            >
+              Тарифы
+            </Link>
+            <Link
+              href="/auth"
+              className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
+            >
+              Войти
+            </Link>
+          </nav>
         </div>
       </header>
 
@@ -40,34 +48,34 @@ export default function LandingPage() {
       <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-primary font-medium mb-6 tracking-wide uppercase text-sm">
-            Для бизнеса с отзывами
+            Для селлеров WB, Ozon и Яндекс.Маркет
           </p>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
-            Отзывы под контролем.
+            Негативный отзыв?
             <br />
-            <span className="text-muted">Нервы в порядке.</span>
+            <span className="text-muted">Больше не ваша проблема.</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
-            Профессиональные ответы на отзывы за секунды. 
-            Вы занимаетесь бизнесом — мы заботимся о репутации.
+            AI генерирует профессиональные ответы на отзывы за секунды. 
+            Вы спокойно занимаетесь бизнесом — а не нервничаете из-за чужого мнения.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/quick-reply"
+              href="/auth"
               className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3"
             >
               Попробовать бесплатно
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <span className="text-sm text-muted">7 дней полного доступа</span>
+            <span className="text-sm text-muted">15 ответов в месяц — навсегда бесплатно</span>
           </div>
         </div>
       </section>
 
-      {/* Problems */}
+      {/* Pain Points — emotional */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
@@ -75,35 +83,35 @@ export default function LandingPage() {
               Знакомо?
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
-              Каждый отзыв — это стресс
+              Один плохой отзыв — и день испорчен
             </h2>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                quote: '«Не знаю, что ответить»',
-                pain: 'Страх написать лишнее и сделать только хуже',
+                quote: '«Опять негатив...»',
+                pain: 'Читаешь — и настроение на нуле. Весь день прокручиваешь в голове.',
               },
               {
-                quote: '«Боюсь выглядеть виноватым»',
-                pain: 'Лишние извинения там, где ты не виноват',
+                quote: '«Что ответить, чтобы не навредить?»',
+                pain: 'Страх написать лишнее. Каждое слово как мина.',
               },
               {
-                quote: '«Негатив портит весь день»',
-                pain: 'Один злой отзыв — и настроение на нуле',
+                quote: '«Я вообще не виноват!»',
+                pain: 'Но приходится извиняться, чтобы не выглядеть хуже.',
               },
               {
-                quote: '«На это уходит вечность»',
-                pain: '15 минут на ответ, который никто не оценит',
+                quote: '«Трачу 20 минут на ответ»',
+                pain: 'А надо ещё 10 отзывов. И товар отгружать. И закупки.',
               },
               {
-                quote: '«Давать скидку или нет?»',
-                pain: 'Каждый раз заново решать одну и ту же дилемму',
+                quote: '«Конкурент наливает фейки»',
+                pain: 'Отвечать надо — молчание убивает карточку.',
               },
               {
-                quote: '«Не хочу этим заниматься»',
-                pain: 'Но приходится, потому что репутация важна',
+                quote: '«Ненавижу это, но надо»',
+                pain: 'Ответы на отзывы — не ваша работа. Но без них никак.',
               },
             ].map((problem, i) => (
               <div 
@@ -124,26 +132,29 @@ export default function LandingPage() {
           <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
             Решение
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-16 leading-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
             Три шага — и вы спокойны.
           </h2>
+          <p className="text-muted text-lg mb-16 max-w-2xl">
+            AI берёт удар на себя. Вы получаете готовый профессиональный ответ и закрываете отзыв за секунды.
+          </p>
           
           <div className="space-y-12">
             {[
               {
                 num: '01',
                 title: 'Вставьте отзыв',
-                desc: 'Скопируйте текст или загрузите скриншот с любой площадки',
+                desc: 'Скопируйте текст или загрузите скриншот. Работает с любой площадкой.',
               },
               {
                 num: '02',
                 title: 'Расскажите контекст',
-                desc: 'Как было на самом деле — AI учтёт вашу позицию',
+                desc: 'Как было на самом деле? AI учтёт вашу позицию и не признает вину, если её нет.',
               },
               {
                 num: '03',
                 title: 'Выберите ответ',
-                desc: 'Три варианта — нейтральный, эмпатичный, с решением',
+                desc: '5 вариантов — от сочувственного до твёрдого. Скопируйте и отправьте.',
               },
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-8">
@@ -165,10 +176,10 @@ export default function LandingPage() {
             Умный профиль
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
-            Настройка один раз — идеальные ответы всегда.
+            AI знает ваш бизнес. Ответы звучат как ваши.
           </h2>
           <p className="text-muted text-lg mb-16 max-w-2xl">
-            Создайте умный профиль бизнеса, и AI будет учитывать ваши особенности при генерации ответов
+            Deep Research найдёт ваш бизнес в интернете и создаст профиль. Каждый ответ будет учитывать вашу специфику, сильные стороны и стиль общения.
           </p>
           
           <div className="space-y-12">
@@ -176,20 +187,20 @@ export default function LandingPage() {
               {
                 num: '00',
                 icon: Search,
-                title: 'Найдём ваш бизнес',
-                desc: 'Укажите название и город — AI изучит информацию о вашем бизнесе, проанализирует специфику и предложит оптимальные настройки',
+                title: 'AI изучит ваш бизнес',
+                desc: 'Укажите название и город — за секунды получите готовый профиль с описанием, специализацией и сильными сторонами',
               },
               {
                 num: '01',
                 icon: Settings,
-                title: 'Проверьте и дополните профиль',
-                desc: 'Просмотрите найденную информацию, скорректируйте описание, добавьте сильные стороны и известные особенности вашего бизнеса',
+                title: 'Настройте под себя',
+                desc: 'Скорректируйте описание, добавьте правила (не извиняться, не давать скидки, звать перезвонить — что угодно)',
               },
               {
                 num: '02',
                 icon: MessageSquare,
-                title: 'Настройте тон общения',
-                desc: 'Выберите стиль ответов: дружелюбный или официальный, с эмпатией или по делу, кратко или развёрнуто. AI запомнит ваш выбор',
+                title: 'Выберите тон',
+                desc: 'Дружелюбный, деловой, экспертный — AI запомнит и будет отвечать именно в вашем стиле',
               },
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-6">
@@ -212,38 +223,200 @@ export default function LandingPage() {
       {/* Examples */}
       <ExamplesSection />
 
-      {/* Benefits */}
+      {/* Chrome Extension */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-card border-2 border-primary/20 rounded-3xl p-8 sm:p-12">
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center">
+                    <Chrome className="w-5 h-5 text-primary" />
+                  </div>
+                  <span className="text-xs font-medium text-primary uppercase tracking-wider">Chrome-расширение</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4 leading-tight">
+                  Отвечайте прямо в кабинете продавца
+                </h2>
+                <p className="text-muted mb-6 leading-relaxed">
+                  Кнопка MyReply появится рядом с каждым отзывом в личном кабинете 
+                  Wildberries, Ozon и Яндекс.Маркет. Один клик — ответ готов. 
+                  Не нужно переключаться между вкладками.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Wildberries</span>
+                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Ozon</span>
+                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Яндекс.Маркет</span>
+                </div>
+              </div>
+              <div className="flex-shrink-0 w-48 h-48 bg-primary-light rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                  <Chrome className="w-16 h-16 text-primary mx-auto mb-3" />
+                  <p className="text-sm font-medium text-primary">Скоро в Chrome Web Store</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits — emotional */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
         <div className="max-w-4xl mx-auto">
           <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
             Почему MyReply
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-16 leading-tight">
-            Спокойствие и контроль.
+            Спокойствие. Репутация. Время.
           </h2>
           
           <div className="grid sm:grid-cols-3 gap-12">
             <div>
-              <Clock className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Секунды, не минуты</h3>
+              <Shield className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
+              <h3 className="text-lg font-semibold mb-2">Негатив — больше не стресс</h3>
               <p className="text-muted text-sm leading-relaxed">
-                Готовый ответ быстрее, чем вы успеете расстроиться
+                AI берёт удар на себя. Вы больше не пропускаете чужое недовольство через себя.
               </p>
             </div>
             <div>
-              <Shield className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Репутация защищена</h3>
+              <Clock className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
+              <h3 className="text-lg font-semibold mb-2">Секунды, не минуты</h3>
               <p className="text-muted text-sm leading-relaxed">
-                Ответы не признают вину там, где её нет
+                Ответ готов быстрее, чем вы успеете расстроиться. Закрыли и забыли.
               </p>
             </div>
             <div>
               <Sparkles className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Ваш стиль</h3>
+              <h3 className="text-lg font-semibold mb-2">Звучит как вы</h3>
               <p className="text-muted text-sm leading-relaxed">
-                Настройте тон и правила — AI их соблюдает
+                Умный профиль бизнеса. Ответы не шаблонные, а персональные — с учётом вашей специфики.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 sm:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+              Тарифы
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
+              Начните бесплатно. Подключите профиль, когда будете готовы.
+            </h2>
+            <p className="text-muted text-lg max-w-2xl mx-auto">
+              Базовые ответы — бесплатно и навсегда. Персонализированные ответы с профилем бизнеса — от 490 ₽/мес.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {/* Free */}
+            <div className="bg-card border-2 border-border rounded-2xl p-6 flex flex-col">
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-1">Free</h3>
+                <p className="text-sm text-muted">Попробовать и оценить</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">0 ₽</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {[
+                  '15 ответов в месяц',
+                  '5 режимов ответов',
+                  'Загрузка скриншотов',
+                  'Базовая генерация',
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth"
+                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-background border border-border hover:border-primary hover:text-primary transition-all"
+              >
+                Начать бесплатно
+              </Link>
+            </div>
+
+            {/* Старт */}
+            <div className="relative bg-card border-2 border-primary rounded-2xl p-6 flex flex-col shadow-lg shadow-primary/10 scale-[1.02]">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
+                Популярный
+              </div>
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-1">Старт</h3>
+                <p className="text-sm text-muted">Для селлеров и малого бизнеса</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">490 ₽</span>
+                <span className="text-muted">/мес</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {[
+                  'Безлимитные ответы',
+                  'Умный профиль бизнеса',
+                  'Deep Research — AI изучит вас',
+                  'Настройка тона общения',
+                  'Вся история ответов',
+                  'Chrome-расширение',
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth"
+                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-primary text-white hover:bg-primary-hover transition-all"
+              >
+                Начать сейчас
+              </Link>
+              <p className="text-xs text-center text-muted mt-2">7 дней полного доступа при регистрации</p>
+            </div>
+
+            {/* Про */}
+            <div className="bg-card border-2 border-border rounded-2xl p-6 flex flex-col">
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-1">Про</h3>
+                <p className="text-sm text-muted">Для команд и сетей магазинов</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">1 490 ₽</span>
+                <span className="text-muted">/мес</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {[
+                  'Всё из тарифа Старт',
+                  'До 5 профилей бизнеса',
+                  'До 3 пользователей',
+                  'Оплата по счёту для юрлиц',
+                  'Приоритетная поддержка',
+                  'Выделенный менеджер',
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth"
+                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-background border border-border hover:border-primary hover:text-primary transition-all"
+              >
+                Выбрать Про
+              </Link>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/pricing" className="text-sm text-primary hover:underline">
+              Подробное сравнение тарифов →
+            </Link>
           </div>
         </div>
       </section>
@@ -253,11 +426,11 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="grid sm:grid-cols-2 gap-6">
             {[
-              'Работает с любой площадкой',
-              'Загрузка скриншотов',
-              'Профиль бизнеса',
-              'История ответов',
-              'Быстрая корректировка',
+              'Wildberries, Ozon, Яндекс.Маркет',
+              'Загрузка скриншотов отзывов',
+              'Умный профиль бизнеса',
+              'История всех ответов',
+              'Быстрая корректировка тона',
               'Тёмная тема',
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
@@ -269,20 +442,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA — emotional */}
       <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
-            Попробуйте сейчас.
+            Следующий негативный отзыв —
+            <br />
+            <span className="text-primary">уже не ваша головная боль.</span>
           </h2>
           <p className="text-muted text-lg mb-10">
-            Вставьте первый отзыв и убедитесь сами.
+            Начните бесплатно. 15 ответов в месяц — навсегда. Без карты.
           </p>
           <Link
-            href="/quick-reply"
+            href="/auth"
             className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all"
           >
-            Начать бесплатно
+            Попробовать бесплатно
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>

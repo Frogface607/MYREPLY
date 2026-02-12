@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Инкрементируем счётчик ДО генерации (чтобы не потратить квоту без учёта)
+      // Инкрементируем счётчик ДО генерации
       await supabase
         .from('subscriptions')
         .update({ usage_count: subscription.usage_count + 1 })
@@ -150,6 +150,13 @@ export async function POST(request: NextRequest) {
         const parsed = JSON.parse(extracted);
         
         if (!parsed.reviewText) {
+          // Откатываем счётчик — пользователь не виноват что скриншот не распознался
+          if (subscription) {
+            await supabase
+              .from('subscriptions')
+              .update({ usage_count: subscription.usage_count })
+              .eq('id', subscription.id);
+          }
           return NextResponse.json(
             { error: parsed.error || 'Не удалось извлечь текст из скриншота' },
             { status: 400 }
@@ -164,6 +171,13 @@ export async function POST(request: NextRequest) {
           context = context ? `${context}. Платформа: ${parsed.platform}` : `Платформа: ${parsed.platform}`;
         }
       } catch (error) {
+        // Откатываем счётчик при ошибке обработки изображения
+        if (subscription) {
+          await supabase
+            .from('subscriptions')
+            .update({ usage_count: subscription.usage_count })
+            .eq('id', subscription.id);
+        }
         return NextResponse.json(
           { error: error instanceof Error ? error.message : 'Ошибка обработки изображения' },
           { status: 400 }
@@ -172,6 +186,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (!reviewText || typeof reviewText !== 'string') {
+      // Откатываем счётчик — нет текста для генерации
+      if (subscription) {
+        await supabase
+          .from('subscriptions')
+          .update({ usage_count: subscription.usage_count })
+          .eq('id', subscription.id);
+      }
       return NextResponse.json(
         { error: 'Текст отзыва обязателен' },
         { status: 400 }
@@ -192,19 +213,30 @@ export async function POST(request: NextRequest) {
     } : null;
 
     // Генерируем ответы
-    const result = await generateResponses(
-      reviewText,
-      business,
-      {
-        adjustment,
-        context,
-        rating,
-        previousResponses,
-        includeHardcore: includeHardcore ?? false,
-      }
-    );
+    try {
+      const result = await generateResponses(
+        reviewText,
+        business,
+        {
+          adjustment,
+          context,
+          rating,
+          previousResponses,
+          includeHardcore: includeHardcore ?? false,
+        }
+      );
 
-    return NextResponse.json(result);
+      return NextResponse.json(result);
+    } catch (genError) {
+      // Откатываем счётчик при ошибке генерации — пользователь не должен терять лимит
+      if (subscription) {
+        await supabase
+          .from('subscriptions')
+          .update({ usage_count: subscription.usage_count })
+          .eq('id', subscription.id);
+      }
+      throw genError; // Пробросим в основной catch для форматирования ошибки
+    }
   } catch (error) {
     console.error('Generate API error:', error);
     
