@@ -23,8 +23,9 @@ export async function GET() {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.error('Business GET auth error:', authError?.message);
       return NextResponse.json(
-        { error: 'Необходима авторизация' },
+        { error: 'Необходима авторизация', detail: authError?.message },
         { status: 401 }
       );
     }
@@ -35,29 +36,38 @@ export async function GET() {
       .eq('user_id', user.id)
       .single();
 
-    if (error || !business) {
+    if (error) {
+      // PGRST116 = не найдена запись, это нормально для нового пользователя
+      if (error.code === 'PGRST116') {
+        return NextResponse.json({ profile: null });
+      }
+      console.error('Business GET db error:', error.code, error.message, error.details);
+      return NextResponse.json({ profile: null });
+    }
+
+    if (!business) {
       return NextResponse.json({ profile: null });
     }
 
     // Парсим metadata если есть
-    const metadata = (business.metadata as any) || {};
+    const metadata = (business.metadata as Record<string, unknown>) || {};
     
     const profile: BusinessProfileData = {
       name: business.name,
-      city: metadata.city,
+      city: metadata.city as string | undefined,
       type: business.type as BusinessType,
-      description: metadata.description || business.custom_instructions?.split('\n\n')[0]?.replace('Описание: ', ''),
-      specialties: metadata.specialties,
-      commonIssues: metadata.commonIssues || [],
-      strengths: metadata.strengths || [],
+      description: (metadata.description as string) || business.custom_instructions?.split('\n\n')[0]?.replace('Описание: ', ''),
+      specialties: metadata.specialties as string | undefined,
+      commonIssues: (metadata.commonIssues as string[]) || [],
+      strengths: (metadata.strengths as string[]) || [],
       tone_settings: business.tone_settings as ToneSettings,
       rules: business.rules as BusinessRules,
-      customRules: metadata.customRules || business.custom_instructions?.split('\n\nОсобые правила: ')[1],
+      customRules: (metadata.customRules as string) || business.custom_instructions?.split('\n\nОсобые правила: ')[1],
     };
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Business API error:', error);
+    console.error('Business GET exception:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Ошибка загрузки' },
       { status: 500 }
@@ -73,8 +83,9 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
+      console.error('Business POST auth error:', authError?.message);
       return NextResponse.json(
-        { error: 'Необходима авторизация' },
+        { error: 'Необходима авторизация', detail: authError?.message },
         { status: 401 }
       );
     }
@@ -82,13 +93,29 @@ export async function POST(request: NextRequest) {
     const data: BusinessProfileData = await request.json();
 
     // Проверяем, существует ли бизнес
-    const { data: existing } = await supabase
+    const { data: existing, error: findError } = await supabase
       .from('businesses')
       .select('id')
       .eq('user_id', user.id)
       .single();
 
-    const metadata = {
+    if (findError && findError.code !== 'PGRST116') {
+      console.error('Business POST find error:', findError.code, findError.message);
+    }
+
+    // Базовые данные, которые точно есть в таблице
+    const businessData: Record<string, unknown> = {
+      name: data.name,
+      type: data.type,
+      tone_settings: data.tone_settings,
+      rules: data.rules,
+      custom_instructions: data.description 
+        ? `Описание: ${data.description}\n\nЧастые проблемы: ${data.commonIssues?.join(', ') || ''}\n\nСильные стороны: ${data.strengths?.join(', ') || ''}${data.customRules ? `\n\nОсобые правила: ${data.customRules}` : ''}`
+        : null,
+    };
+
+    // metadata — добавляем только если колонка существует (миграция выполнена)
+    const metadataObj = {
       city: data.city,
       description: data.description,
       specialties: data.specialties,
@@ -96,31 +123,38 @@ export async function POST(request: NextRequest) {
       strengths: data.strengths || [],
       customRules: data.customRules,
     };
-
-    const businessData = {
-      name: data.name,
-      type: data.type,
-      tone_settings: data.tone_settings,
-      rules: data.rules,
-      metadata,
-      // Сохраняем также в custom_instructions для обратной совместимости
-      custom_instructions: data.description 
-        ? `Описание: ${data.description}\n\nЧастые проблемы: ${data.commonIssues?.join(', ') || ''}\n\nСильные стороны: ${data.strengths?.join(', ') || ''}${data.customRules ? `\n\nОсобые правила: ${data.customRules}` : ''}`
-        : null,
-    };
+    businessData.metadata = metadataObj;
 
     if (existing) {
-      // Обновляем существующий
       const { error } = await supabase
         .from('businesses')
         .update(businessData)
         .eq('id', existing.id);
 
       if (error) {
-        throw error;
+        console.error('Business POST update error:', error.code, error.message, error.details, error.hint);
+        // Если ошибка связана с metadata колонкой — пробуем без неё
+        if (error.message?.includes('metadata') || error.code === '42703') {
+          console.log('Retrying without metadata column...');
+          delete businessData.metadata;
+          const { error: retryError } = await supabase
+            .from('businesses')
+            .update(businessData)
+            .eq('id', existing.id);
+          if (retryError) {
+            return NextResponse.json(
+              { error: retryError.message, code: retryError.code },
+              { status: 500 }
+            );
+          }
+        } else {
+          return NextResponse.json(
+            { error: error.message, code: error.code, hint: error.hint },
+            { status: 500 }
+          );
+        }
       }
     } else {
-      // Создаём новый
       const { error } = await supabase
         .from('businesses')
         .insert({
@@ -129,13 +163,35 @@ export async function POST(request: NextRequest) {
         });
 
       if (error) {
-        throw error;
+        console.error('Business POST insert error:', error.code, error.message, error.details, error.hint);
+        // Если ошибка связана с metadata колонкой — пробуем без неё
+        if (error.message?.includes('metadata') || error.code === '42703') {
+          console.log('Retrying insert without metadata column...');
+          delete businessData.metadata;
+          const { error: retryError } = await supabase
+            .from('businesses')
+            .insert({
+              user_id: user.id,
+              ...businessData,
+            });
+          if (retryError) {
+            return NextResponse.json(
+              { error: retryError.message, code: retryError.code },
+              { status: 500 }
+            );
+          }
+        } else {
+          return NextResponse.json(
+            { error: error.message, code: error.code, hint: error.hint },
+            { status: 500 }
+          );
+        }
       }
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Business API error:', error);
+    console.error('Business POST exception:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Ошибка сохранения' },
       { status: 500 }
