@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check, ThumbsUp, ThumbsDown, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Copy, Check, ThumbsUp, ThumbsDown, RefreshCw, AlertTriangle, Send, X } from 'lucide-react';
 import type { GeneratedResponse } from '@/types';
 
 interface ResponseCardProps {
   response: GeneratedResponse;
   onCopy: (text: string) => void;
-  onFeedback: (responseId: string, feedback: 'liked' | 'disliked') => void;
+  onFeedback: (responseId: string, feedback: 'liked' | 'disliked', comment?: string) => void;
   onRegenerate: (responseId: string, adjustment?: string) => void;
   isSelected?: boolean;
 }
@@ -29,6 +29,9 @@ export function ResponseCard({
 }: ResponseCardProps) {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'liked' | 'disliked' | null>(null);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(response.text);
@@ -39,7 +42,21 @@ export function ResponseCard({
 
   const handleFeedback = (type: 'liked' | 'disliked') => {
     setFeedback(type);
-    onFeedback(response.id, type);
+    if (type === 'disliked') {
+      setShowFeedbackForm(true);
+    } else {
+      onFeedback(response.id, type);
+      setFeedbackSent(true);
+      setTimeout(() => setFeedbackSent(false), 2000);
+    }
+  };
+
+  const handleSubmitFeedback = () => {
+    onFeedback(response.id, 'disliked', feedbackComment.trim() || undefined);
+    setShowFeedbackForm(false);
+    setFeedbackSent(true);
+    setFeedbackComment('');
+    setTimeout(() => setFeedbackSent(false), 2000);
   };
 
   const accent = accentLabels[response.accent] || accentLabels.neutral;
@@ -97,6 +114,56 @@ export function ResponseCard({
         <p className="text-sm text-muted mb-4 italic">
           💡 {response.explanation}
         </p>
+      )}
+
+      {/* Feedback Form (on dislike) */}
+      {showFeedbackForm && (
+        <div className="mb-4 p-3 bg-muted-light rounded-xl animate-fade-in">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">Что не понравилось?</span>
+            <button onClick={() => { setShowFeedbackForm(false); setFeedback(null); }} className="p-1 hover:bg-background rounded">
+              <X className="w-3.5 h-3.5 text-muted" />
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {['Слишком длинный', 'Слишком шаблонный', 'Не тот тон', 'Не учёл контекст', 'Другое'].map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setFeedbackComment(tag)}
+                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                  feedbackComment === tag 
+                    ? 'bg-primary text-white border-primary' 
+                    : 'border-border hover:border-primary text-muted'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={feedbackComment}
+              onChange={(e) => setFeedbackComment(e.target.value)}
+              placeholder="Или напишите свой вариант..."
+              className="flex-1 px-3 py-1.5 bg-background border border-border rounded-lg text-sm focus:border-primary outline-none"
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmitFeedback()}
+            />
+            <button
+              onClick={handleSubmitFeedback}
+              className="px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback sent confirmation */}
+      {feedbackSent && (
+        <div className="mb-4 p-2 bg-success-light text-success text-xs rounded-lg text-center animate-fade-in">
+          Спасибо за отзыв! Это помогает нам стать лучше 💪
+        </div>
       )}
 
       {/* Actions */}

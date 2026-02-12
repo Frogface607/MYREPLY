@@ -76,6 +76,8 @@ export default function ChallengePage() {
       });
 
       if (res.status === 401) {
+        // Сохраняем отзыв — подставим после регистрации
+        localStorage.setItem('myreply-challenge-review', reviewText.trim());
         setError('auth');
         return;
       }

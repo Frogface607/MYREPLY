@@ -53,12 +53,22 @@ export default function QuickReplyPage() {
             setSubscription(data.subscription);
           }
         }
+
+        // Подхватываем отзыв из челленджа (если пришёл через /challenge → /auth → /quick-reply)
+        const challengeReview = localStorage.getItem('myreply-challenge-review');
+        if (challengeReview) {
+          setReviewText(challengeReview);
+          setIncludeHardcore(true); // Включаем дерзкий режим
+          localStorage.removeItem('myreply-challenge-review');
+          toast.showSuccess('Отзыв из челленджа загружен! Нажмите «Ответить» для генерации 🔥');
+        }
       } catch (error) {
         console.error('Error loading data:', error);
       }
     };
 
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkUsageLimit = (): boolean => {
@@ -190,8 +200,24 @@ export default function QuickReplyPage() {
     }
   };
 
-  const handleFeedback = async (responseId: string, feedback: 'liked' | 'disliked') => {
-    console.log('Feedback:', responseId, feedback);
+  const handleFeedback = async (responseId: string, feedback: 'liked' | 'disliked', comment?: string) => {
+    try {
+      // Сохраняем в историю если есть бизнес
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          responseId,
+          feedback,
+          comment,
+          reviewText,
+          responseText: responses.find(r => r.id === responseId)?.text,
+          accent: responses.find(r => r.id === responseId)?.accent,
+        }),
+      });
+    } catch {
+      // Не блокируем UI при ошибке фидбэка
+    }
   };
 
   const handleRegenerate = async (responseId: string) => {
