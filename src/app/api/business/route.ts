@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import type { BusinessType, ToneSettings, BusinessRules } from '@/types';
 
+const VALID_BUSINESS_TYPES: BusinessType[] = [
+  'restaurant', 'delivery', 'cafe', 'marketplace', 'service', 'hotel', 'other'
+];
+
 export interface BusinessProfileData {
   name: string;
   city?: string;
@@ -91,6 +95,12 @@ export async function POST(request: NextRequest) {
     }
 
     const data: BusinessProfileData = await request.json();
+
+    // Валидируем тип бизнеса — если не в списке, ставим 'other'
+    if (!VALID_BUSINESS_TYPES.includes(data.type)) {
+      console.warn(`Invalid business type "${data.type}", falling back to "other"`);
+      data.type = 'other';
+    }
 
     // Проверяем, существует ли бизнес
     const { data: existing, error: findError } = await supabase
