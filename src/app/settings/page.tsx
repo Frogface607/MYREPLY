@@ -21,7 +21,8 @@ import {
   Plus,
   X,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  User
 } from 'lucide-react';
 import type { ToneSettings, BusinessRules, BusinessType } from '@/types';
 import { useToast } from '@/components/ToastProvider';
@@ -234,18 +235,27 @@ export default function SettingsPage() {
             <Settings className="w-5 h-5 text-primary" />
             <span className="font-semibold">MyReply</span>
           </Link>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`px-3 py-1.5 text-sm font-medium rounded-lg flex items-center gap-1.5 transition-all ${
-              saved
-                ? 'bg-success text-white'
-                : 'bg-primary text-white hover:bg-primary-hover'
-            }`}
-          >
-            {saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            {saved ? 'Сохранено' : 'Сохранить'}
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard"
+              className="p-2 text-muted hover:text-foreground hover:bg-muted-light rounded-lg transition-all"
+              title="Кабинет"
+            >
+              <User className="w-4 h-4" />
+            </Link>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg flex items-center gap-1.5 transition-all ${
+                saved
+                  ? 'bg-success text-white'
+                  : 'bg-primary text-white hover:bg-primary-hover'
+              }`}
+            >
+              {saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+              {saved ? 'Сохранено' : 'Сохранить'}
+            </button>
+          </div>
         </div>
       </header>
 

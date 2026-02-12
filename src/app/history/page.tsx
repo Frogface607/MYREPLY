@@ -11,7 +11,8 @@ import {
   MessageSquareText,
   Sparkles,
   Download,
-  Loader2
+  Loader2,
+  User
 } from 'lucide-react';
 import type { ResponseHistory } from '@/types';
 import { useToast } from '@/components/ToastProvider';
@@ -163,15 +164,18 @@ export default function HistoryPage() {
               >
                 <Download className="w-5 h-5" />
               </button>
-              <button
-                onClick={handleClearAll}
-                className="text-sm text-muted hover:text-danger transition-colors"
+              <Link
+                href="/dashboard"
+                className="p-2 text-muted hover:text-foreground hover:bg-muted-light rounded-lg transition-all"
+                title="Кабинет"
               >
-                Очистить
-              </button>
+                <User className="w-5 h-5" />
+              </Link>
             </div>
           ) : (
-            <div className="w-16" />
+            <Link href="/dashboard" className="p-2 text-muted hover:text-foreground transition-colors" title="Кабинет">
+              <User className="w-5 h-5" />
+            </Link>
           )}
         </div>
       </header>

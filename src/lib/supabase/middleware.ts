@@ -47,10 +47,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Если пользователь авторизован и идёт на /auth - редирект на dashboard
+  // Если пользователь авторизован и идёт на /auth - редирект на quick-reply
   if (user && request.nextUrl.pathname === '/auth') {
     const url = request.nextUrl.clone();
-    url.pathname = '/dashboard';
+    url.pathname = '/quick-reply';
     return NextResponse.redirect(url);
   }
 

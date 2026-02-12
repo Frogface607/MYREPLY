@@ -7,7 +7,7 @@ import { AdjustmentInput } from '@/components/AdjustmentInput';
 import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import { Paywall, UsageCounter, UpsellBanner } from '@/components/Paywall';
 import type { GeneratedResponse, Subscription, PlanType } from '@/types';
-import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLeft, ToggleRight } from 'lucide-react';
+import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLeft, ToggleRight, User } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -250,6 +250,13 @@ export default function QuickReplyPage() {
               title="Настройки"
             >
               <Settings className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
+              title="Кабинет"
+            >
+              <User className="w-5 h-5" />
             </Link>
             <ThemeToggle />
           </div>
