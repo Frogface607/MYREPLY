@@ -37,15 +37,13 @@ export default function DashboardPage() {
         if (!extensionId) return;
 
         // chrome.runtime.sendMessage доступен только если расширение установлено
-        if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-          chrome.runtime.sendMessage(
+        const w = window as unknown as { chrome?: { runtime?: { sendMessage?: (id: string, msg: unknown, cb: () => void) => void; lastError?: unknown } } };
+        if (w.chrome?.runtime?.sendMessage) {
+          w.chrome.runtime.sendMessage(
             extensionId,
             { type: 'SET_AUTH_TOKEN', token: session.access_token },
             () => {
               // Ответ от расширения (или ошибка если не установлено — это нормально)
-              if (chrome.runtime.lastError) {
-                // Расширение не установлено — молча игнорируем
-              }
             }
           );
         }
