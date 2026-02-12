@@ -4,7 +4,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://myreply.app/sitemap.xml
+Sitemap: https://my-reply.ru/sitemap.xml
 
 # Disallow admin/api routes
 Disallow: /api/

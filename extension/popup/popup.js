@@ -1,6 +1,6 @@
 // MyReply Chrome Extension - Popup Script
 
-const API_BASE = 'https://myreply.vercel.app';
+const API_BASE = 'https://my-reply.ru';
 
 // DOM Elements
 const authSection = document.getElementById('auth-section');

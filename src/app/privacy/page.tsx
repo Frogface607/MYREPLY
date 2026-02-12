@@ -39,8 +39,8 @@ export default function PrivacyPage() {
               Настоящая Политика конфиденциальности (далее — «Политика») определяет порядок
               обработки и защиты персональных данных пользователей сервиса MyReply
               (далее — «Сервис»), расположенного по адресу{' '}
-              <a href="https://myreply.vercel.app" className="text-primary hover:underline">
-                myreply.vercel.app
+              <a href="https://my-reply.ru" className="text-primary hover:underline">
+                my-reply.ru
               </a>.
             </p>
             <p className="leading-relaxed">

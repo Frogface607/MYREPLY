@@ -27,14 +27,14 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     // First install - show welcome
     chrome.tabs.create({
-      url: 'https://myreply.vercel.app/auth?source=extension',
+      url: 'https://my-reply.ru/auth?source=extension',
     });
   }
 });
 
 // Listen for auth from website
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-  if (message.type === 'SET_AUTH_TOKEN' && sender.origin === 'https://myreply.vercel.app') {
+  if (message.type === 'SET_AUTH_TOKEN' && (sender.origin === 'https://my-reply.ru' || sender.origin === 'https://myreply.vercel.app')) {
     chrome.storage.local.set({ authToken: message.token });
     sendResponse({ success: true });
   }

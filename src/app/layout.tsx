@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
-    url: 'https://myreply.app',
+    url: 'https://my-reply.ru',
     siteName: 'MyReply',
     title: 'MyReply — Умные ответы на отзывы',
     description: 'Профессиональные ответы на отзывы клиентов за секунды. Сохраните нервы и репутацию.',

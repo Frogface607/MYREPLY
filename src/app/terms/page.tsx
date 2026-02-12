@@ -50,8 +50,8 @@ export default function TermsPage() {
               Сервис MyReply (далее — «Сервис») — это онлайн-платформа для автоматизированной
               генерации профессиональных ответов на отзывы клиентов с использованием технологий
               искусственного интеллекта. Сервис доступен по адресу{' '}
-              <a href="https://myreply.vercel.app" className="text-primary hover:underline">
-                myreply.vercel.app
+              <a href="https://my-reply.ru" className="text-primary hover:underline">
+                my-reply.ru
               </a>.
             </p>
           </section>
