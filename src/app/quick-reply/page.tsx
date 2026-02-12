@@ -10,6 +10,7 @@ import type { GeneratedResponse, Subscription, PlanType } from '@/types';
 import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLeft, ToggleRight } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface ReviewAnalysis {
   sentiment: 'positive' | 'neutral' | 'negative';
@@ -250,6 +251,7 @@ export default function QuickReplyPage() {
             >
               <Settings className="w-5 h-5" />
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </header>

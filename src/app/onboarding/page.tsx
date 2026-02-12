@@ -141,7 +141,7 @@ export default function OnboardingPage() {
 
       if (dbError) throw dbError;
 
-      router.push('/dashboard');
+      router.push('/quick-reply');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка');
       setIsLoading(false);

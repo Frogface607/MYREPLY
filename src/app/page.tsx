@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Chrome, Zap, Crown } from 'lucide-react';
 import { ExamplesSection } from '@/components/ExamplesSection';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function LandingPage() {
   return (
@@ -26,13 +27,14 @@ export default function LandingPage() {
             </div>
             <span className="font-semibold text-lg tracking-tight">MyReply</span>
           </Link>
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-4">
             <Link
               href="/pricing"
               className="text-sm font-medium text-muted hover:text-foreground transition-colors hidden sm:block"
             >
               Тарифы
             </Link>
+            <ThemeToggle />
             <Link
               href="/auth"
               className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
@@ -48,7 +50,7 @@ export default function LandingPage() {
       <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-primary font-medium mb-6 tracking-wide uppercase text-sm">
-            Для селлеров WB, Ozon и Яндекс.Маркет
+            Для любого бизнеса с отзывами
           </p>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
@@ -57,10 +59,18 @@ export default function LandingPage() {
             <span className="text-muted">Больше не ваша проблема.</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
             AI генерирует профессиональные ответы на отзывы за секунды. 
             Вы спокойно занимаетесь бизнесом — а не нервничаете из-за чужого мнения.
           </p>
+
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {['Маркетплейсы', 'Рестораны и кафе', 'Отели', 'Услуги', 'Клиники', 'Авто'].map((tag) => (
+              <span key={tag} className="px-3 py-1 bg-muted-light text-muted text-sm rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
@@ -95,23 +105,23 @@ export default function LandingPage() {
               },
               {
                 quote: '«Что ответить, чтобы не навредить?»',
-                pain: 'Страх написать лишнее. Каждое слово как мина.',
+                pain: 'Страх написать лишнее. Каждое слово — как мина.',
               },
               {
                 quote: '«Я вообще не виноват!»',
-                pain: 'Но приходится извиняться, чтобы не выглядеть хуже.',
+                pain: 'Клиент не прав, но извиняться всё равно приходится.',
               },
               {
-                quote: '«Трачу 20 минут на ответ»',
-                pain: 'А надо ещё 10 отзывов. И товар отгружать. И закупки.',
+                quote: '«На это уходит вечность»',
+                pain: '20 минут на один ответ. А их десять. А ещё бизнес вести.',
               },
               {
-                quote: '«Конкурент наливает фейки»',
-                pain: 'Отвечать надо — молчание убивает карточку.',
+                quote: '«Один отзыв — минус 10 клиентов»',
+                pain: 'Без ответа рейтинг падает. С плохим ответом — ещё хуже.',
               },
               {
                 quote: '«Ненавижу это, но надо»',
-                pain: 'Ответы на отзывы — не ваша работа. Но без них никак.',
+                pain: 'Отвечать на отзывы — не ваша работа. Но без этого никак.',
               },
             ].map((problem, i) => (
               <div 
@@ -223,6 +233,61 @@ export default function LandingPage() {
       {/* Examples */}
       <ExamplesSection />
 
+      {/* Who it's for */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+              Кому подходит
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+              Любой бизнес, где есть отзывы клиентов
+            </h2>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                emoji: '📦',
+                title: 'Маркетплейсы',
+                desc: 'WB, Ozon, Яндекс.Маркет — ответы на отзывы прямо из кабинета продавца',
+              },
+              {
+                emoji: '🍽️',
+                title: 'Рестораны и кафе',
+                desc: 'Яндекс.Карты, 2GIS, Google — один плохой отзыв = минус десяток гостей',
+              },
+              {
+                emoji: '🏨',
+                title: 'Отели и хостелы',
+                desc: 'Booking, Островок, Google — каждый сезон волна негатива, а отвечать некогда',
+              },
+              {
+                emoji: '✂️',
+                title: 'Услуги и салоны',
+                desc: 'Яндекс, Профи, Авито — клиент недоволен, а ты не знаешь что сказать',
+              },
+              {
+                emoji: '🏥',
+                title: 'Клиники и врачи',
+                desc: 'ПроДокторов, Яндекс — деликатные ответы, где каждое слово важно',
+              },
+              {
+                emoji: '🚗',
+                title: 'Авто и сервисы',
+                desc: 'Яндекс, 2GIS, Drive2 — «сломалось через день» нужен грамотный ответ',
+              },
+            ].map((item, i) => (
+              <div key={i} className="p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-colors">
+                <div className="text-3xl mb-3">{item.emoji}</div>
+                <h3 className="font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Chrome Extension */}
       <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
@@ -240,7 +305,7 @@ export default function LandingPage() {
                 </h2>
                 <p className="text-muted mb-6 leading-relaxed">
                   Кнопка MyReply появится рядом с каждым отзывом в личном кабинете 
-                  Wildberries, Ozon и Яндекс.Маркет. Один клик — ответ готов. 
+                  маркетплейса. Один клик — ответ готов. 
                   Не нужно переключаться между вкладками.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -426,11 +491,11 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="grid sm:grid-cols-2 gap-6">
             {[
-              'Wildberries, Ozon, Яндекс.Маркет',
+              'Любая площадка с отзывами',
               'Загрузка скриншотов отзывов',
               'Умный профиль бизнеса',
-              'История всех ответов',
-              'Быстрая корректировка тона',
+              'Deep Research — AI изучит вас',
+              '5 режимов ответов',
               'Тёмная тема',
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
