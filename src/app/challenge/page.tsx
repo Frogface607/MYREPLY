@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { 
   Copy, 
   Check, 
@@ -15,10 +16,11 @@ import {
   Shield,
   Heart,
   ThumbsUp,
-  ThumbsDown,
   Gift,
-  RefreshCw,
   ChevronDown,
+  Link2,
+  Users,
+  Trophy,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -61,7 +63,16 @@ const exampleReviews = [
   'Заселились в номер — таракан на подушке. Ресепшен сказал "бывает". Серьёзно?!',
 ];
 
+interface ReferralInfo {
+  code: string;
+  url: string;
+  clicks: number;
+  signups: number;
+  nextThreshold: { clicks: number; remaining: number; reward: string } | null;
+}
+
 export default function ChallengePage() {
+  const searchParams = useSearchParams();
   const [reviewText, setReviewText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ChallengeResult | null>(null);
@@ -69,7 +80,35 @@ export default function ChallengePage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedAccent, setSelectedAccent] = useState<string | null>(null);
   const [limitReached, setLimitReached] = useState(false);
+  const [referral, setReferral] = useState<ReferralInfo | null>(null);
+  const [showReferral, setShowReferral] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Трекинг реферального перехода
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      // Фиксируем клик — fire and forget
+      fetch('/api/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: ref }),
+      }).catch(() => {}); // игнорируем ошибки
+    }
+  }, [searchParams]);
+
+  // Загружаем реферальную ссылку для авторизованных
+  useEffect(() => {
+    fetch('/api/referral')
+      .then(res => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then(data => {
+        if (data?.code) setReferral(data);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     // Плавный скролл к результатам после загрузки
@@ -126,11 +165,17 @@ export default function ChallengePage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const getShareUrl = () => {
+    if (referral?.url) return referral.url;
+    return 'https://my-reply.ru/challenge';
+  };
+
   const handleShare = async (response?: GeneratedResponse) => {
     const resp = response || result?.responses.find(r => r.accent === (selectedAccent || 'solution-focused'));
+    const url = getShareUrl();
     const shareText = resp
-      ? `"${reviewText.slice(0, 150)}${reviewText.length > 150 ? '...' : ''}"\n\n${accentLabels[resp.accent]?.icon || ''} Ответ MyReply:\n"${resp.text}"\n\n✨ Попробуй бесплатно: my-reply.ru/challenge`
-      : `AI пишет идеальные ответы на отзывы за 30 секунд ✨\nПопробуй бесплатно: my-reply.ru/challenge`;
+      ? `"${reviewText.slice(0, 150)}${reviewText.length > 150 ? '...' : ''}"\n\n${accentLabels[resp.accent]?.icon || ''} Ответ MyReply:\n"${resp.text}"\n\n✨ Попробуй бесплатно: ${url}`
+      : `AI пишет идеальные ответы на отзывы за 30 секунд ✨\nПопробуй бесплатно: ${url}`;
 
     if (navigator.share) {
       try {
@@ -141,6 +186,13 @@ export default function ChallengePage() {
       setCopiedId('share');
       setTimeout(() => setCopiedId(null), 2000);
     }
+  };
+
+  const handleCopyReferralLink = () => {
+    if (!referral?.url) return;
+    navigator.clipboard.writeText(referral.url);
+    setCopiedId('referral');
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const handleExampleClick = (text: string) => {
@@ -447,6 +499,62 @@ export default function ChallengePage() {
                 </span>
               </div>
             </div>
+
+            {/* Share-for-bonus — для авторизованных */}
+            {referral && (
+              <div className="bg-card border-2 border-success/30 rounded-2xl p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-success-light rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-success" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold">Поделись — получи бонусы</h3>
+                    <p className="text-xs text-muted">Каждый переход по вашей ссылке приближает к награде</p>
+                  </div>
+                </div>
+
+                {/* Referral link */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-sm font-mono truncate">
+                    {referral.url}
+                  </div>
+                  <button
+                    onClick={handleCopyReferralLink}
+                    className="px-4 py-2.5 bg-success text-white text-sm font-medium rounded-xl hover:bg-success/90 transition-colors flex items-center gap-1.5 flex-shrink-0"
+                  >
+                    {copiedId === 'referral' ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                    {copiedId === 'referral' ? 'Скопировано!' : 'Копировать'}
+                  </button>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-muted-light rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-foreground">{referral.clicks}</p>
+                    <p className="text-xs text-muted">переходов</p>
+                  </div>
+                  <div className="bg-muted-light rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-foreground">{referral.signups}</p>
+                    <p className="text-xs text-muted">регистраций</p>
+                  </div>
+                </div>
+
+                {/* Next threshold */}
+                {referral.nextThreshold && (
+                  <div className="bg-success-light/50 rounded-xl p-3 flex items-center gap-3">
+                    <Trophy className="w-5 h-5 text-success flex-shrink-0" />
+                    <div className="text-sm">
+                      <span className="font-medium">Ещё {referral.nextThreshold.remaining} переходов</span>
+                      <span className="text-muted"> → {referral.nextThreshold.reward}</span>
+                    </div>
+                  </div>
+                )}
+
+                <p className="text-xs text-muted mt-3 text-center">
+                  Делитесь ссылкой в соцсетях, мессенджерах, с коллегами — бонусы начисляются автоматически
+                </p>
+              </div>
+            )}
           </div>
         )}
 

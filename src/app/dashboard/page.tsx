@@ -22,7 +22,11 @@ import {
   Check,
   ExternalLink,
   Gift,
-  Tag
+  Tag,
+  Link2,
+  Users,
+  Trophy,
+  Share2,
 } from 'lucide-react';
 import type { Subscription, PlanType } from '@/types';
 import { PLAN_NAMES, PLAN_LIMITS } from '@/types';
@@ -42,6 +46,8 @@ export default function DashboardPage() {
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoMessage, setPromoMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [referral, setReferral] = useState<{ code: string; url: string; clicks: number; signups: number; nextThreshold: { clicks: number; remaining: number; reward: string } | null } | null>(null);
+  const [refCopied, setRefCopied] = useState(false);
 
   // Передаём access_token в Chrome-расширение (если установлено)
   useEffect(() => {
@@ -96,6 +102,13 @@ export default function DashboardPage() {
         if (res.ok) {
           const data = await res.json();
           setSubscription(data.subscription);
+        }
+
+        // Загружаем реферальную ссылку
+        const refRes = await fetch('/api/referral');
+        if (refRes.ok) {
+          const refData = await refRes.json();
+          if (refData?.code) setReferral(refData);
         }
       } catch (error) {
         console.error('Error loading dashboard:', error);
@@ -366,6 +379,47 @@ export default function DashboardPage() {
             </p>
           )}
         </section>
+
+        {/* Referral */}
+        {referral && (
+          <section className="bg-card border border-border rounded-xl p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <Share2 className="w-5 h-5 text-success" />
+              <div>
+                <h2 className="font-semibold text-sm">Приглашай друзей — получай бонусы</h2>
+                <p className="text-xs text-muted">Поделись ссылкой, каждый переход приближает к награде</p>
+              </div>
+            </div>
+            <div className="flex gap-2 mb-3">
+              <div className="flex-1 px-3 py-2 bg-background border border-border rounded-xl text-xs font-mono truncate flex items-center">
+                {referral.url}
+              </div>
+              <button
+                onClick={() => { navigator.clipboard.writeText(referral.url); setRefCopied(true); setTimeout(() => setRefCopied(false), 2000); }}
+                className="px-4 py-2 bg-success text-white text-sm font-medium rounded-xl hover:bg-success/90 flex items-center gap-1.5 transition-colors flex-shrink-0"
+              >
+                {refCopied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                {refCopied ? 'Скопировано!' : 'Копировать'}
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="bg-muted-light rounded-lg p-2.5 text-center">
+                <p className="text-xl font-bold">{referral.clicks}</p>
+                <p className="text-[10px] text-muted">переходов</p>
+              </div>
+              <div className="bg-muted-light rounded-lg p-2.5 text-center">
+                <p className="text-xl font-bold">{referral.signups}</p>
+                <p className="text-[10px] text-muted">регистраций</p>
+              </div>
+            </div>
+            {referral.nextThreshold && (
+              <div className="bg-success-light/50 rounded-lg p-2.5 flex items-center gap-2 text-xs">
+                <Trophy className="w-4 h-4 text-success flex-shrink-0" />
+                <span>Ещё <strong>{referral.nextThreshold.remaining}</strong> переходов → {referral.nextThreshold.reward}</span>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Legal */}
         <div className="flex justify-center gap-4 text-xs text-muted pt-2 pb-4">

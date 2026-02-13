@@ -1,0 +1,7 @@
+Challenge 2.0: free generation without auth, content strategy
+
+- New /api/challenge endpoint: 1 free generation per IP/24h without registration
+- Revamped /challenge page: focus on quality over humor, universal appeal
+- Updated promo codes: 7 days instead of 30, added MYREPLY promo
+- Landing page: CTA now points to /challenge for frictionless trial
+- Added content strategy templates for TG/IG/VK social media launch
