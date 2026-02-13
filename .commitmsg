@@ -1,7 +1,8 @@
-Challenge 2.0: free generation without auth, content strategy
+Referral system: share-for-bonus with tracking and auto rewards
 
-- New /api/challenge endpoint: 1 free generation per IP/24h without registration
-- Revamped /challenge page: focus on quality over humor, universal appeal
-- Updated promo codes: 7 days instead of 30, added MYREPLY promo
-- Landing page: CTA now points to /challenge for frictionless trial
-- Added content strategy templates for TG/IG/VK social media launch
+- New /api/referral endpoint: generates unique referral links, tracks clicks with IP dedup
+- Bonus thresholds: 3 clicks = +5 responses, 10 = +15, 25 = 7d Start, 50 = 14d Start
+- Challenge page: tracks ?ref= visits, shows referral panel for authenticated users
+- Dashboard: referral link widget with stats and next reward progress
+- Share functions use personalized referral URLs when available
+- SQL migration for referral_links, referral_visits, referral_bonuses tables

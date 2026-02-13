@@ -561,13 +561,19 @@ export default function LandingPage() {
               <Link href="/privacy" className="hover:text-foreground transition-colors">
                 Политика конфиденциальности
               </Link>
+              <a href="https://t.me/myreply_ru" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                Telegram
+              </a>
               <a href="mailto:hello@myreply.ru" className="hover:text-foreground transition-colors">
                 Контакты
               </a>
             </nav>
           </div>
-          <div className="text-center sm:text-left text-xs text-muted">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2 text-xs text-muted">
             <p>© 2026 MyReply. Сделано для тех, кто ценит время и репутацию.</p>
+            <a href="https://t.me/myreply_ru" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              t.me/myreply_ru
+            </a>
           </div>
         </div>
       </footer>

@@ -664,6 +664,7 @@ export default function ChallengePage() {
             <Link href="/" className="hover:text-foreground transition-colors font-medium">MyReply</Link> — AI-ответы на отзывы для любого бизнеса
           </p>
           <div className="flex justify-center gap-4 text-xs text-muted">
+            <a href="https://t.me/myreply_ru" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Telegram</a>
             <Link href="/pricing" className="hover:text-foreground transition-colors">Тарифы</Link>
             <Link href="/terms" className="hover:text-foreground transition-colors">Оферта</Link>
             <Link href="/privacy" className="hover:text-foreground transition-colors">Конфиденциальность</Link>
