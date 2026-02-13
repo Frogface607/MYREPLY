@@ -30,9 +30,9 @@ export default function LandingPage() {
           <nav className="flex items-center gap-4">
             <Link
               href="/challenge"
-              className="text-sm font-medium text-danger hover:text-danger/80 transition-colors hidden sm:block"
+              className="text-sm font-medium text-primary hover:text-primary-hover transition-colors hidden sm:block"
             >
-              🔥 Челлендж
+              ✨ Попробовать
             </Link>
             <Link
               href="/pricing"
@@ -80,14 +80,20 @@ export default function LandingPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/auth"
-              className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3"
+              href="/challenge"
+              className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/20"
             >
               Попробовать бесплатно
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <span className="text-sm text-muted">15 ответов в месяц — навсегда бесплатно</span>
+            <Link
+              href="/auth"
+              className="px-6 py-3 border border-border rounded-full text-sm hover:border-primary hover:text-primary transition-all"
+            >
+              Войти в кабинет
+            </Link>
           </div>
+          <p className="text-sm text-muted mt-4">Без регистрации • 5 вариантов ответа • 30 секунд</p>
         </div>
       </section>
 
@@ -522,13 +528,13 @@ export default function LandingPage() {
             <span className="text-primary">уже не ваша головная боль.</span>
           </h2>
           <p className="text-muted text-lg mb-10">
-            Начните бесплатно. 15 ответов в месяц — навсегда. Без карты.
+            Вставьте отзыв — получите 5 вариантов ответа. Без регистрации, без карты.
           </p>
           <Link
-            href="/auth"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all"
+            href="/challenge"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
           >
-            Попробовать бесплатно
+            Попробовать прямо сейчас
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>

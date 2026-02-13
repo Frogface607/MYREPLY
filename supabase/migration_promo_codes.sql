@@ -47,7 +47,10 @@ CREATE POLICY "Users can insert own activations" ON promo_activations
 -- Первый промокод для акции
 -- =====================
 INSERT INTO promo_codes (code, plan, duration_days, max_uses, description)
-VALUES ('ЖЕСТЬ', 'start', 30, 200, 'Акция «Покажи самый жёсткий отзыв» — 1 месяц Start бесплатно');
+VALUES ('ЖЕСТЬ', 'start', 7, 500, 'Челлендж MyReply — 7 дней Start бесплатно');
 
 INSERT INTO promo_codes (code, plan, duration_days, max_uses, description)
-VALUES ('CRINGE', 'start', 30, 200, 'Challenge promo — 1 month Start free');
+VALUES ('CRINGE', 'start', 7, 500, 'Challenge promo — 7 days Start free');
+
+INSERT INTO promo_codes (code, plan, duration_days, max_uses, description)
+VALUES ('MYREPLY', 'start', 7, 1000, 'Промо при запуске — 7 дней Start бесплатно');
