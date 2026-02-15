@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Sparkles, Loader2, Crown, X, Shield, Clock, Zap } from 'lucide-react';
+import { ArrowLeft, Check, Loader2, Crown, X, Shield, Clock, Zap } from 'lucide-react';
 import { PLAN_LIMITS, PLAN_PRICES, PLAN_NAMES, type PlanType, type Subscription } from '@/types';
 
 const plans: {
@@ -138,8 +138,8 @@ export default function PricingPage() {
             <span className="hidden sm:inline">На главную</span>
           </Link>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-semibold">MyReply</span>
+            <img src="/favicon.svg" alt="" className="w-5 h-5" />
+            <span className="font-semibold">My<span className="text-primary">Reply</span></span>
           </Link>
           <div className="w-16" />
         </div>

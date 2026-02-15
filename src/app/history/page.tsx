@@ -152,8 +152,8 @@ export default function HistoryPage() {
             <span className="hidden sm:inline">Назад</span>
           </Link>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <History className="w-5 h-5 text-primary" />
-            <span className="font-semibold">MyReply</span>
+            <img src="/favicon.svg" alt="" className="w-5 h-5" />
+            <span className="font-semibold">My<span className="text-primary">Reply</span></span>
           </Link>
           {history.length > 0 ? (
             <div className="flex items-center gap-3">
