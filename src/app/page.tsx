@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Chrome, Zap, Crown } from 'lucide-react';
 import { ExamplesSection } from '@/components/ExamplesSection';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -20,11 +19,13 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link 
             href="/" 
-            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             aria-label="MyReply - На главную"
           >
-            <Image src="/favicon.svg" alt="" width={28} height={28} className="w-7 h-7" aria-hidden="true" />
-            <span className="font-semibold text-lg tracking-tight">My<span className="text-primary">Reply</span></span>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" aria-hidden="true" />
+            </div>
+            <span className="font-semibold text-lg tracking-tight">MyReply</span>
           </Link>
           <nav className="flex items-center gap-4">
             <Link
@@ -52,37 +53,35 @@ export default function LandingPage() {
 
       {/* Hero */}
       <main id="main" role="main">
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16 hero-gradient">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-light text-primary rounded-full text-sm font-medium mb-8 animate-fade-in">
-            <Zap className="w-3.5 h-3.5" aria-hidden="true" />
+          <p className="text-primary font-medium mb-6 tracking-wide uppercase text-sm">
             Для любого бизнеса с отзывами
-          </div>
+          </p>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight animate-fade-in">
-            Не позволяйте отзывам
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
+            Негативный отзыв?
             <br />
-            <span className="text-primary">управлять вашим днём.</span>
+            <span className="text-muted">Больше не ваша проблема.</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-in">
-            AI генерирует 5 идеальных ответов за 30 секунд — 
-            от профессионального до дерзкого. 
-            Вы спокойно занимаетесь бизнесом.
+          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
+            AI генерирует профессиональные ответы на отзывы за секунды. 
+            Вы спокойно занимаетесь бизнесом — а не нервничаете из-за чужого мнения.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-2 mb-10 animate-fade-in">
-            {['🛒 Маркетплейсы', '🍕 Рестораны', '🏨 Отели', '💇 Услуги', '🏥 Клиники', '🚗 Авто'].map((tag) => (
-              <span key={tag} className="px-3 py-1.5 bg-card border border-border text-muted text-sm rounded-full hover:border-primary/30 transition-colors">
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {['Маркетплейсы', 'Рестораны и кафе', 'Отели', 'Услуги', 'Клиники', 'Авто'].map((tag) => (
+              <span key={tag} className="px-3 py-1 bg-muted-light text-muted text-sm rounded-full">
                 {tag}
               </span>
             ))}
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/challenge"
-              className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 primary-glow"
+              className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/20"
             >
               Попробовать бесплатно
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -94,7 +93,7 @@ export default function LandingPage() {
               Войти в кабинет
             </Link>
           </div>
-          <p className="text-sm text-muted mt-5 animate-fade-in">Без регистрации • 5 стилей ответа • 30 секунд</p>
+          <p className="text-sm text-muted mt-4">Без регистрации • 5 вариантов ответа • 30 секунд</p>
         </div>
       </section>
 
@@ -524,16 +523,16 @@ export default function LandingPage() {
       <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
-            Верните себе спокойствие.
+            Следующий негативный отзыв —
             <br />
-            <span className="text-primary">Негатив — больше не оружие.</span>
+            <span className="text-primary">уже не ваша головная боль.</span>
           </h2>
           <p className="text-muted text-lg mb-10">
-            Вставьте отзыв — получите 5 идеальных ответов. Без регистрации, без карты.
+            Вставьте отзыв — получите 5 вариантов ответа. Без регистрации, без карты.
           </p>
           <Link
             href="/challenge"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all primary-glow"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
           >
             Попробовать прямо сейчас
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -547,8 +546,10 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
             <div className="flex items-center gap-2">
-              <Image src="/favicon.svg" alt="" width={20} height={20} className="w-5 h-5" />
-              <span className="font-medium">My<span className="text-primary">Reply</span></span>
+              <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-primary" />
+              </div>
+              <span className="font-medium">MyReply</span>
             </div>
             <nav className="flex flex-wrap items-center gap-6 text-sm text-muted">
               <Link href="/pricing" className="hover:text-foreground transition-colors">

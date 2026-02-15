@@ -219,8 +219,8 @@ export default function ChallengePage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img src="/favicon.svg" alt="" className="w-5 h-5" />
-            <span className="font-semibold">My<span className="text-primary">Reply</span></span>
+            <MessageSquareText className="w-5 h-5 text-primary" />
+            <span className="font-semibold">MyReply</span>
           </Link>
           <nav className="flex items-center gap-3">
             <ThemeToggle />

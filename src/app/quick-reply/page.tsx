@@ -7,7 +7,7 @@ import { AdjustmentInput } from '@/components/AdjustmentInput';
 import { ResponseSkeletonGroup } from '@/components/Skeleton';
 import { Paywall, UsageCounter, UpsellBanner } from '@/components/Paywall';
 import type { GeneratedResponse, Subscription, PlanType } from '@/types';
-import { ArrowLeft, Settings, History, Crown, Flame, ToggleLeft, ToggleRight, User } from 'lucide-react';
+import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLeft, ToggleRight, User } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -251,8 +251,8 @@ export default function QuickReplyPage() {
             <span className="hidden sm:inline">Главная</span>
           </Link>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img src="/favicon.svg" alt="" className="w-5 h-5" />
-            <span className="font-semibold">My<span className="text-primary">Reply</span></span>
+            <MessageSquareText className="w-5 h-5 text-primary" />
+            <span className="font-semibold">MyReply</span>
           </Link>
           <div className="flex items-center gap-3">
             {/* Usage Counter */}

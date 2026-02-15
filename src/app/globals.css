@@ -1,102 +1,89 @@
 @import "tailwindcss";
 
 :root {
-  /* MyReply Brand: Индиго + Янтарь */
-  --background: #FAFAF8;
-  --foreground: #111111;
+  /* Основные цвета - тёплая, спокойная палитра */
+  --background: #faf9f7;
+  --foreground: #1a1a1a;
   
-  /* Primary: Индиго */
-  --primary: #6366F1;
-  --primary-hover: #4F46E5;
-  --primary-light: #EEF2FF;
-  
-  /* Accent: Янтарный (для CTA, highlights) */
-  --accent: #F59E0B;
-  --accent-hover: #D97706;
-  --accent-light: #FEF3C7;
+  /* Акцентные цвета */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #dbeafe;
   
   /* Успех / Позитив */
   --success: #059669;
-  --success-light: #D1FAE5;
+  --success-light: #d1fae5;
   
   /* Предупреждение */
-  --warning: #D97706;
-  --warning-light: #FEF3C7;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
   
   /* Негатив */
-  --danger: #EF4444;
-  --danger-light: #FEE2E2;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
   
   /* Нейтральные */
-  --muted: #6B7280;
-  --muted-light: #F3F4F6;
-  --border: #E5E7EB;
+  --muted: #6b7280;
+  --muted-light: #f3f4f6;
+  --border: #e5e7eb;
   
   /* Карточки */
-  --card: #FFFFFF;
-  --card-hover: #F9FAFB;
+  --card: #ffffff;
+  --card-hover: #f9fafb;
 }
 
 /* Тёмная тема: авто (системная) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: #09090B;
-    --foreground: #FAFAFA;
+    --background: #0f0f0f;
+    --foreground: #f5f5f5;
     
-    --primary: #818CF8;
-    --primary-hover: #A5B4FC;
-    --primary-light: #1E1B4B;
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-light: #1e3a5f;
     
-    --accent: #FBBF24;
-    --accent-hover: #F59E0B;
-    --accent-light: #78350F;
+    --success: #10b981;
+    --success-light: #064e3b;
     
-    --success: #34D399;
-    --success-light: #064E3B;
+    --warning: #f59e0b;
+    --warning-light: #78350f;
     
-    --warning: #FBBF24;
-    --warning-light: #78350F;
+    --danger: #ef4444;
+    --danger-light: #7f1d1d;
     
-    --danger: #F87171;
-    --danger-light: #7F1D1D;
+    --muted: #9ca3af;
+    --muted-light: #1f2937;
+    --border: #374151;
     
-    --muted: #A1A1AA;
-    --muted-light: #18181B;
-    --border: #27272A;
-    
-    --card: #0F0F12;
-    --card-hover: #18181B;
+    --card: #171717;
+    --card-hover: #1f1f1f;
   }
 }
 
 /* Тёмная тема: ручной переключатель */
 :root[data-theme="dark"] {
-  --background: #09090B;
-  --foreground: #FAFAFA;
+  --background: #0f0f0f;
+  --foreground: #f5f5f5;
   
-  --primary: #818CF8;
-  --primary-hover: #A5B4FC;
-  --primary-light: #1E1B4B;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-light: #1e3a5f;
   
-  --accent: #FBBF24;
-  --accent-hover: #F59E0B;
-  --accent-light: #78350F;
+  --success: #10b981;
+  --success-light: #064e3b;
   
-  --success: #34D399;
-  --success-light: #064E3B;
+  --warning: #f59e0b;
+  --warning-light: #78350f;
   
-  --warning: #FBBF24;
-  --warning-light: #78350F;
+  --danger: #ef4444;
+  --danger-light: #7f1d1d;
   
-  --danger: #F87171;
-  --danger-light: #7F1D1D;
+  --muted: #9ca3af;
+  --muted-light: #1f2937;
+  --border: #374151;
   
-  --muted: #A1A1AA;
-  --muted-light: #18181B;
-  --border: #27272A;
-  
-  --card: #0F0F12;
-  --card-hover: #18181B;
+  --card: #171717;
+  --card-hover: #1f1f1f;
 }
 
 @theme inline {
@@ -105,9 +92,6 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-light: var(--accent-light);
   --color-success: var(--success);
   --color-success-light: var(--success-light);
   --color-warning: var(--warning);
@@ -245,101 +229,9 @@ a:focus-visible {
   background: linear-gradient(
     135deg,
     var(--background) 0%,
-    var(--primary-light) 40%,
-    var(--accent-light) 70%,
+    var(--primary-light) 50%,
     var(--background) 100%
   );
-}
-
-/* Брендовый градиент для кнопок и акцентов */
-.brand-gradient {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6, #A78BFA);
-}
-
-.brand-gradient-warm {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6, #F59E0B);
-}
-
-/* Glow для primary кнопок */
-.primary-glow {
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
-}
-
-.primary-glow:hover {
-  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.35);
-}
-
-/* Scroll-triggered animation */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-slide-in-up {
-  animation: slideInUp 0.6s ease-out forwards;
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.6s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slideInRight 0.6s ease-out forwards;
-}
-
-/* Float animation for hero elements */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Typing cursor */
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-.typing-cursor::after {
-  content: '|';
-  animation: blink 1s infinite;
-  color: var(--primary);
-  font-weight: 300;
 }
 
 /* Стиль для textarea отзыва */

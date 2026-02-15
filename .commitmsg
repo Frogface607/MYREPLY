@@ -1,1 +1,8 @@
-Add Telegram channel link to landing and challenge footers
+Referral system: share-for-bonus with tracking and auto rewards
+
+- New /api/referral endpoint: generates unique referral links, tracks clicks with IP dedup
+- Bonus thresholds: 3 clicks = +5 responses, 10 = +15, 25 = 7d Start, 50 = 14d Start
+- Challenge page: tracks ?ref= visits, shows referral panel for authenticated users
+- Dashboard: referral link widget with stats and next reward progress
+- Share functions use personalized referral URLs when available
+- SQL migration for referral_links, referral_visits, referral_bonuses tables

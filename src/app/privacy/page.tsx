@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 
 export const metadata = {
   title: 'Политика конфиденциальности — MyReply',
@@ -20,8 +20,8 @@ export default function PrivacyPage() {
             <span className="hidden sm:inline">На главную</span>
           </Link>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img src="/favicon.svg" alt="" className="w-5 h-5" />
-            <span className="font-semibold">My<span className="text-primary">Reply</span></span>
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="font-semibold">MyReply</span>
           </Link>
           <div className="w-16" />
         </div>
