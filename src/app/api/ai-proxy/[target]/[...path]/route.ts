@@ -16,16 +16,24 @@ const TARGETS: Record<string, string> = {
   gemini: 'https://generativelanguage.googleapis.com',
 };
 
-const PROXY_SECRET = process.env.AI_PROXY_SECRET || 'moltbot-proxy-2026';
+const PROXY_SECRET = process.env.AI_PROXY_SECRET;
 
 function checkAuth(request: NextRequest): boolean {
-  const headerSecret = request.headers.get('x-proxy-secret');
-  if (headerSecret === PROXY_SECRET) return true;
+  // If AI_PROXY_SECRET is set, require it via header or query param
+  if (PROXY_SECRET) {
+    const headerSecret = request.headers.get('x-proxy-secret');
+    if (headerSecret === PROXY_SECRET) return true;
+    
+    const urlSecret = request.nextUrl.searchParams.get('proxy_secret');
+    if (urlSecret === PROXY_SECRET) return true;
+    
+    return false;
+  }
   
-  const urlSecret = request.nextUrl.searchParams.get('proxy_secret');
-  if (urlSecret === PROXY_SECRET) return true;
-  
-  return false;
+  // No secret configured — accept requests that have an Authorization header
+  // (only someone with an API key can use this, and without it the proxy is useless)
+  const auth = request.headers.get('authorization');
+  return !!auth;
 }
 
 type RouteContext = { params: Promise<{ target: string; path: string[] }> };
