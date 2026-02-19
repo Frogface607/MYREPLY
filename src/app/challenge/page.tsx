@@ -45,7 +45,7 @@ const accentLabels: Record<string, { label: string; icon: string; desc: string }
   empathetic: { label: 'Эмпатичный', icon: '💛', desc: 'С пониманием и теплотой' },
   'solution-focused': { label: 'С решением', icon: '🔧', desc: 'Конкретные действия и предложения' },
   'passive-aggressive': { label: 'Твёрдый', icon: '🛡️', desc: 'Вежливый, но без извинений' },
-  hardcore: { label: 'Дерзкий', icon: '🔥', desc: 'Ироничный, в стиле VIZIT/Aviasales' },
+  hardcore: { label: 'Дерзкий', icon: '🔥', desc: 'Ироничный, с сарказмом и самоиронией' },
 };
 
 const accentColors: Record<string, string> = {
