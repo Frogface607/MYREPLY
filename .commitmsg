@@ -1,1 +1,1 @@
-Fix ai-proxy auth: accept requests with Authorization header when no secret configured
+Remove third-party brand mentions from hardcore mode descriptions

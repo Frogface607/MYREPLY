@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { 
   Copy, 
   Check, 
@@ -72,7 +71,6 @@ interface ReferralInfo {
 }
 
 export default function ChallengePage() {
-  const searchParams = useSearchParams();
   const [reviewText, setReviewText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ChallengeResult | null>(null);
@@ -86,16 +84,18 @@ export default function ChallengePage() {
 
   // Трекинг реферального перехода
   useEffect(() => {
-    const ref = searchParams.get('ref');
-    if (ref) {
-      // Фиксируем клик — fire and forget
-      fetch('/api/referral', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: ref }),
-      }).catch(() => {}); // игнорируем ошибки
-    }
-  }, [searchParams]);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        fetch('/api/referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: ref }),
+        }).catch(() => {});
+      }
+    } catch {}
+  }, []);
 
   // Загружаем реферальную ссылку для авторизованных
   useEffect(() => {
