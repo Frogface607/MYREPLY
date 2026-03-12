@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { PLAN_PRICES, PLAN_NAMES, PLAN_LIMITS, type PlanType } from '@/types';
+import { logger } from '@/lib/logger';
 
 // ЮKassa API endpoint
 const YUKASSA_API_URL = 'https://api.yookassa.ru/v3/payments';
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     const secretKey = process.env.YUKASSA_SECRET_KEY;
 
     if (!shopId || !secretKey) {
-      console.error('ЮKassa credentials not configured');
+      logger.error('payment-create', 'YuKassa credentials not configured');
       return NextResponse.json(
         { error: 'Платежная система не настроена' },
         { status: 500 }
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('ЮKassa API error:', errorData);
+      logger.error('payment-create', 'YuKassa API error', new Error(errorData));
       return NextResponse.json(
         { error: 'Ошибка создания платежа' },
         { status: 500 }
@@ -120,9 +121,9 @@ export async function POST(request: NextRequest) {
       paymentUrl: payment.confirmation.confirmation_url,
     });
   } catch (error) {
-    console.error('Payment create error:', error);
+    logger.error('payment-create', 'Error', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка создания платежа' },
+      { error: 'Ошибка создания платежа' },
       { status: 500 }
     );
   }

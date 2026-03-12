@@ -17,15 +17,13 @@ export default function LandingPage() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link 
-            href="/" 
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          <Link
+            href="/"
+            className="flex items-center hover:opacity-80 transition-opacity"
             aria-label="MyReply - На главную"
           >
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" aria-hidden="true" />
-            </div>
-            <span className="font-semibold text-lg tracking-tight">MyReply</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="MyReply" className="h-7 sm:h-8 w-auto" />
           </Link>
           <nav className="flex items-center gap-4">
             <Link

@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { PLAN_LIMITS, type PlanType } from '@/types';
+import { logger } from '@/lib/logger';
 
 // Создаём admin клиент только при вызове (lazy initialization)
 function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
+
   if (!url || !key) {
     throw new Error('Supabase credentials not configured');
   }
-  
+
   return createClient(url, key);
 }
 
@@ -28,16 +29,16 @@ const YUKASSA_IPS = [
 
 function ipInCIDR(ip: string, cidr: string): boolean {
   if (!cidr.includes('/')) return ip === cidr;
-  
+
   const [range, bits] = cidr.split('/');
   const mask = ~(2 ** (32 - parseInt(bits)) - 1);
-  
+
   const ipParts = ip.split('.').map(Number);
   const rangeParts = range.split('.').map(Number);
-  
+
   const ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
   const rangeNum = (rangeParts[0] << 24) | (rangeParts[1] << 16) | (rangeParts[2] << 8) | rangeParts[3];
-  
+
   return (ipNum & mask) === (rangeNum & mask);
 }
 
@@ -47,7 +48,7 @@ function isYukassaIP(ip: string): boolean {
   if (ip === '127.0.0.1' || ip === '::1') {
     return process.env.NODE_ENV === 'development';
   }
-  
+
   return YUKASSA_IPS.some(cidr => {
     if (cidr.includes(':')) return false; // Skip IPv6 ranges for now
     return ipInCIDR(ip, cidr);
@@ -60,16 +61,16 @@ export async function POST(request: NextRequest) {
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
     const clientIp = forwardedFor?.split(',')[0]?.trim() || realIp || '';
-    
+
     if (clientIp && !isYukassaIP(clientIp)) {
-      console.warn(`Webhook rejected: untrusted IP ${clientIp}`);
+      logger.warn('webhook', 'Rejected untrusted IP', { ip: clientIp });
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
     const { event, object: payment } = body;
 
-    console.log('ЮKassa webhook received:', event, payment?.id);
+    logger.info('webhook', 'Received', { event });
 
     if (event !== 'payment.succeeded') {
       // Обрабатываем только успешные платежи
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
     const plan = metadata?.plan as PlanType;
 
     if (!userId || !plan) {
-      console.error('Missing metadata in payment:', paymentId);
+      logger.error('webhook', 'Missing metadata in payment');
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
     }
 
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     // Обновляем подписку пользователя
     const newLimit = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
-    
+
     const { error: subError } = await supabaseAdmin
       .from('subscriptions')
       .update({
@@ -115,17 +116,17 @@ export async function POST(request: NextRequest) {
       .eq('user_id', userId);
 
     if (subError) {
-      console.error('Error updating subscription:', subError);
+      logger.error('webhook', 'Subscription update failed', subError);
       return NextResponse.json({ error: 'Subscription update failed' }, { status: 500 });
     }
 
-    console.log(`✅ Subscription updated for user ${userId} to plan ${plan}`);
+    logger.info('webhook', 'Subscription updated', { plan });
 
     return NextResponse.json({ received: true, success: true });
   } catch (error) {
-    console.error('Webhook error:', error);
+    logger.error('webhook', 'Unhandled error', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Webhook error' },
+      { error: 'Webhook processing error' },
       { status: 500 }
     );
   }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 // POST — сохранить фидбэк на ответ
 export async function POST(request: NextRequest) {
@@ -21,8 +22,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!business) {
-      // Если нет бизнеса — сохраняем в отдельную таблицу или просто логируем
-      console.log('Feedback without business:', { userId: user.id, feedback, comment, accent });
+      logger.info('feedback', 'Feedback without business profile', { feedback, accent });
       return NextResponse.json({ received: true });
     }
 
@@ -36,11 +36,11 @@ export async function POST(request: NextRequest) {
       adjustment: comment || null,
     });
 
-    console.log(`📊 Feedback: ${feedback}${comment ? ` — "${comment}"` : ''} (accent: ${accent})`);
+    logger.info('feedback', 'Saved', { feedback, accent });
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Feedback API error:', error);
-    return NextResponse.json({ received: true }); // Не показываем ошибку пользователю
+    logger.error('feedback', 'API error', error);
+    return NextResponse.json({ received: true });
   }
 }

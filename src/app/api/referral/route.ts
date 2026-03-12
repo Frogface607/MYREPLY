@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 // Бонусные пороги
 const BONUS_THRESHOLDS = [
@@ -46,7 +47,7 @@ export async function GET() {
         .single();
 
       if (insertError) {
-        console.error('Error creating referral link:', insertError);
+        logger.error('referral', 'Failed to create link', insertError);
         return NextResponse.json({ error: 'Не удалось создать ссылку' }, { status: 500 });
       }
       link = newLink;
@@ -76,7 +77,7 @@ export async function GET() {
       } : null,
     });
   } catch (error) {
-    console.error('Referral GET error:', error);
+    logger.error('referral', 'GET error', error);
     return NextResponse.json({ error: 'Ошибка' }, { status: 500 });
   }
 }
@@ -94,8 +95,8 @@ export async function POST(request: NextRequest) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
-      console.error('Missing Supabase service config');
-      return NextResponse.json({ ok: true }); // не выдаём ошибку пользователю
+      logger.error('referral', 'Missing Supabase service config');
+      return NextResponse.json({ ok: true });
     }
 
     const supabaseAdmin = createServiceClient(supabaseUrl, serviceKey);
@@ -201,14 +202,14 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          console.log(`🎁 Referral bonus: ${threshold.reason} for user ${link.user_id}`);
+          logger.info('referral', 'Bonus awarded', { reason: threshold.reason, userId: link.user_id });
         }
       }
     }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('Referral POST error:', error);
-    return NextResponse.json({ ok: true }); // fail silently
+    logger.error('referral', 'POST error', error);
+    return NextResponse.json({ ok: true });
   }
 }

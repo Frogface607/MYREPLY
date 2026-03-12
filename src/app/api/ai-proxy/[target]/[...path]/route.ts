@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 /**
  * Universal AI API proxy for Moltbot VPS.
  * Russian VPS IP is geo-blocked by Groq/Gemini — this Vercel route forwards requests.
- * 
+ *
  * Usage: set OpenClaw baseUrl to https://my-reply.ru/api/ai-proxy/groq/openai/v1
  * Then OpenClaw appends /audio/transcriptions → full URL:
  *   https://my-reply.ru/api/ai-proxy/groq/openai/v1/audio/transcriptions
@@ -19,35 +20,29 @@ const TARGETS: Record<string, string> = {
 const PROXY_SECRET = process.env.AI_PROXY_SECRET;
 
 function checkAuth(request: NextRequest): boolean {
-  // If AI_PROXY_SECRET is set, require it via header or query param
-  if (PROXY_SECRET) {
-    const headerSecret = request.headers.get('x-proxy-secret');
-    if (headerSecret === PROXY_SECRET) return true;
-    
-    const urlSecret = request.nextUrl.searchParams.get('proxy_secret');
-    if (urlSecret === PROXY_SECRET) return true;
-    
-    return false;
+  // AI_PROXY_SECRET is required in production
+  if (!PROXY_SECRET) {
+    if (process.env.NODE_ENV === 'production') return false;
+    // In development, allow requests with an Authorization header
+    return !!request.headers.get('authorization');
   }
-  
-  // No secret configured — accept requests that have an Authorization header
-  // (only someone with an API key can use this, and without it the proxy is useless)
-  const auth = request.headers.get('authorization');
-  return !!auth;
+
+  const headerSecret = request.headers.get('x-proxy-secret');
+  return headerSecret === PROXY_SECRET;
 }
 
 type RouteContext = { params: Promise<{ target: string; path: string[] }> };
 
 export async function POST(request: NextRequest, context: RouteContext) {
   const { target, path } = await context.params;
-  
+
   if (!checkAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const baseUrl = TARGETS[target];
   if (!baseUrl) {
-    return NextResponse.json({ error: `Unknown target: ${target}` }, { status: 400 });
+    return NextResponse.json({ error: 'Unknown target' }, { status: 400 });
   }
 
   const targetPath = '/' + path.join('/');
@@ -55,7 +50,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   try {
     const forwardHeaders: Record<string, string> = {};
-    
+
     const authorization = request.headers.get('authorization');
     if (authorization) forwardHeaders['Authorization'] = authorization;
 
@@ -82,9 +77,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
       },
     });
   } catch (error) {
-    console.error(`AI Proxy error [${target}${targetPath}]:`, error);
+    logger.error('ai-proxy', 'Proxy error', error);
     return NextResponse.json(
-      { error: 'Proxy error', details: String(error) },
+      { error: 'Proxy error' },
       { status: 500 }
     );
   }
@@ -99,18 +94,17 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
   const baseUrl = TARGETS[target];
   if (!baseUrl) {
-    return NextResponse.json({ error: `Unknown target: ${target}` }, { status: 400 });
+    return NextResponse.json({ error: 'Unknown target' }, { status: 400 });
   }
 
   const targetPath = '/' + path.join('/');
   const url = new URL(request.url);
-  url.searchParams.delete('proxy_secret');
   const queryString = url.searchParams.toString();
   const targetUrl = `${baseUrl}${targetPath}${queryString ? '?' + queryString : ''}`;
 
   try {
     const forwardHeaders: Record<string, string> = {};
-    
+
     const authorization = request.headers.get('authorization');
     if (authorization) forwardHeaders['Authorization'] = authorization;
 
@@ -127,6 +121,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       },
     });
   } catch (error) {
+    logger.error('ai-proxy', 'GET proxy error', error);
     return NextResponse.json({ error: 'Proxy error' }, { status: 500 });
   }
 }

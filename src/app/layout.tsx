@@ -80,6 +80,63 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('myreply-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}})()`,
           }}
         />
+        {/* JSON-LD structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'MyReply',
+              url: 'https://my-reply.ru',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              description: 'AI-помощник для профессиональных ответов на отзывы клиентов. Сохраните нервы и репутацию.',
+              offers: [
+                {
+                  '@type': 'Offer',
+                  price: '0',
+                  priceCurrency: 'RUB',
+                  name: 'Бесплатный',
+                  description: '15 ответов в месяц',
+                },
+                {
+                  '@type': 'Offer',
+                  price: '490',
+                  priceCurrency: 'RUB',
+                  name: 'Старт',
+                  description: 'Безлимитные ответы, профиль бизнеса, история',
+                },
+                {
+                  '@type': 'Offer',
+                  price: '1490',
+                  priceCurrency: 'RUB',
+                  name: 'Про',
+                  description: 'До 5 профилей, 3 пользователя, приоритетная поддержка',
+                },
+              ],
+              inLanguage: 'ru',
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'MyReply',
+              url: 'https://my-reply.ru',
+              logo: 'https://my-reply.ru/favicon.svg',
+              contactPoint: {
+                '@type': 'ContactPoint',
+                email: 'support@my-reply.ru',
+                contactType: 'customer service',
+                availableLanguage: 'Russian',
+              },
+            }),
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}

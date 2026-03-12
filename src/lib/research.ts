@@ -25,7 +25,7 @@ async function tryModel(model: string, messages: { role: string; content: string
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+      'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://my-reply.ru',
       'X-Title': 'MyReply',
     },
     body: JSON.stringify({
@@ -80,13 +80,11 @@ brevity: 0=развёрнуто, 100=кратко
   let response = await tryModel(PERPLEXITY_MODEL, messages);
   
   if (!response.ok) {
-    console.log('Perplexity unavailable, trying Claude...');
+    // Perplexity unavailable, trying Claude as fallback
     response = await tryModel(FALLBACK_MODEL, messages);
   }
 
   if (!response.ok) {
-    const error = await response.text();
-    console.error('Research API error:', error);
     throw new Error('Не удалось выполнить исследование');
   }
 
