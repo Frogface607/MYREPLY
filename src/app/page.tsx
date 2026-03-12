@@ -1,36 +1,36 @@
 import Link from 'next/link';
-import { ArrowRight, Clock, Shield, Sparkles, Check, Search, Settings, MessageSquare, Chrome, Zap, Crown } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Check, Search, Settings, MessageSquare, Chrome, Zap, Building2, Utensils, Hotel, Scissors, Stethoscope, Car, Copy, Star, TrendingUp, Brain, Eye, Palette } from 'lucide-react';
 import { ExamplesSection } from '@/components/ExamplesSection';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Logo } from '@/components/Logo';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* Skip to main content - accessibility */}
-      <a 
-        href="#main" 
+      <a
+        href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg"
       >
         Перейти к содержимому
       </a>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link
             href="/"
             className="flex items-center hover:opacity-80 transition-opacity"
             aria-label="MyReply - На главную"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="MyReply" className="h-7 sm:h-8 w-auto" />
+            <Logo className="h-7 sm:h-8 w-auto" />
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-3 sm:gap-4">
             <Link
               href="/challenge"
               className="text-sm font-medium text-primary hover:text-primary-hover transition-colors hidden sm:block"
             >
-              ✨ Попробовать
+              Демо
             </Link>
             <Link
               href="/pricing"
@@ -41,7 +41,7 @@ export default function LandingPage() {
             <ThemeToggle />
             <Link
               href="/auth"
-              className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
+              className="text-sm font-medium px-4 py-1.5 rounded-full border border-primary/30 text-primary hover:bg-primary hover:text-white transition-all"
             >
               Войти
             </Link>
@@ -49,187 +49,166 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
       <main id="main" role="main">
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-primary font-medium mb-6 tracking-wide uppercase text-sm">
-            Для любого бизнеса с отзывами
-          </p>
-          
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
+
+      {/* ─── HERO ─── */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-16">
+        {/* Background effects */}
+        <div className="glow-orb w-[600px] h-[600px] bg-primary/30 -top-40 -right-40" />
+        <div className="glow-orb w-[400px] h-[400px] bg-primary/20 bottom-20 -left-32" />
+        <div className="absolute inset-0 bg-grid opacity-30" />
+
+        <div className="relative max-w-5xl mx-auto text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in">
+            <Zap className="w-3.5 h-3.5 text-primary" />
+            <span className="text-sm font-medium text-primary">AI-ответы на отзывы за 30 секунд</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.08] tracking-tight animate-fade-in">
             Негативный отзыв?
             <br />
-            <span className="text-muted">Больше не ваша проблема.</span>
+            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Больше не проблема.
+            </span>
           </h1>
-          
-          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-            AI генерирует профессиональные ответы на отзывы за секунды. 
-            Вы спокойно занимаетесь бизнесом — а не нервничаете из-за чужого мнения.
+
+          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in">
+            AI генерирует профессиональные ответы на отзывы — а вы спокойно
+            занимаетесь бизнесом. 5 вариантов за секунды.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {['Маркетплейсы', 'Рестораны и кафе', 'Отели', 'Услуги', 'Клиники', 'Авто'].map((tag) => (
-              <span key={tag} className="px-3 py-1 bg-muted-light text-muted text-sm rounded-full">
-                {tag}
-              </span>
-            ))}
+          {/* Mini product preview */}
+          <div className="max-w-md mx-auto mb-10 animate-fade-in">
+            <div className="bg-card border border-border/60 rounded-2xl p-4 shadow-xl shadow-primary/5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-danger" />
+                <span className="text-xs text-muted">1 звезда</span>
+                <span className="text-xs text-muted ml-auto">Wildberries</span>
+              </div>
+              <p className="text-sm text-left mb-3 leading-relaxed">
+                &laquo;Ужасное качество! Ткань полезла после первой стирки, швы кривые. Не рекомендую!&raquo;
+              </p>
+              <div className="flex gap-2">
+                <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-lg font-medium">Эмпатичный</span>
+                <span className="px-2.5 py-1 bg-muted-light text-muted text-xs rounded-lg">Решение</span>
+                <span className="px-2.5 py-1 bg-muted-light text-muted text-xs rounded-lg">Нейтральный</span>
+              </div>
+            </div>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
             <Link
               href="/challenge"
-              className="group px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/20"
+              className="group px-8 py-4 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/25 btn-glow"
             >
               Попробовать бесплатно
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/auth"
-              className="px-6 py-3 border border-border rounded-full text-sm hover:border-primary hover:text-primary transition-all"
+              className="px-6 py-3 border border-border rounded-full text-sm font-medium hover:border-primary hover:text-primary transition-all"
             >
               Войти в кабинет
             </Link>
           </div>
-          <p className="text-sm text-muted mt-4">Без регистрации • 5 вариантов ответа • 30 секунд</p>
+          <p className="text-xs text-muted mt-5 tracking-wide">Без регистрации &middot; 5 вариантов ответа &middot; 30 секунд</p>
         </div>
       </section>
 
-      {/* Pain Points — emotional */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/50">
+      {/* ─── PAIN POINTS ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 border-t border-border/30">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
               Знакомо?
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
               Один плохой отзыв — и день испорчен
             </h2>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                quote: '«Опять негатив...»',
+                quote: 'Опять негатив...',
                 pain: 'Читаешь — и настроение на нуле. Весь день прокручиваешь в голове.',
               },
               {
-                quote: '«Что ответить, чтобы не навредить?»',
+                quote: 'Что ответить, чтобы не навредить?',
                 pain: 'Страх написать лишнее. Каждое слово — как мина.',
               },
               {
-                quote: '«Я вообще не виноват!»',
+                quote: 'Я вообще не виноват!',
                 pain: 'Клиент не прав, но извиняться всё равно приходится.',
               },
               {
-                quote: '«На это уходит вечность»',
+                quote: 'На это уходит вечность',
                 pain: '20 минут на один ответ. А их десять. А ещё бизнес вести.',
               },
               {
-                quote: '«Один отзыв — минус 10 клиентов»',
+                quote: 'Один отзыв — минус 10 клиентов',
                 pain: 'Без ответа рейтинг падает. С плохим ответом — ещё хуже.',
               },
               {
-                quote: '«Ненавижу это, но надо»',
+                quote: 'Ненавижу это, но надо',
                 pain: 'Отвечать на отзывы — не ваша работа. Но без этого никак.',
               },
             ].map((problem, i) => (
-              <div 
-                key={i} 
-                className="p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 transition-colors"
+              <div
+                key={i}
+                className="group p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-danger/30 hover:bg-danger-light/30 transition-all duration-300 card-lift"
               >
-                <p className="text-lg font-semibold mb-2">{problem.quote}</p>
-                <p className="text-sm text-muted">{problem.pain}</p>
+                <p className="text-lg font-semibold mb-2">&laquo;{problem.quote}&raquo;</p>
+                <p className="text-sm text-muted leading-relaxed">{problem.pain}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Solution */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
+      {/* ─── HOW IT WORKS ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card/50 border-y border-border/30">
         <div className="max-w-4xl mx-auto">
-          <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
-            Решение
+          <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
+            Как это работает
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
             Три шага — и вы спокойны.
           </h2>
-          <p className="text-muted text-lg mb-16 max-w-2xl">
-            AI берёт удар на себя. Вы получаете готовый профессиональный ответ и закрываете отзыв за секунды.
+          <p className="text-muted text-lg mb-16 max-w-2xl leading-relaxed">
+            AI берёт удар на себя. Вы получаете готовый профессиональный ответ
+            и закрываете отзыв за секунды.
           </p>
-          
-          <div className="space-y-12">
+
+          <div className="space-y-8">
             {[
               {
                 num: '01',
+                icon: Copy,
                 title: 'Вставьте отзыв',
                 desc: 'Скопируйте текст или загрузите скриншот. Работает с любой площадкой.',
               },
               {
                 num: '02',
+                icon: MessageSquare,
                 title: 'Расскажите контекст',
                 desc: 'Как было на самом деле? AI учтёт вашу позицию и не признает вину, если её нет.',
               },
               {
                 num: '03',
+                icon: Check,
                 title: 'Выберите ответ',
                 desc: '5 вариантов — от сочувственного до твёрдого. Скопируйте и отправьте.',
               },
             ].map((step, i) => (
-              <div key={i} className="flex items-start gap-8">
-                <span className="text-4xl font-bold text-border">{step.num}</span>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                  <p className="text-muted">{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Smart Profile */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
-            Умный профиль
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
-            AI знает ваш бизнес. Ответы звучат как ваши.
-          </h2>
-          <p className="text-muted text-lg mb-16 max-w-2xl">
-            Deep Research найдёт ваш бизнес в интернете и создаст профиль. Каждый ответ будет учитывать вашу специфику, сильные стороны и стиль общения.
-          </p>
-          
-          <div className="space-y-12">
-            {[
-              {
-                num: '00',
-                icon: Search,
-                title: 'AI изучит ваш бизнес',
-                desc: 'Укажите название и город — за секунды получите готовый профиль с описанием, специализацией и сильными сторонами',
-              },
-              {
-                num: '01',
-                icon: Settings,
-                title: 'Настройте под себя',
-                desc: 'Скорректируйте описание, добавьте правила (не извиняться, не давать скидки, звать перезвонить — что угодно)',
-              },
-              {
-                num: '02',
-                icon: MessageSquare,
-                title: 'Выберите тон',
-                desc: 'Дружелюбный, деловой, экспертный — AI запомнит и будет отвечать именно в вашем стиле',
-              },
-            ].map((step, i) => (
-              <div key={i} className="flex items-start gap-6">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary-light rounded-xl flex items-center justify-center">
+              <div key={i} className="flex items-start gap-6 group">
+                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                   <step.icon className="w-6 h-6 text-primary" aria-hidden="true" />
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl font-bold text-border">{step.num}</span>
+                <div className="flex-1 pt-1">
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <span className="text-sm font-mono text-muted step-number">{step.num}</span>
                     <h3 className="text-xl font-semibold">{step.title}</h3>
                   </div>
                   <p className="text-muted leading-relaxed">{step.desc}</p>
@@ -240,56 +219,104 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Examples */}
+      {/* ─── SMART PROFILE ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
+              Умный профиль
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
+              AI знает ваш бизнес.<br />Ответы звучат как ваши.
+            </h2>
+            <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
+              Deep Research найдёт ваш бизнес в интернете и создаст профиль.
+              Каждый ответ учитывает вашу специфику.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Search,
+                title: 'AI изучит ваш бизнес',
+                desc: 'Укажите название и город — за секунды получите готовый профиль с описанием и сильными сторонами',
+              },
+              {
+                icon: Settings,
+                title: 'Настройте под себя',
+                desc: 'Скорректируйте описание, добавьте правила — не извиняться, не давать скидки, что угодно',
+              },
+              {
+                icon: Palette,
+                title: 'Выберите тон',
+                desc: 'Дружелюбный, деловой, экспертный — AI запомнит и будет отвечать именно в вашем стиле',
+              },
+            ].map((step, i) => (
+              <div key={i} className="p-6 rounded-2xl border border-border/50 bg-card/50 card-lift">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <step.icon className="w-6 h-6 text-primary" aria-hidden="true" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── EXAMPLES ─── */}
       <ExamplesSection />
 
-      {/* Who it's for */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
+      {/* ─── WHO IT'S FOR ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card/50 border-y border-border/30">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
               Кому подходит
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
               Любой бизнес, где есть отзывы клиентов
             </h2>
           </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
-                emoji: '📦',
+                icon: Building2,
                 title: 'Маркетплейсы',
                 desc: 'WB, Ozon, Яндекс.Маркет — ответы на отзывы прямо из кабинета продавца',
               },
               {
-                emoji: '🍽️',
+                icon: Utensils,
                 title: 'Рестораны и кафе',
                 desc: 'Яндекс.Карты, 2GIS, Google — один плохой отзыв = минус десяток гостей',
               },
               {
-                emoji: '🏨',
+                icon: Hotel,
                 title: 'Отели и хостелы',
                 desc: 'Booking, Островок, Google — каждый сезон волна негатива, а отвечать некогда',
               },
               {
-                emoji: '✂️',
+                icon: Scissors,
                 title: 'Услуги и салоны',
                 desc: 'Яндекс, Профи, Авито — клиент недоволен, а ты не знаешь что сказать',
               },
               {
-                emoji: '🏥',
+                icon: Stethoscope,
                 title: 'Клиники и врачи',
                 desc: 'ПроДокторов, Яндекс — деликатные ответы, где каждое слово важно',
               },
               {
-                emoji: '🚗',
+                icon: Car,
                 title: 'Авто и сервисы',
-                desc: 'Яндекс, 2GIS, Drive2 — «сломалось через день» нужен грамотный ответ',
+                desc: 'Яндекс, 2GIS, Drive2 — нужен грамотный ответ, не шаблон',
               },
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-colors">
-                <div className="text-3xl mb-3">{item.emoji}</div>
+              <div key={i} className="group p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 card-lift">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
+                  <item.icon className="w-5 h-5 text-primary" aria-hidden="true" />
+                </div>
                 <h3 className="font-semibold mb-2">{item.title}</h3>
                 <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
               </div>
@@ -298,14 +325,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Chrome Extension */}
+      {/* ─── CHROME EXTENSION ─── */}
       <section className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-card border-2 border-primary/20 rounded-3xl p-8 sm:p-12">
-            <div className="flex flex-col lg:flex-row items-center gap-8">
+          <div className="relative bg-card border border-border/50 rounded-3xl p-8 sm:p-12 overflow-hidden">
+            {/* Subtle glow */}
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/10 rounded-full blur-3xl" />
+
+            <div className="relative flex flex-col lg:flex-row items-center gap-8">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                     <Chrome className="w-5 h-5 text-primary" />
                   </div>
                   <span className="text-xs font-medium text-primary uppercase tracking-wider">Chrome-расширение</span>
@@ -314,20 +344,19 @@ export default function LandingPage() {
                   Отвечайте прямо в кабинете продавца
                 </h2>
                 <p className="text-muted mb-6 leading-relaxed">
-                  Кнопка MyReply появится рядом с каждым отзывом в личном кабинете 
-                  маркетплейса. Один клик — ответ готов. 
-                  Не нужно переключаться между вкладками.
+                  Кнопка MyReply появится рядом с каждым отзывом в личном кабинете
+                  маркетплейса. Один клик — ответ готов.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Wildberries</span>
-                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Ozon</span>
-                  <span className="px-3 py-1.5 bg-muted-light rounded-lg text-sm font-medium">Яндекс.Маркет</span>
+                  {['Wildberries', 'Ozon', 'Яндекс.Маркет'].map((mp) => (
+                    <span key={mp} className="px-3 py-1.5 bg-primary/10 rounded-lg text-sm font-medium text-primary/80">{mp}</span>
+                  ))}
                 </div>
               </div>
-              <div className="flex-shrink-0 w-48 h-48 bg-primary-light rounded-2xl flex items-center justify-center">
+              <div className="flex-shrink-0 w-48 h-48 bg-primary/5 border border-primary/10 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
-                  <Chrome className="w-16 h-16 text-primary mx-auto mb-3" />
-                  <p className="text-sm font-medium text-primary">Скоро в Chrome Web Store</p>
+                  <Chrome className="w-14 h-14 text-primary/60 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-primary/70">Скоро в Web Store</p>
                 </div>
               </div>
             </div>
@@ -335,60 +364,71 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Benefits — emotional */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
-            Почему MyReply
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-16 leading-tight">
-            Спокойствие. Репутация. Время.
-          </h2>
-          
-          <div className="grid sm:grid-cols-3 gap-12">
-            <div>
-              <Shield className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Негатив — больше не стресс</h3>
-              <p className="text-muted text-sm leading-relaxed">
-                AI берёт удар на себя. Вы больше не пропускаете чужое недовольство через себя.
-              </p>
-            </div>
-            <div>
-              <Clock className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Секунды, не минуты</h3>
-              <p className="text-muted text-sm leading-relaxed">
-                Ответ готов быстрее, чем вы успеете расстроиться. Закрыли и забыли.
-              </p>
-            </div>
-            <div>
-              <Sparkles className="w-8 h-8 text-primary mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-semibold mb-2">Звучит как вы</h3>
-              <p className="text-muted text-sm leading-relaxed">
-                Умный профиль бизнеса. Ответы не шаблонные, а персональные — с учётом вашей специфики.
-              </p>
-            </div>
+      {/* ─── WHY MYREPLY ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card/50 border-y border-border/30">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
+              Почему MyReply
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+              Спокойствие. Репутация. Время.
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Shield,
+                title: 'Негатив — не стресс',
+                desc: 'AI берёт удар на себя. Вы больше не пропускаете чужое недовольство через себя.',
+              },
+              {
+                icon: Clock,
+                title: 'Секунды, не минуты',
+                desc: 'Ответ готов быстрее, чем вы успеете расстроиться.',
+              },
+              {
+                icon: Brain,
+                title: 'Звучит как вы',
+                desc: 'Умный профиль бизнеса. Ответы персональные, не шаблонные.',
+              },
+              {
+                icon: Eye,
+                title: 'Скриншоты тоже',
+                desc: 'Загрузите фото отзыва — AI распознает текст и ответит.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center p-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-6 h-6 text-primary" aria-hidden="true" />
+                </div>
+                <h3 className="font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* ─── PRICING ─── */}
       <section id="pricing" className="py-24 sm:py-32 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-sm">
+          <div className="text-center mb-14">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
               Тарифы
             </p>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
-              Начните бесплатно. Подключите профиль, когда будете готовы.
+              Начните бесплатно. Подключите, когда будете готовы.
             </h2>
             <p className="text-muted text-lg max-w-2xl mx-auto">
-              Базовые ответы — бесплатно и навсегда. Персонализированные ответы с профилем бизнеса — от 490 ₽/мес.
+              Базовые ответы — бесплатно навсегда. Персонализация — от 490 ₽/мес.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {/* Free */}
-            <div className="bg-card border-2 border-border rounded-2xl p-6 flex flex-col">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 flex flex-col card-lift">
               <div className="mb-6">
                 <h3 className="text-xl font-semibold mb-1">Free</h3>
                 <p className="text-sm text-muted">Попробовать и оценить</p>
@@ -403,7 +443,7 @@ export default function LandingPage() {
                   'Загрузка скриншотов',
                   'Базовая генерация',
                 ].map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
+                  <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span>{f}</span>
                   </li>
@@ -411,15 +451,15 @@ export default function LandingPage() {
               </ul>
               <Link
                 href="/auth"
-                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-background border border-border hover:border-primary hover:text-primary transition-all"
+                className="w-full py-3 px-4 rounded-xl font-medium text-center border border-border hover:border-primary hover:text-primary transition-all"
               >
                 Начать бесплатно
               </Link>
             </div>
 
-            {/* Старт */}
-            <div className="relative bg-card border-2 border-primary rounded-2xl p-6 flex flex-col shadow-lg shadow-primary/10 scale-[1.02]">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
+            {/* Старт — popular */}
+            <div className="relative bg-card border-2 border-primary rounded-2xl p-6 flex flex-col pricing-glow">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-white text-xs font-semibold rounded-full">
                 Популярный
               </div>
               <div className="mb-6">
@@ -439,7 +479,7 @@ export default function LandingPage() {
                   'Вся история ответов',
                   'Chrome-расширение',
                 ].map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
+                  <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span>{f}</span>
                   </li>
@@ -447,7 +487,7 @@ export default function LandingPage() {
               </ul>
               <Link
                 href="/auth"
-                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-primary text-white hover:bg-primary-hover transition-all"
+                className="w-full py-3 px-4 rounded-xl font-semibold text-center bg-primary text-white hover:bg-primary-hover transition-all"
               >
                 Начать сейчас
               </Link>
@@ -455,7 +495,7 @@ export default function LandingPage() {
             </div>
 
             {/* Про */}
-            <div className="bg-card border-2 border-border rounded-2xl p-6 flex flex-col">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 flex flex-col card-lift">
               <div className="mb-6">
                 <h3 className="text-xl font-semibold mb-1">Про</h3>
                 <p className="text-sm text-muted">Для команд и сетей магазинов</p>
@@ -473,7 +513,7 @@ export default function LandingPage() {
                   'Приоритетная поддержка',
                   'Выделенный менеджер',
                 ].map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
+                  <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                     <span>{f}</span>
                   </li>
@@ -481,7 +521,7 @@ export default function LandingPage() {
               </ul>
               <Link
                 href="/auth"
-                className="w-full py-3 px-4 rounded-xl font-medium text-center bg-background border border-border hover:border-primary hover:text-primary transition-all"
+                className="w-full py-3 px-4 rounded-xl font-medium text-center border border-border hover:border-primary hover:text-primary transition-all"
               >
                 Выбрать Про
               </Link>
@@ -496,41 +536,42 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features list */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card border-y border-border/50">
+      {/* ─── FEATURES GRID ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card/50 border-y border-border/30">
         <div className="max-w-4xl mx-auto">
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4">
             {[
-              'Любая площадка с отзывами',
-              'Загрузка скриншотов отзывов',
-              'Умный профиль бизнеса',
-              'Deep Research — AI изучит вас',
-              '5 режимов ответов',
-              'Тёмная тема',
+              { icon: Star, text: 'Любая площадка с отзывами' },
+              { icon: Eye, text: 'Загрузка скриншотов отзывов' },
+              { icon: Brain, text: 'Умный профиль бизнеса' },
+              { icon: Search, text: 'Deep Research — AI изучит вас' },
+              { icon: TrendingUp, text: '5 режимов ответов' },
+              { icon: Palette, text: 'Тёмная тема' },
             ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <Check className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
-                <span>{feature}</span>
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-card transition-colors">
+                <feature.icon className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+                <span className="font-medium">{feature.text}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA — emotional */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto text-center">
+      {/* ─── CTA ─── */}
+      <section className="relative py-24 sm:py-32 px-4 sm:px-6">
+        <div className="glow-orb w-[500px] h-[500px] bg-primary/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        <div className="relative max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight">
             Следующий негативный отзыв —
             <br />
             <span className="text-primary">уже не ваша головная боль.</span>
           </h2>
-          <p className="text-muted text-lg mb-10">
+          <p className="text-muted text-lg mb-10 leading-relaxed">
             Вставьте отзыв — получите 5 вариантов ответа. Без регистрации, без карты.
           </p>
           <Link
             href="/challenge"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/20"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/25 btn-glow"
           >
             Попробовать прямо сейчас
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -539,16 +580,13 @@ export default function LandingPage() {
       </section>
       </main>
 
-      {/* Footer */}
-      <footer className="py-10 px-4 sm:px-6 border-t border-border/50">
+      {/* ─── FOOTER ─── */}
+      <footer className="py-10 px-4 sm:px-6 border-t border-border/30">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-primary/20 rounded flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-primary" />
-              </div>
-              <span className="font-medium">MyReply</span>
-            </div>
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <Logo className="h-6 w-auto" />
+            </Link>
             <nav className="flex flex-wrap items-center gap-6 text-sm text-muted">
               <Link href="/pricing" className="hover:text-foreground transition-colors">
                 Тарифы
@@ -568,7 +606,7 @@ export default function LandingPage() {
             </nav>
           </div>
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2 text-xs text-muted">
-            <p>© 2026 MyReply. Сделано для тех, кто ценит время и репутацию.</p>
+            <p>&copy; 2026 MyReply. Сделано для тех, кто ценит время и репутацию.</p>
             <a href="https://t.me/myreply_ru" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
               t.me/myreply_ru
             </a>
