@@ -101,28 +101,33 @@ export default function HistoryPage() {
     toast.showInfo('Функция массового удаления пока недоступна. Удаляйте записи по одной.');
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (history.length === 0) {
       toast.showWarning('Нет данных для экспорта');
       return;
     }
-    
+
+    if (subscription?.plan !== 'pro') {
+      toast.showInfo('Экспорт в CSV доступен на тарифе Про');
+      return;
+    }
+
     try {
-      const content = history.map(item => {
-        const date = new Date(item.created_at).toLocaleString('ru-RU');
-        return `---\nДата: ${date}\n\nОтзыв:\n${item.review_text}\n\nОтвет:\n${item.chosen_response}\n`;
-      }).join('\n');
-      
-      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const res = await fetch('/api/history?format=csv');
+      if (!res.ok) {
+        toast.showError('Ошибка при экспорте');
+        return;
+      }
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `myreply-history-${new Date().toISOString().split('T')[0]}.txt`;
+      a.download = `myreply-history-${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.showSuccess('История экспортирована');
+      toast.showSuccess('История экспортирована в CSV');
     } catch (error) {
       toast.showError('Ошибка при экспорте истории');
     }
@@ -167,10 +172,14 @@ export default function HistoryPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleExport}
-                className="p-2 text-muted hover:text-foreground hover:bg-muted-light rounded-lg transition-all"
-                title="Экспорт"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-muted hover:text-foreground hover:bg-muted-light rounded-lg transition-all text-sm"
+                title="Экспорт CSV"
               >
-                <Download className="w-5 h-5" />
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">CSV</span>
+                {subscription?.plan !== 'pro' && (
+                  <span className="text-[10px] bg-primary/10 text-primary px-1 py-0.5 rounded">Про</span>
+                )}
               </button>
               <Link
                 href="/dashboard"
