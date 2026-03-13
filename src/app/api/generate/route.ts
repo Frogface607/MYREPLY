@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateResponses } from '@/lib/openrouter';
-import { PLAN_LIMITS } from '@/types';
+import { PLAN_LIMITS, PLAN_FEATURES, type PlanType } from '@/types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -142,6 +142,12 @@ export async function POST(request: NextRequest) {
     // =====================
     const body = await request.json();
     let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
+
+    // Gate hardcore mode by plan — Pro only
+    const currentPlan = (subscription?.plan || 'free') as PlanType;
+    if (includeHardcore && !PLAN_FEATURES[currentPlan]?.hardcoreMode) {
+      includeHardcore = false;
+    }
 
     // If image provided, extract text first
     if (imageBase64) {

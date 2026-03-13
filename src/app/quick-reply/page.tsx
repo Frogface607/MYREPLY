@@ -330,24 +330,31 @@ export default function QuickReplyPage() {
           </div>
         )}
 
-        {/* Mode Toggle */}
+        {/* Mode Toggle — Pro only */}
         <div className="mb-4 flex items-center justify-end">
-          <button
-            onClick={() => setIncludeHardcore(!includeHardcore)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-              includeHardcore 
-                ? 'bg-orange-100 text-orange-700 border border-orange-300' 
-                : 'bg-muted-light text-muted hover:bg-muted-light/80'
-            }`}
-          >
-            <Flame className={`w-4 h-4 ${includeHardcore ? 'text-orange-500' : ''}`} />
-            <span>{includeHardcore ? 'Все режимы + Дерзкий' : '4 рабочих режима'}</span>
-            {includeHardcore ? (
-              <ToggleRight className="w-5 h-5 text-orange-500" />
-            ) : (
-              <ToggleLeft className="w-5 h-5" />
-            )}
-          </button>
+          {subscription?.plan === 'pro' ? (
+            <button
+              onClick={() => setIncludeHardcore(!includeHardcore)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                includeHardcore
+                  ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                  : 'bg-muted-light text-muted hover:bg-muted-light/80'
+              }`}
+            >
+              <Flame className={`w-4 h-4 ${includeHardcore ? 'text-orange-500' : ''}`} />
+              <span>{includeHardcore ? 'Все режимы + Дерзкий' : '4 рабочих режима'}</span>
+              {includeHardcore ? (
+                <ToggleRight className="w-5 h-5 text-orange-500" />
+              ) : (
+                <ToggleLeft className="w-5 h-5" />
+              )}
+            </button>
+          ) : subscription && (
+            <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted opacity-60">
+              <Flame className="w-4 h-4" />
+              <span>Режим Хардкор — на тарифе Про</span>
+            </div>
+          )}
         </div>
 
         {/* Input Section */}
