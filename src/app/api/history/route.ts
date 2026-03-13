@@ -57,13 +57,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Получить историю ответов
-export async function GET() {
+// Получить историю ответов (+ CSV export для Pro)
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Необходима авторизация' },
@@ -80,6 +80,53 @@ export async function GET() {
 
     if (!business) {
       return NextResponse.json({ history: [] });
+    }
+
+    // CSV export for Pro users
+    const { searchParams } = new URL(request.url);
+    if (searchParams.get('format') === 'csv') {
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('plan')
+        .eq('user_id', user.id)
+        .single();
+
+      if (subscription?.plan !== 'pro') {
+        return NextResponse.json(
+          { error: 'Экспорт доступен только на тарифе Про' },
+          { status: 403 }
+        );
+      }
+
+      const { data: exportHistory } = await supabase
+        .from('response_history')
+        .select('review_text, chosen_response, response_accent, created_at')
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false });
+
+      if (!exportHistory || exportHistory.length === 0) {
+        return NextResponse.json(
+          { error: 'Нет данных для экспорта' },
+          { status: 404 }
+        );
+      }
+
+      const BOM = '\uFEFF';
+      const header = 'Дата,Текст отзыва,Ответ,Тон\n';
+      const rows = exportHistory.map(h => {
+        const date = new Date(h.created_at).toLocaleDateString('ru-RU');
+        const review = `"${(h.review_text || '').replace(/"/g, '""')}"`;
+        const response = `"${(h.chosen_response || '').replace(/"/g, '""')}"`;
+        const accent = h.response_accent || '';
+        return `${date},${review},${response},${accent}`;
+      }).join('\n');
+
+      return new Response(BOM + header + rows, {
+        headers: {
+          'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': 'attachment; filename="myreply-history.csv"',
+        },
+      });
     }
 
     const { data: history, error: historyError } = await supabase
