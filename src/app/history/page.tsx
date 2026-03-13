@@ -14,7 +14,7 @@ import {
   Loader2,
   User
 } from 'lucide-react';
-import type { ResponseHistory } from '@/types';
+import type { ResponseHistory, Subscription } from '@/types';
 import { useToast } from '@/components/ToastProvider';
 import { Dialog } from '@/components/Dialog';
 
@@ -25,16 +25,24 @@ export default function HistoryPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const toast = useToast();
 
   useEffect(() => {
     const loadHistory = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/history');
-        if (!res.ok) throw new Error('Failed to load history');
-        const data = await res.json();
+        const [historyRes, subRes] = await Promise.all([
+          fetch('/api/history'),
+          fetch('/api/subscription'),
+        ]);
+        if (!historyRes.ok) throw new Error('Failed to load history');
+        const data = await historyRes.json();
         setHistory(data.history || []);
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          if (subData.subscription) setSubscription(subData.subscription);
+        }
       } catch (error) {
         console.error('Error loading history:', error);
         toast.showError('Не удалось загрузить историю');
@@ -191,19 +199,38 @@ export default function HistoryPage() {
               <MessageSquareText className="w-10 h-10 text-primary" />
             </div>
             <h2 className="text-2xl font-semibold mb-3">История пуста</h2>
-            <p className="text-muted mb-2 max-w-md mx-auto">
-              Здесь появятся ответы, которые вы скопировали.
-            </p>
-            <p className="text-sm text-muted mb-8">
-              Это удобно — можно использовать удачные формулировки повторно.
-            </p>
-            <Link
-              href="/quick-reply"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium"
-            >
-              <Sparkles className="w-5 h-5" />
-              Создать первый ответ
-            </Link>
+            {subscription?.plan === 'free' && subscription?.status !== 'trialing' ? (
+              <>
+                <p className="text-muted mb-2 max-w-md mx-auto">
+                  История доступна на тарифе Старт
+                </p>
+                <p className="text-sm text-muted mb-8">
+                  Сохраняйте ответы и используйте удачные формулировки повторно.
+                </p>
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium"
+                >
+                  Подключить за 790 ₽/мес →
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="text-muted mb-2 max-w-md mx-auto">
+                  Здесь появятся ответы, которые вы скопировали.
+                </p>
+                <p className="text-sm text-muted mb-8">
+                  Это удобно — можно использовать удачные формулировки повторно.
+                </p>
+                <Link
+                  href="/quick-reply"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Создать первый ответ
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <div className="space-y-6">

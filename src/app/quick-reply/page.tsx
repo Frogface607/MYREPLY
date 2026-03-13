@@ -428,6 +428,21 @@ export default function QuickReplyPage() {
               />
             </div>
 
+            {/* Upsell for free users */}
+            {subscription?.plan === 'free' && subscription?.status !== 'trialing' && (
+              <div className="mt-6 p-4 rounded-xl border border-primary/20 bg-primary-light/50">
+                <p className="text-sm font-medium mb-1">
+                  С профилем бизнеса ответы станут персональными
+                </p>
+                <p className="text-xs text-muted mb-3">
+                  AI будет знать название, сильные стороны и стиль вашего бизнеса
+                </p>
+                <a href="/pricing" className="text-sm text-primary font-medium hover:underline">
+                  Подключить Старт за 790 ₽/мес →
+                </a>
+              </div>
+            )}
+
             {/* New Review Button */}
             <div className="mt-8 text-center">
               <button
