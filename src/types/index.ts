@@ -122,25 +122,23 @@ export interface OnboardingData {
 // =====================
 
 // Тарифные планы
-export type PlanType = 'free' | 'start' | 'pro' | 'business';
+export type PlanType = 'free' | 'start' | 'pro';
 
 // Статус подписки
 export type SubscriptionStatus = 'active' | 'trialing' | 'cancelled' | 'past_due' | 'expired';
 
 // Лимиты по тарифам (ответов в месяц)
 export const PLAN_LIMITS: Record<PlanType, number> = {
-  free: 15,
+  free: 5,
   start: 999999,   // безлимит
   pro: 999999,     // безлимит
-  business: 999999, // безлимит
 };
 
 // Цены в копейках
 export const PLAN_PRICES: Record<PlanType, number> = {
   free: 0,
-  start: 49000,     // 490 ₽
-  pro: 149000,      // 1 490 ₽
-  business: 149000,  // legacy, не показываем
+  start: 79000,     // 790 ₽
+  pro: 199000,      // 1 990 ₽
 };
 
 // Названия тарифов
@@ -148,7 +146,6 @@ export const PLAN_NAMES: Record<PlanType, string> = {
   free: 'Free',
   start: 'Старт',
   pro: 'Про',
-  business: 'Про', // legacy
 };
 
 // Фичи по тарифам (feature-gated модель)
@@ -156,51 +153,49 @@ export const PLAN_FEATURES: Record<PlanType, {
   businessProfile: boolean;
   deepResearch: boolean;
   toneSettings: boolean;
-  history: boolean | number; // true = вся, number = последние N
+  history: boolean | number; // true = вся, number = последние N, 0 = нет
   chromeExtension: boolean;
   multipleBusinesses: number; // кол-во профилей
   multipleUsers: number;     // кол-во пользователей
   invoicePayment: boolean;   // оплата по счёту
+  hardcoreMode: boolean;     // режим Хардкор — только Pro
+  csvExport: boolean;        // экспорт истории в CSV — только Pro
 }> = {
   free: {
     businessProfile: false,
-    deepResearch: false, // 1 раз на онбординге, потом блок
+    deepResearch: false,
     toneSettings: false,
-    history: 5,
+    history: 0,
     chromeExtension: false,
     multipleBusinesses: 0,
     multipleUsers: 1,
     invoicePayment: false,
+    hardcoreMode: false,
+    csvExport: false,
   },
   start: {
     businessProfile: true,
     deepResearch: true,
     toneSettings: true,
     history: true,
-    chromeExtension: true,
+    chromeExtension: false,
     multipleBusinesses: 1,
     multipleUsers: 1,
     invoicePayment: false,
+    hardcoreMode: false,
+    csvExport: false,
   },
   pro: {
     businessProfile: true,
     deepResearch: true,
     toneSettings: true,
     history: true,
-    chromeExtension: true,
+    chromeExtension: false,
     multipleBusinesses: 5,
     multipleUsers: 3,
     invoicePayment: true,
-  },
-  business: { // legacy
-    businessProfile: true,
-    deepResearch: true,
-    toneSettings: true,
-    history: true,
-    chromeExtension: true,
-    multipleBusinesses: 5,
-    multipleUsers: 3,
-    invoicePayment: true,
+    hardcoreMode: true,
+    csvExport: true,
   },
 };
 
