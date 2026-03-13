@@ -19,7 +19,7 @@ export function Paywall({
   type,
   feature,
   usageCount = 0,
-  usageLimit = 15,
+  usageLimit = 5,
   trialDaysUsed = 7,
   onClose,
   onUpgrade,
@@ -136,11 +136,11 @@ export function Paywall({
 
           <ul className="space-y-2 mb-4">
             {[
+              'Персонализированные ответы с профилем бизнеса',
               'Безлимитные ответы',
-              'Умный профиль бизнеса',
               'Deep Research — AI изучит вас',
               'Настройка тона общения',
-              'Chrome-расширение для WB/Ozon',
+              'Вся история ответов',
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-2 text-sm">
                 <Check className="w-4 h-4 text-primary flex-shrink-0" />
