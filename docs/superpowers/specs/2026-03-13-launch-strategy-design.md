@@ -255,6 +255,7 @@ Extension NOT ready. Create anticipation:
 | Chrome extension | 🔴 High | Killer feature, competitor differentiator |
 | Auto-monitoring reviews | 🟡 Medium | Competitors have it, users expect it |
 | "Owner advice" mode | 🟡 Medium | Additional value, strengthens Pro tier |
+| Yearly subscriptions + invoicing for legal entities | 🟡 Medium | Higher LTV, B2B convenience |
 | API for integrations | 🟢 Low | B2B feature, too early |
 | Multi-language | 🟢 Low | Capture Russia first |
 
@@ -312,3 +313,4 @@ MRR model (Stage 3): 300 regs × 10% conv = 30 paid users. 21 Start (790) + 9 Pr
 - Remove `'business'` from `PlanType` union in `src/types/index.ts`
 - Remove Chrome extension from pricing page features list
 - TG bot technical spec → separate document (out of scope for this spec)
+- Marketing session brief: `docs/marketing-session-brief.md` — ready for separate Claude Code session
