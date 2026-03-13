@@ -338,25 +338,34 @@ export default function LandingPage() {
                   <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                     <Chrome className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-xs font-medium text-primary uppercase tracking-wider">Chrome-расширение</span>
+                  <span className="text-xs font-medium text-primary uppercase tracking-wider">Скоро</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4 leading-tight">
-                  Отвечайте прямо в кабинете продавца
+                  Chrome-расширение — отвечайте прямо на площадке
                 </h2>
                 <p className="text-muted mb-6 leading-relaxed">
-                  Кнопка MyReply появится рядом с каждым отзывом в личном кабинете
-                  маркетплейса. Один клик — ответ готов.
+                  Кнопка MyReply появится рядом с каждым отзывом на Яндекс.Картах,
+                  2ГИС, Авито и маркетплейсах. Один клик — ответ готов.
                 </p>
-                <div className="flex flex-wrap gap-3">
-                  {['Wildberries', 'Ozon', 'Яндекс.Маркет'].map((mp) => (
+                <div className="flex flex-wrap gap-3 mb-4">
+                  {['Яндекс.Карты', '2ГИС', 'Авито', 'Wildberries', 'Ozon'].map((mp) => (
                     <span key={mp} className="px-3 py-1.5 bg-primary/10 rounded-lg text-sm font-medium text-primary/80">{mp}</span>
                   ))}
                 </div>
+                <a
+                  href="https://t.me/myreply_ru"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/10 text-primary font-medium rounded-xl hover:bg-primary/20 transition-colors text-sm"
+                >
+                  Хочу первым узнать о запуске
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
               <div className="flex-shrink-0 w-48 h-48 bg-primary/5 border border-primary/10 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
                   <Chrome className="w-14 h-14 text-primary/60 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-primary/70">Скоро в Web Store</p>
+                  <p className="text-sm font-medium text-primary/70">В разработке</p>
                 </div>
               </div>
             </div>
@@ -422,7 +431,7 @@ export default function LandingPage() {
               Начните бесплатно. Подключите, когда будете готовы.
             </h2>
             <p className="text-muted text-lg max-w-2xl mx-auto">
-              Базовые ответы — бесплатно навсегда. Персонализация — от 490 ₽/мес.
+              Базовые ответы — бесплатно навсегда. Персонализация — от 790 ₽/мес.
             </p>
           </div>
 
@@ -438,10 +447,9 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8 flex-1">
                 {[
-                  '15 ответов в месяц',
-                  '5 режимов ответов',
+                  '5 ответов в месяц',
+                  'Базовая генерация AI',
                   'Загрузка скриншотов',
-                  'Базовая генерация',
                 ].map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
@@ -467,7 +475,7 @@ export default function LandingPage() {
                 <p className="text-sm text-muted">Для селлеров и малого бизнеса</p>
               </div>
               <div className="mb-6">
-                <span className="text-4xl font-bold">490 ₽</span>
+                <span className="text-4xl font-bold">790 ₽</span>
                 <span className="text-muted">/мес</span>
               </div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -477,7 +485,6 @@ export default function LandingPage() {
                   'Deep Research — AI изучит вас',
                   'Настройка тона общения',
                   'Вся история ответов',
-                  'Chrome-расширение',
                 ].map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
@@ -501,7 +508,7 @@ export default function LandingPage() {
                 <p className="text-sm text-muted">Для команд и сетей магазинов</p>
               </div>
               <div className="mb-6">
-                <span className="text-4xl font-bold">1 490 ₽</span>
+                <span className="text-4xl font-bold">1 990 ₽</span>
                 <span className="text-muted">/мес</span>
               </div>
               <ul className="space-y-3 mb-8 flex-1">
@@ -509,9 +516,9 @@ export default function LandingPage() {
                   'Всё из тарифа Старт',
                   'До 5 профилей бизнеса',
                   'До 3 пользователей',
-                  'Оплата по счёту для юрлиц',
+                  'Режим Хардкор',
+                  'Экспорт истории (CSV)',
                   'Приоритетная поддержка',
-                  'Выделенный менеджер',
                 ].map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
