@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
             .eq('id', subscription.id);
         }
         return NextResponse.json(
-          { error: error instanceof Error ? error.message : 'Ошибка обработки изображения' },
+          { error: 'Не удалось обработать изображение. Попробуйте другой скриншот.' },
           { status: 400 }
         );
       }
@@ -259,8 +259,6 @@ export async function POST(request: NextRequest) {
       } else if (msg.includes('content policy') || msg.includes('safety')) {
         userMessage = 'Текст не может быть обработан. Попробуйте другую формулировку.';
         statusCode = 400;
-      } else if (error.message && error.message !== 'Ошибка генерации') {
-        userMessage = error.message;
       }
     }
     

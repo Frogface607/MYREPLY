@@ -104,7 +104,7 @@ export async function GET() {
   } catch (error) {
     console.error('Subscription API error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка загрузки подписки' },
+      { error: 'Ошибка загрузки подписки' },
       { status: 500 }
     );
   }
@@ -173,7 +173,7 @@ export async function POST() {
   } catch (error) {
     console.error('Subscription increment error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка обновления' },
+      { error: 'Ошибка обновления подписки' },
       { status: 500 }
     );
   }

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('History API error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка сохранения' },
+      { error: 'Ошибка сохранения' },
       { status: 500 }
     );
   }
@@ -97,7 +97,7 @@ export async function GET() {
   } catch (error) {
     console.error('History API error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка загрузки' },
+      { error: 'Ошибка загрузки истории' },
       { status: 500 }
     );
   }
@@ -156,7 +156,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error('History API error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка удаления' },
+      { error: 'Ошибка удаления' },
       { status: 500 }
     );
   }

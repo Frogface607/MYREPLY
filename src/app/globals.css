@@ -4,11 +4,11 @@
   /* Основные цвета - тёплая, спокойная палитра */
   --background: #faf9f7;
   --foreground: #1a1a1a;
-  
-  /* Акцентные цвета */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #dbeafe;
+
+  /* Акцентные цвета — MyReply brand blue */
+  --primary: #3B7DD8;
+  --primary-hover: #2E6BC4;
+  --primary-light: #EBF2FC;
   
   /* Успех / Позитив */
   --success: #059669;
@@ -35,55 +35,55 @@
 /* Тёмная тема: авто (системная) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: #0f0f0f;
-    --foreground: #f5f5f5;
-    
-    --primary: #3b82f6;
-    --primary-hover: #60a5fa;
-    --primary-light: #1e3a5f;
-    
+    --background: #0a0a0a;
+    --foreground: #f0f0f0;
+
+    --primary: #5B9AE8;
+    --primary-hover: #7DB3F0;
+    --primary-light: #1a2d4a;
+
     --success: #10b981;
     --success-light: #064e3b;
-    
+
     --warning: #f59e0b;
     --warning-light: #78350f;
-    
+
     --danger: #ef4444;
     --danger-light: #7f1d1d;
-    
-    --muted: #9ca3af;
-    --muted-light: #1f2937;
-    --border: #374151;
-    
-    --card: #171717;
-    --card-hover: #1f1f1f;
+
+    --muted: #888;
+    --muted-light: #181818;
+    --border: #222;
+
+    --card: #111;
+    --card-hover: #161616;
   }
 }
 
 /* Тёмная тема: ручной переключатель */
 :root[data-theme="dark"] {
-  --background: #0f0f0f;
-  --foreground: #f5f5f5;
-  
-  --primary: #3b82f6;
-  --primary-hover: #60a5fa;
-  --primary-light: #1e3a5f;
-  
+  --background: #0a0a0a;
+  --foreground: #f0f0f0;
+
+  --primary: #5B9AE8;
+  --primary-hover: #7DB3F0;
+  --primary-light: #1a2d4a;
+
   --success: #10b981;
   --success-light: #064e3b;
-  
+
   --warning: #f59e0b;
   --warning-light: #78350f;
-  
+
   --danger: #ef4444;
   --danger-light: #7f1d1d;
-  
-  --muted: #9ca3af;
-  --muted-light: #1f2937;
-  --border: #374151;
-  
-  --card: #171717;
-  --card-hover: #1f1f1f;
+
+  --muted: #888;
+  --muted-light: #181818;
+  --border: #222;
+
+  --card: #111;
+  --card-hover: #161616;
 }
 
 @theme inline {
@@ -232,6 +232,56 @@ a:focus-visible {
     var(--primary-light) 50%,
     var(--background) 100%
   );
+}
+
+/* Subtle dot grid background */
+.bg-grid {
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Glow orb for hero */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Number marker for steps */
+.step-number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Scroll-triggered reveal */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  animation: revealUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.reveal-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.reveal-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.reveal-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.reveal-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+/* Subtle card lift */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px rgba(59, 125, 216, 0.15);
+}
+
+/* Pricing popular glow */
+.pricing-glow {
+  box-shadow: 0 0 0 1px var(--primary), 0 8px 40px -12px rgba(59, 125, 216, 0.3);
 }
 
 /* Стиль для textarea отзыва */

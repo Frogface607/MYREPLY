@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Promo activation error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка активации' },
+      { error: 'Ошибка активации промокода' },
       { status: 500 }
     );
   }

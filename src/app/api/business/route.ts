@@ -27,9 +27,9 @@ export async function GET() {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      console.error('Business GET auth error:', authError?.message);
+      console.error('Business GET auth error');
       return NextResponse.json(
-        { error: 'Необходима авторизация', detail: authError?.message },
+        { error: 'Необходима авторизация' },
         { status: 401 }
       );
     }
@@ -45,7 +45,7 @@ export async function GET() {
       if (error.code === 'PGRST116') {
         return NextResponse.json({ profile: null });
       }
-      console.error('Business GET db error:', error.code, error.message, error.details);
+      console.error('Business GET db error:', error.code);
       return NextResponse.json({ profile: null });
     }
 
@@ -73,7 +73,7 @@ export async function GET() {
   } catch (error) {
     console.error('Business GET exception:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка загрузки' },
+      { error: 'Ошибка загрузки профиля' },
       { status: 500 }
     );
   }
@@ -87,9 +87,9 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      console.error('Business POST auth error:', authError?.message);
+      console.error('Business POST auth error');
       return NextResponse.json(
-        { error: 'Необходима авторизация', detail: authError?.message },
+        { error: 'Необходима авторизация' },
         { status: 401 }
       );
     }
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (findError && findError.code !== 'PGRST116') {
-      console.error('Business POST find error:', findError.code, findError.message);
+      console.error('Business POST find error:', findError.code);
     }
 
     // Базовые данные, которые точно есть в таблице
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         .eq('id', existing.id);
 
       if (error) {
-        console.error('Business POST update error:', error.code, error.message, error.details, error.hint);
+        console.error('Business POST update error:', error.code);
         // Если ошибка связана с metadata колонкой — пробуем без неё
         if (error.message?.includes('metadata') || error.code === '42703') {
           console.log('Retrying without metadata column...');
@@ -153,13 +153,13 @@ export async function POST(request: NextRequest) {
             .eq('id', existing.id);
           if (retryError) {
             return NextResponse.json(
-              { error: retryError.message, code: retryError.code },
+              { error: 'Ошибка сохранения профиля' },
               { status: 500 }
             );
           }
         } else {
           return NextResponse.json(
-            { error: error.message, code: error.code, hint: error.hint },
+            { error: 'Ошибка сохранения профиля' },
             { status: 500 }
           );
         }
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
         });
 
       if (error) {
-        console.error('Business POST insert error:', error.code, error.message, error.details, error.hint);
+        console.error('Business POST insert error:', error.code);
         // Если ошибка связана с metadata колонкой — пробуем без неё
         if (error.message?.includes('metadata') || error.code === '42703') {
           console.log('Retrying insert without metadata column...');
@@ -186,13 +186,13 @@ export async function POST(request: NextRequest) {
             });
           if (retryError) {
             return NextResponse.json(
-              { error: retryError.message, code: retryError.code },
+              { error: 'Ошибка сохранения профиля' },
               { status: 500 }
             );
           }
         } else {
           return NextResponse.json(
-            { error: error.message, code: error.code, hint: error.hint },
+            { error: 'Ошибка сохранения профиля' },
             { status: 500 }
           );
         }
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Business POST exception:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Ошибка сохранения' },
+      { error: 'Ошибка сохранения профиля' },
       { status: 500 }
     );
   }
