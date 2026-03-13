@@ -77,8 +77,10 @@ RLS на всех таблицах — юзер видит только свои
 - `/api/ai-proxy/[target]/[...path]` — прокси для расширения
 
 ## Дизайн
-- Light mode: тёплый нейтральный (#faf9f7)
-- Dark mode: глубокий тёмный (#0f0f0f)
+- **Brand color:** Teal #1E8B8B (палитра "Calm Authority")
+- Light mode: тёплый нейтральный (#faf9f7), primary #1E8B8B
+- Dark mode: глубокий тёмный (#0a0a0a), primary #3DBDBD
+- Logo: MY=#1E8B8B (teal), REPLY=#1A2332 (deep navy) / currentColor в тёмной теме
 - Шрифты: Geist Sans + Geist Mono (с кириллицей)
 - Переключатель темы: data-theme атрибут
 

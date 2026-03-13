@@ -5,10 +5,10 @@
   --background: #faf9f7;
   --foreground: #1a1a1a;
 
-  /* Акцентные цвета — MyReply brand blue */
-  --primary: #3B7DD8;
-  --primary-hover: #2E6BC4;
-  --primary-light: #EBF2FC;
+  /* Акцентные цвета — MyReply brand teal */
+  --primary: #1E8B8B;
+  --primary-hover: #177070;
+  --primary-light: #E6F5F5;
   
   /* Успех / Позитив */
   --success: #059669;
@@ -38,9 +38,9 @@
     --background: #0a0a0a;
     --foreground: #f0f0f0;
 
-    --primary: #5B9AE8;
-    --primary-hover: #7DB3F0;
-    --primary-light: #1a2d4a;
+    --primary: #3DBDBD;
+    --primary-hover: #5DD4D4;
+    --primary-light: #0f2a2a;
 
     --success: #10b981;
     --success-light: #064e3b;
@@ -281,7 +281,7 @@ a:focus-visible {
 
 /* Pricing popular glow */
 .pricing-glow {
-  box-shadow: 0 0 0 1px var(--primary), 0 8px 40px -12px rgba(59, 125, 216, 0.3);
+  box-shadow: 0 0 0 1px var(--primary), 0 8px 40px -12px rgba(30, 139, 139, 0.3);
 }
 
 /* Стиль для textarea отзыва */
