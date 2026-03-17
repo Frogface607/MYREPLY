@@ -78,26 +78,7 @@ export default function LandingPage() {
             занимаетесь бизнесом. 5 вариантов за секунды.
           </p>
 
-          {/* Mini product preview */}
-          <div className="max-w-md mx-auto mb-10 animate-fade-in">
-            <div className="bg-card border border-border/60 rounded-2xl p-4 shadow-xl shadow-primary/5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2 h-2 rounded-full bg-danger" />
-                <span className="text-xs text-muted">1 звезда</span>
-                <span className="text-xs text-muted ml-auto">Wildberries</span>
-              </div>
-              <p className="text-sm text-left mb-3 leading-relaxed">
-                &laquo;Ужасное качество! Ткань полезла после первой стирки, швы кривые. Не рекомендую!&raquo;
-              </p>
-              <div className="flex gap-2">
-                <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-lg font-medium">Эмпатичный</span>
-                <span className="px-2.5 py-1 bg-muted-light text-muted text-xs rounded-lg">Решение</span>
-                <span className="px-2.5 py-1 bg-muted-light text-muted text-xs rounded-lg">Нейтральный</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in mt-10">
             <Link
               href="/challenge"
               className="group px-8 py-4 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/25 btn-glow"
