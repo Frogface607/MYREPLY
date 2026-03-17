@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Clock, Shield, Check, Search, Settings, MessageSquare, Chrome, Zap, Building2, Utensils, Hotel, Scissors, Stethoscope, Car, Copy, Star, TrendingUp, Brain, Eye, Palette } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Check, Search, Settings, MessageSquare, Chrome, Zap, Building2, Utensils, Hotel, Scissors, Stethoscope, Car, Copy, Star, TrendingUp, Brain, Eye, Palette, Scale } from 'lucide-react';
 import { ExamplesSection } from '@/components/ExamplesSection';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Logo } from '@/components/Logo';
@@ -267,6 +267,109 @@ export default function LandingPage() {
 
       {/* ─── EXAMPLES ─── */}
       <ExamplesSection />
+
+      {/* ─── YOUR TRUTH ─── */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-primary font-medium mb-4 tracking-wide uppercase text-xs">
+              Ваша правда
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight">
+              Клиент не всегда прав.<br />AI это понимает.
+            </h2>
+            <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
+              Расскажите что произошло на самом деле — AI не будет извиняться
+              за то, в чём вы не виноваты.
+            </p>
+          </div>
+
+          {/* Interactive example */}
+          <div className="max-w-3xl mx-auto mb-16">
+            <div className="bg-card border border-border/60 rounded-2xl overflow-hidden">
+              {/* Review */}
+              <div className="p-6 border-b border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex">
+                    {[1].map((s) => (
+                      <Star key={s} className="w-4 h-4 text-warning fill-warning" />
+                    ))}
+                    {[2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="w-4 h-4 text-border" />
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted">Яндекс.Карты</span>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  &laquo;Худшее заведение в городе! Пришли отметить день рождения, ждали еду полтора часа.
+                  Официант хамил и закатывал глаза. Половину заказа перепутали. Именинница расплакалась.
+                  НЕ ХОДИТЕ СЮДА!&raquo;
+                </p>
+              </div>
+
+              {/* Your truth */}
+              <div className="p-6 border-b border-border/50 bg-primary/5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">Ваша правда</span>
+                </div>
+                <p className="text-sm text-muted leading-relaxed italic">
+                  &laquo;Компания из 12 человек пришла без брони в пятницу вечером. Мы нашли стол за 10 минут.
+                  Заказ на 12 персон готовили 40 минут — это нормально для горячего. Одна гостья
+                  начала снимать персонал на телефон и оскорблять повара. Мы вежливо попросили прекратить.
+                  Перепутали один гарнир — заменили бесплатно за 5 минут.&raquo;
+                </p>
+              </div>
+
+              {/* AI response */}
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Ответ MyReply</span>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  &laquo;Здравствуйте! Спасибо за обратную связь, нам важно каждое мнение.
+                  Хотим уточнить детали: ваша компания из 12 человек пришла без предварительного
+                  бронирования в пятничный вечер — мы нашли столик за 10 минут. Время приготовления
+                  горячих блюд на 12 персон составило около 40 минут, что является стандартным.
+                  Единственная ошибка — перепутанный гарнир — была исправлена в течение 5 минут.
+                  Мы дорожим каждым гостем и всегда готовы к диалогу. Будем рады видеть вас снова
+                  — рекомендуем бронировать стол заранее для большой компании.&raquo;
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature icons */}
+          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {[
+              {
+                icon: Shield,
+                title: 'Не извиняется за то, в чём вы не виноваты',
+                desc: 'AI не будет унижаться и просить прощения, если вы правы',
+              },
+              {
+                icon: MessageSquare,
+                title: 'Излагает вашу позицию',
+                desc: 'Факты и контекст — корректно, без эмоций, но твёрдо',
+              },
+              {
+                icon: Scale,
+                title: 'Профессиональный тон',
+                desc: 'Ответ защищает репутацию и не опускается до уровня конфликта',
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <item.icon className="w-6 h-6 text-primary" aria-hidden="true" />
+                </div>
+                <h3 className="font-semibold mb-1 text-sm">{item.title}</h3>
+                <p className="text-xs text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ─── WHO IT'S FOR ─── */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 bg-card/50 border-y border-border/30">
