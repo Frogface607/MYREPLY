@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Sparkles, Loader2, AlertCircle, Star, ImagePlus, X, Camera } from 'lucide-react';
+import { Sparkles, Loader2, AlertCircle, Star, ImagePlus, X, Camera, Shield, ChevronDown } from 'lucide-react';
 
 interface ReviewInputProps {
   onSubmit: (reviewText: string, rating?: number, context?: string, imageBase64?: string) => void;
@@ -197,31 +197,40 @@ export function ReviewInput({ onSubmit, isLoading, error }: ReviewInputProps) {
         </div>
       </div>
 
-      {/* Context / Special instructions */}
+      {/* Context — "Расскажите свою правду" */}
       <div>
-        {!showContext ? (
-          <button
-            type="button"
-            onClick={() => setShowContext(true)}
-            className="text-sm text-primary hover:text-primary-hover flex items-center gap-1.5"
-          >
-            <span>💬</span> Рассказать, как было на самом деле
-          </button>
-        ) : (
-          <div className="animate-fade-in">
-            <label className="block text-sm font-medium mb-2">
-              Как всё было на самом деле? <span className="text-muted font-normal">(ваша версия событий)</span>
-            </label>
+        <button
+          type="button"
+          onClick={() => setShowContext(!showContext)}
+          className="w-full text-left p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer group"
+          disabled={isLoading}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-sm">Расскажите свою правду</p>
+                <p className="text-xs text-muted mt-0.5">AI учтёт вашу версию и не будет извиняться, если вы не виноваты</p>
+              </div>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-muted transition-transform duration-200 ${showContext ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
+
+        {showContext && (
+          <div className="mt-3 animate-fade-in">
             <textarea
               value={context}
               onChange={(e) => setContext(e.target.value)}
-              placeholder="Например: Гость пришёл в час пик, ждал 15 минут — это нормально при полной посадке. Но он начал скандалить. В итоге мы угостили десертом, он ушёл довольный, но отзыв не удалил..."
+              placeholder="Например: Гость пришёл за 20 минут до закрытия, заказал сложное блюдо. Предупредили, что ждать дольше — согласился. Потом начал снимать персонал на камеру и провоцировать конфликт..."
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary-light outline-none resize-none text-sm"
               rows={3}
               disabled={isLoading}
             />
             <p className="text-xs text-muted mt-1.5">
-              AI учтёт вашу версию и не будет извиняться там, где вы не виноваты
+              AI корректно изложит вашу позицию и сохранит профессиональный тон
             </p>
           </div>
         )}
