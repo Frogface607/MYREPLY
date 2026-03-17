@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Sparkles, Loader2, Crown, X, Shield, Clock, Zap } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Loader2, Crown, X, Shield, Clock, Zap, Scale, MessageSquare } from 'lucide-react';
 import { PLAN_LIMITS, PLAN_PRICES, PLAN_NAMES, type PlanType, type Subscription } from '@/types';
 
 const plans: {
@@ -258,25 +258,44 @@ export default function PricingPage() {
           })}
         </div>
 
-        {/* Comparison: Base vs Profile */}
+        {/* Comparison: Three levels of response */}
         <div className="bg-card border border-border rounded-2xl p-8 mb-8">
-          <h3 className="text-xl font-semibold text-center mb-6">Базовый ответ vs С профилем бизнеса</h3>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h3 className="text-xl font-semibold text-center mb-2">Три уровня ответа</h3>
+          <p className="text-sm text-muted text-center mb-6">На один и тот же негативный отзыв</p>
+          <p className="text-xs text-center text-muted mb-6 italic">
+            Отзыв: &laquo;Заказала платье на выпускной дочери. Пришло не того размера, ткань дешёвая, швы торчат. Дочь плакала. Продавцы-мошенники!&raquo;
+          </p>
+          <div className="grid md:grid-cols-3 gap-4">
             <div className="p-5 bg-muted-light rounded-xl">
               <p className="text-xs font-medium text-muted uppercase tracking-wider mb-3">Free — базовый</p>
               <p className="text-sm leading-relaxed italic text-muted">
-                «Благодарим за отзыв. Нам жаль, что вы остались недовольны. 
-                Мы учтём ваши замечания и постараемся стать лучше. Будем рады видеть вас снова.»
+                &laquo;Благодарим за отзыв. Нам жаль, что вы остались недовольны.
+                Мы учтём ваши замечания и постараемся стать лучше. Будем рады видеть вас снова.&raquo;
               </p>
+              <span className="inline-block mt-3 px-2 py-1 bg-muted-light border border-border rounded text-xs text-muted">Шаблонный</span>
             </div>
             <div className="p-5 bg-primary-light rounded-xl border border-primary/20">
               <p className="text-xs font-medium text-primary uppercase tracking-wider mb-3">Старт — с профилем</p>
               <p className="text-sm leading-relaxed italic">
-                «Здравствуйте! Благодарим за обратную связь. Понимаем ваше разочарование — 
-                для нас важно, чтобы каждый заказ соответствовал ожиданиям. Мы уже передали информацию 
-                на склад для проверки упаковки. Будем рады, если дадите нам шанс исправиться — 
-                качество нашей продукции обычно радует покупателей.»
+                &laquo;Здравствуйте! Нам очень жаль, что платье не оправдало ожиданий.
+                В нашем магазине &quot;Стиль&quot; все товары проходят проверку качества перед отправкой.
+                Напишите нам — оформим возврат или обмен на нужный размер. Хотим, чтобы
+                выпускной вашей дочери прошёл идеально!&raquo;
               </p>
+              <span className="inline-block mt-3 px-2 py-1 bg-primary/10 border border-primary/20 rounded text-xs text-primary">Персональный</span>
+            </div>
+            <div className="p-5 bg-primary/5 rounded-xl border border-primary/30">
+              <div className="flex items-center gap-1.5 mb-3">
+                <Shield className="w-3.5 h-3.5 text-primary" />
+                <p className="text-xs font-medium text-primary uppercase tracking-wider">+ Ваша правда</p>
+              </div>
+              <p className="text-sm leading-relaxed italic">
+                &laquo;Здравствуйте! Хотим уточнить: размер был указан корректно в карточке товара,
+                и мы дважды подтверждали его с вами в переписке. Ткань — натуральный хлопок,
+                сертификаты качества доступны по запросу. Если размер не подошёл — готовы
+                оформить обмен. Мы дорожим каждым клиентом и работаем прозрачно.&raquo;
+              </p>
+              <span className="inline-block mt-3 px-2 py-1 bg-primary/10 border border-primary/20 rounded text-xs text-primary font-medium">Защищает репутацию</span>
             </div>
           </div>
         </div>
