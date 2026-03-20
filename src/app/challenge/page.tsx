@@ -2,11 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  Copy, 
-  Check, 
-  Loader2, 
-  Share2, 
+import {
+  Copy,
+  Check,
+  Loader2,
+  Share2,
   ArrowRight,
   MessageSquareText,
   Sparkles,
@@ -20,6 +20,17 @@ import {
   Link2,
   Users,
   Trophy,
+  Scale,
+  Wrench,
+  Flame,
+  Target,
+  MessageSquare,
+  Building2,
+  Utensils,
+  Hotel,
+  Scissors,
+  Stethoscope,
+  type LucideIcon,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -39,12 +50,12 @@ interface ChallengeResult {
   };
 }
 
-const accentLabels: Record<string, { label: string; icon: string; desc: string }> = {
-  neutral: { label: 'Нейтральный', icon: '⚖️', desc: 'Сбалансированный и профессиональный' },
-  empathetic: { label: 'Эмпатичный', icon: '💛', desc: 'С пониманием и теплотой' },
-  'solution-focused': { label: 'С решением', icon: '🔧', desc: 'Конкретные действия и предложения' },
-  'passive-aggressive': { label: 'Твёрдый', icon: '🛡️', desc: 'Вежливый, но без извинений' },
-  hardcore: { label: 'Дерзкий', icon: '🔥', desc: 'Ироничный, с сарказмом и самоиронией' },
+const accentLabels: Record<string, { label: string; Icon: LucideIcon; desc: string }> = {
+  neutral: { label: 'Нейтральный', Icon: Scale, desc: 'Сбалансированный и профессиональный' },
+  empathetic: { label: 'Эмпатичный', Icon: Heart, desc: 'С пониманием и теплотой' },
+  'solution-focused': { label: 'С решением', Icon: Wrench, desc: 'Конкретные действия и предложения' },
+  'passive-aggressive': { label: 'Твёрдый', Icon: Shield, desc: 'Вежливый, но без извинений' },
+  hardcore: { label: 'Дерзкий', Icon: Flame, desc: 'Ироничный, с сарказмом и самоиронией' },
 };
 
 const accentColors: Record<string, string> = {
@@ -174,8 +185,8 @@ export default function ChallengePage() {
     const resp = response || result?.responses.find(r => r.accent === (selectedAccent || 'solution-focused'));
     const url = getShareUrl();
     const shareText = resp
-      ? `"${reviewText.slice(0, 150)}${reviewText.length > 150 ? '...' : ''}"\n\n${accentLabels[resp.accent]?.icon || ''} Ответ MyReply:\n"${resp.text}"\n\n✨ Попробуй бесплатно: ${url}`
-      : `AI пишет идеальные ответы на отзывы за 30 секунд ✨\nПопробуй бесплатно: ${url}`;
+      ? `"${reviewText.slice(0, 150)}${reviewText.length > 150 ? '...' : ''}"\n\nОтвет MyReply (${accentLabels[resp.accent]?.label || ''}):\n"${resp.text}"\n\nПопробуй бесплатно: ${url}`
+      : `AI пишет идеальные ответы на отзывы за 30 секунд\nПопробуй бесплатно: ${url}`;
 
     if (navigator.share) {
       try {
@@ -424,7 +435,7 @@ export default function ChallengePage() {
                   >
                     <div className="flex items-start justify-between mb-3 gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{meta?.icon || '💬'}</span>
+                        {meta?.Icon ? <meta.Icon className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
                         <div>
                           <span className="text-sm font-semibold">{meta?.label || response.accent}</span>
                           <span className="text-xs text-muted ml-2 hidden sm:inline">{meta?.desc}</span>
@@ -597,7 +608,7 @@ export default function ChallengePage() {
                 {Object.entries(accentLabels).map(([key, meta]) => (
                   <div key={key} className={`p-4 rounded-xl border-2 ${accentColors[key]}`}>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{meta.icon}</span>
+                      <meta.Icon className="w-4 h-4" />
                       <span className="font-semibold text-sm">{meta.label}</span>
                     </div>
                     <p className="text-xs text-muted">{meta.desc}</p>
@@ -605,7 +616,7 @@ export default function ChallengePage() {
                 ))}
                 <div className="p-4 rounded-xl border-2 border-dashed border-primary/30 flex items-center justify-center text-center">
                   <div>
-                    <span className="text-lg">🎯</span>
+                    <Target className="w-5 h-5 text-primary mx-auto" />
                     <p className="text-xs text-muted mt-1">С профилем бизнеса — ответы персонализированы</p>
                   </div>
                 </div>
@@ -617,15 +628,16 @@ export default function ChallengePage() {
               <h2 className="text-2xl font-bold text-center mb-8">Для любого бизнеса с отзывами</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {[
-                  '🛒 Маркетплейсы',
-                  '🍕 Рестораны и кафе',
-                  '🏨 Отели',
-                  '💇 Салоны красоты',
-                  '🏥 Медицина',
-                  '🔧 Сервисы и услуги',
+                  { Icon: Building2, label: 'Маркетплейсы' },
+                  { Icon: Utensils, label: 'Рестораны и кафе' },
+                  { Icon: Hotel, label: 'Отели' },
+                  { Icon: Scissors, label: 'Салоны красоты' },
+                  { Icon: Stethoscope, label: 'Медицина' },
+                  { Icon: Wrench, label: 'Сервисы и услуги' },
                 ].map((item, i) => (
-                  <div key={i} className="text-center p-3 bg-card border border-border rounded-xl text-sm">
-                    {item}
+                  <div key={i} className="flex items-center justify-center gap-2 p-3 bg-card border border-border rounded-xl text-sm">
+                    <item.Icon className="w-4 h-4 text-primary" />
+                    {item.label}
                   </div>
                 ))}
               </div>
@@ -640,15 +652,15 @@ export default function ChallengePage() {
               </div>
               <div className="space-y-4">
                 <div className="border-l-4 border-success pl-4">
-                  <p className="text-xs text-success mb-1 font-medium">🔧 С решением</p>
+                  <p className="text-xs text-success mb-1 font-medium flex items-center gap-1"><Wrench className="w-3 h-3" /> С решением</p>
                   <p className="text-sm leading-relaxed">&ldquo;Спасибо за обратную связь. Задержка 2 часа — неприемлема для нас. Мы разобрались с логистикой и провели беседу с курьером. Будем рады загладить вину — напишите нам в директ.&rdquo;</p>
                 </div>
                 <div className="border-l-4 border-warning pl-4">
-                  <p className="text-xs text-warning mb-1 font-medium">💛 Эмпатичный</p>
+                  <p className="text-xs text-warning mb-1 font-medium flex items-center gap-1"><Heart className="w-3 h-3" /> Эмпатичный</p>
                   <p className="text-sm leading-relaxed">&ldquo;Понимаем ваше разочарование — ждать 2 часа и получить холодную пиццу действительно обидно. Нам искренне жаль. Мы уже приняли меры, чтобы такое не повторилось.&rdquo;</p>
                 </div>
                 <div className="border-l-4 border-danger pl-4">
-                  <p className="text-xs text-danger mb-1 font-medium">🔥 Дерзкий</p>
+                  <p className="text-xs text-danger mb-1 font-medium flex items-center gap-1"><Flame className="w-3 h-3" /> Дерзкий</p>
                   <p className="text-sm leading-relaxed">&ldquo;Два часа — это просто наш шеф-повар медитировал над вашим заказом. А холодная пицца — авторская подача. Но если серьёзно — разобрались, виновные наказаны, пицца реабилитирована.&rdquo;</p>
                 </div>
               </div>
