@@ -422,8 +422,11 @@ export default function ChallengePage() {
                 </Link>
               </div>
               <p className="text-sm text-muted">
-                Промокод <code className="bg-primary-light px-2 py-0.5 rounded font-mono font-bold text-primary">ЖЕСТЬ</code> — 
+                Промокод <code className="bg-primary-light px-2 py-0.5 rounded font-mono font-bold text-primary">ЖЕСТЬ</code> —
                 7 дней тарифа «Старт» бесплатно
+              </p>
+              <p className="text-xs text-muted/70 mt-1">
+                Введите промокод в Личном кабинете после регистрации
               </p>
             </div>
           </div>
