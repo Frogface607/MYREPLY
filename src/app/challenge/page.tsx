@@ -83,6 +83,8 @@ interface ReferralInfo {
 
 export default function ChallengePage() {
   const [reviewText, setReviewText] = useState('');
+  const [context, setContext] = useState('');
+  const [showContext, setShowContext] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ChallengeResult | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -142,7 +144,7 @@ export default function ChallengePage() {
       const res = await fetch('/api/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewText: reviewText.trim() }),
+        body: JSON.stringify({ reviewText: reviewText.trim(), context: context.trim() || undefined }),
       });
 
       if (res.status === 429) {
@@ -293,6 +295,52 @@ export default function ChallengePage() {
               rows={4}
               maxLength={2000}
             />
+            {/* "Расскажите свою правду" */}
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => setShowContext(!showContext)}
+                className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                  showContext
+                    ? 'border-primary bg-primary/10'
+                    : 'border-primary/20 bg-primary/5 hover:bg-primary/10'
+                }`}
+                disabled={isLoading}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      showContext ? 'bg-primary text-white' : 'bg-primary/10'
+                    }`}>
+                      <Shield className={`w-4 h-4 ${showContext ? 'text-white' : 'text-primary'}`} />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Расскажите свою правду</p>
+                      <p className="text-xs text-muted mt-0.5">AI учтёт вашу версию и не будет извиняться, если вы не виноваты</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-muted transition-transform duration-200 flex-shrink-0 ${showContext ? 'rotate-180' : ''}`} />
+                </div>
+              </button>
+
+              {showContext && (
+                <div className="mt-2 animate-fade-in">
+                  <textarea
+                    value={context}
+                    onChange={(e) => setContext(e.target.value)}
+                    placeholder="Например: Клиент пришёл без записи за 10 минут до закрытия. Мы его приняли, но он остался недоволен, что пришлось подождать 5 минут..."
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary-light outline-none resize-none text-sm"
+                    rows={3}
+                    maxLength={1000}
+                    disabled={isLoading}
+                  />
+                  <p className="text-xs text-muted mt-1">
+                    AI корректно изложит вашу позицию и сохранит профессиональный тон
+                  </p>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-muted">{reviewText.length} / 2000</span>
               <button

@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { reviewText } = body;
+    const { reviewText, context } = body;
 
     if (!reviewText || typeof reviewText !== 'string' || reviewText.trim().length < 10) {
       return NextResponse.json(
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       null, // без бизнес-профиля
       {
         includeHardcore: true,
+        context: typeof context === 'string' ? context.trim() || undefined : undefined,
       }
     );
 
