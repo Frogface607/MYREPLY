@@ -158,7 +158,7 @@ export const PLAN_FEATURES: Record<PlanType, {
   multipleBusinesses: number; // кол-во профилей
   multipleUsers: number;     // кол-во пользователей
   invoicePayment: boolean;   // оплата по счёту
-  hardcoreMode: boolean;     // режим Хардкор — только Pro
+  hardcoreMode: boolean;     // режим Хардкор — доступен всем
   csvExport: boolean;        // экспорт истории в CSV — только Pro
 }> = {
   free: {
@@ -170,7 +170,7 @@ export const PLAN_FEATURES: Record<PlanType, {
     multipleBusinesses: 0,
     multipleUsers: 1,
     invoicePayment: false,
-    hardcoreMode: false,
+    hardcoreMode: true,
     csvExport: false,
   },
   start: {
@@ -182,7 +182,7 @@ export const PLAN_FEATURES: Record<PlanType, {
     multipleBusinesses: 1,
     multipleUsers: 1,
     invoicePayment: false,
-    hardcoreMode: false,
+    hardcoreMode: true,
     csvExport: false,
   },
   pro: {

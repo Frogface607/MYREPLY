@@ -143,11 +143,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
 
-    // Gate hardcore mode by plan — Pro only
-    const currentPlan = (subscription?.plan || 'free') as PlanType;
-    if (includeHardcore && !PLAN_FEATURES[currentPlan]?.hardcoreMode) {
-      includeHardcore = false;
-    }
+    // Hardcore mode available for all plans (with disclaimer in UI)
 
     // If image provided, extract text first
     if (imageBase64) {
