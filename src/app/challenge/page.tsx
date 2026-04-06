@@ -409,25 +409,18 @@ export default function ChallengePage() {
               <Gift className="w-10 h-10 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Понравилось? Это только начало!</h3>
               <p className="text-muted mb-6 max-w-md mx-auto">
-                Зарегистрируйтесь — получите <strong>15 бесплатных ответов</strong>. 
-                А с профилем бизнеса ответы будут персонализированы именно под вас.
+                Зарегистрируйтесь — <strong>7 дней полного доступа бесплатно</strong>.
+                Безлимитные ответы, профиль бизнеса, персонализация — всё включено.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   href="/auth"
                   className="px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover flex items-center justify-center gap-2 transition-colors shadow-sm"
                 >
                   <ArrowRight className="w-4 h-4" />
-                  Зарегистрироваться бесплатно
+                  Попробовать 7 дней бесплатно
                 </Link>
               </div>
-              <p className="text-sm text-muted">
-                Промокод <code className="bg-primary-light px-2 py-0.5 rounded font-mono font-bold text-primary">ЖЕСТЬ</code> —
-                14 дней тарифа «Старт» бесплатно
-              </p>
-              <p className="text-xs text-muted/70 mt-1">
-                Введите промокод в Личном кабинете после регистрации
-              </p>
             </div>
           </div>
         )}
@@ -553,11 +546,7 @@ export default function ChallengePage() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-muted">
                 <span className="flex items-center gap-1.5">
                   <Gift className="w-4 h-4 text-primary" />
-                  15 бесплатных ответов при регистрации
-                </span>
-                <span className="hidden sm:block">•</span>
-                <span>
-                  Промокод <code className="bg-primary-light px-1.5 py-0.5 rounded font-mono font-bold text-primary text-xs">ЖЕСТЬ</code> — 7 дней «Старт»
+                  7 дней полного доступа при регистрации
                 </span>
               </div>
             </div>
