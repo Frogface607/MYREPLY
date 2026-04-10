@@ -1,1 +1,3 @@
-Remove third-party brand mentions from hardcore mode descriptions
+Fix challenge page: replace useSearchParams with window.location
+
+useSearchParams without Suspense boundary can break page rendering in Next.js

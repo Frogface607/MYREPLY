@@ -80,20 +80,20 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in mt-10">
             <Link
-              href="/challenge"
+              href="/horror-challenge"
               className="group px-8 py-4 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all flex items-center gap-3 shadow-lg shadow-primary/25 btn-glow"
             >
-              Попробовать бесплатно
+              Прислать адовый отзыв — получить неделю PRO
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/auth"
+              href="/challenge"
               className="px-6 py-3 border border-border rounded-full text-sm font-medium hover:border-primary hover:text-primary transition-all"
             >
-              Войти в кабинет
+              Попробовать бесплатно
             </Link>
           </div>
-          <p className="text-xs text-muted mt-5 tracking-wide">Без регистрации &middot; 5 вариантов ответа &middot; 30 секунд</p>
+          <p className="text-xs text-muted mt-5 tracking-wide">Horror Reviews Challenge &middot; 7 дней PRO бесплатно &middot; Обезличим</p>
         </div>
       </section>
 
