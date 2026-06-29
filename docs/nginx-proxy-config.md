@@ -5,7 +5,9 @@ Current verified state on 2026-06-29:
 - Vercel production is healthy: `https://myreply.vercel.app`
 - Vercel aliases include `my-reply.ru` and `www.my-reply.ru`
 - DNS for both `my-reply.ru` and `www.my-reply.ru` points to Jino VPS `195.161.41.131`
-- The Jino VPS currently returns `403` for `https://my-reply.ru`
+- `https://my-reply.ru` currently returns nginx/Vercel mitigation `403`
+- `https://www.my-reply.ru` currently fails TLS hostname validation
+- `vercel domains inspect my-reply.ru` reports current nameservers `ns1.jino.ru` through `ns4.jino.ru`, while intended Vercel nameservers are `ns1.vercel-dns.com` and `ns2.vercel-dns.com`
 
 ## Preferred Fix: Point DNS Directly To Vercel
 
@@ -15,7 +17,7 @@ In Jino DNS, set:
 
 ```dns
 my-reply.ru.      A      76.76.21.21
-www.my-reply.ru.  CNAME  cname.vercel-dns.com.
+www.my-reply.ru.  A      76.76.21.21
 ```
 
 Remove old `A` records for:
@@ -37,8 +39,17 @@ curl -I https://www.my-reply.ru
 Expected:
 
 - `my-reply.ru` resolves to `76.76.21.21`
-- `www.my-reply.ru` resolves through Vercel DNS
+- `www.my-reply.ru` resolves to `76.76.21.21`
 - both URLs return `200` or a Vercel-managed redirect to the canonical domain
+
+Alternative: in the domain registrar panel, replace Jino nameservers with:
+
+```text
+ns1.vercel-dns.com
+ns2.vercel-dns.com
+```
+
+Use either DNS records at Jino or Vercel nameservers, not both at once.
 
 ## Fallback Fix: Keep Jino VPS As Reverse Proxy
 
@@ -119,4 +130,5 @@ Current production deployment can be inspected with:
 ```bash
 vercel inspect https://myreply.vercel.app
 vercel domains inspect my-reply.ru
+vercel domains inspect www.my-reply.ru
 ```
