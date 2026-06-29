@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateResponses } from '@/lib/openrouter';
-import { PLAN_LIMITS, PLAN_FEATURES, type PlanType } from '@/types';
+import { PLAN_LIMITS } from '@/types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -141,7 +141,8 @@ export async function POST(request: NextRequest) {
     // ГЕНЕРАЦИЯ
     // =====================
     const body = await request.json();
-    let { reviewText, rating, context, adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
+    let { reviewText, rating, context } = body;
+    const { adjustment, previousResponses, businessSettings, imageBase64, includeHardcore } = body;
 
     // Hardcore mode available for all plans (with disclaimer in UI)
 
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
         if (parsed.platform) {
           context = context ? `${context}. Платформа: ${parsed.platform}` : `Платформа: ${parsed.platform}`;
         }
-      } catch (error) {
+      } catch {
         // Откатываем счётчик при ошибке обработки изображения
         if (subscription) {
           await supabase

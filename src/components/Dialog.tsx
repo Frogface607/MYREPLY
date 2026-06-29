@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { AlertTriangle, Info, CheckCircle, X } from 'lucide-react';
 
 export interface DialogProps {
@@ -28,6 +28,16 @@ export function Dialog({
   onCancel,
   variant = 'default',
 }: DialogProps) {
+  const handleConfirm = useCallback(() => {
+    onConfirm?.();
+    onClose();
+  }, [onClose, onConfirm]);
+
+  const handleCancel = useCallback(() => {
+    onCancel?.();
+    onClose();
+  }, [onCancel, onClose]);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -51,19 +61,9 @@ export function Dialog({
       window.addEventListener('keydown', handleEscape);
       return () => window.removeEventListener('keydown', handleEscape);
     }
-  }, [open]);
+  }, [handleCancel, open]);
 
   if (!open) return null;
-
-  const handleConfirm = () => {
-    onConfirm?.();
-    onClose();
-  };
-
-  const handleCancel = () => {
-    onCancel?.();
-    onClose();
-  };
 
   const getIcon = () => {
     switch (type) {

@@ -1,5 +1,5 @@
 import { createClient } from './server';
-import type { Business, BusinessType, ToneSettings, BusinessRules } from '@/types';
+import type { BusinessType, ToneSettings, BusinessRules } from '@/types';
 
 export interface BusinessProfileData {
   name: string;
@@ -13,6 +13,11 @@ export interface BusinessProfileData {
   rules: BusinessRules;
   customRules?: string;
 }
+
+type BusinessMetadata = Partial<Pick<
+  BusinessProfileData,
+  'city' | 'description' | 'specialties' | 'commonIssues' | 'strengths' | 'customRules'
+>>;
 
 /**
  * Получить бизнес-профиль текущего пользователя
@@ -32,7 +37,7 @@ export async function getBusinessProfile(): Promise<BusinessProfileData | null> 
   if (error || !business) return null;
 
   // Парсим metadata если есть
-  const metadata = (business.metadata as any) || {};
+  const metadata = (business.metadata as BusinessMetadata | null) || {};
   
   return {
     name: business.name,

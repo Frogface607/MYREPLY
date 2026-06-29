@@ -1,33 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark' | 'system';
 
+const applyTheme = (t: Theme) => {
+  const root = document.documentElement;
+  if (t === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+  } else if (t === 'light') {
+    root.setAttribute('data-theme', 'light');
+  } else {
+    root.removeAttribute('data-theme');
+  }
+};
+
+const getInitialTheme = (): Theme => {
+  if (typeof window === 'undefined') return 'system';
+
+  const saved = localStorage.getItem('myreply-theme') as Theme | null;
+  if (saved === 'dark' || saved === 'light' || saved === 'system') {
+    applyTheme(saved);
+    return saved;
+  }
+
+  return 'system';
+};
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('system');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem('myreply-theme') as Theme | null;
-    if (saved) {
-      setTheme(saved);
-      applyTheme(saved);
-    }
-  }, []);
-
-  const applyTheme = (t: Theme) => {
-    const root = document.documentElement;
-    if (t === 'dark') {
-      root.setAttribute('data-theme', 'dark');
-    } else if (t === 'light') {
-      root.setAttribute('data-theme', 'light');
-    } else {
-      root.removeAttribute('data-theme');
-    }
-  };
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
   const toggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
@@ -39,10 +41,6 @@ export function ThemeToggle() {
   // Определяем текущую реальную тему для иконки
   const isDark = theme === 'dark' || 
     (theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-  if (!mounted) {
-    return <div className="w-9 h-9" />;
-  }
 
   return (
     <button

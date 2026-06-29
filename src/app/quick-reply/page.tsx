@@ -11,6 +11,7 @@ import { ArrowLeft, MessageSquareText, Settings, History, Crown, Flame, ToggleLe
 import Link from 'next/link';
 import { useToast } from '@/components/ToastProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import type { BusinessProfileData } from '@/lib/supabase/business';
 
 interface ReviewAnalysis {
   sentiment: 'positive' | 'neutral' | 'negative';
@@ -23,7 +24,7 @@ export default function QuickReplyPage() {
   const [reviewText, setReviewText] = useState('');
   const [responses, setResponses] = useState<GeneratedResponse[]>([]);
   const [analysis, setAnalysis] = useState<ReviewAnalysis | null>(null);
-  const [businessSettings, setBusinessSettings] = useState<any>(null);
+  const [businessSettings, setBusinessSettings] = useState<BusinessProfileData | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showUpsell, setShowUpsell] = useState(false);
