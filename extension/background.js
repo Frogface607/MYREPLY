@@ -27,7 +27,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     // First install - show welcome
     chrome.tabs.create({
-      url: 'https://my-reply.ru/auth?source=extension',
+      url: 'https://myreply.vercel.app/auth?source=extension',
     });
   }
 });

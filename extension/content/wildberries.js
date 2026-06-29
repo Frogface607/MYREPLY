@@ -15,7 +15,7 @@
       <span class="myreply-btn-icon">${MYREPLY_ICON}</span>
       <span>MyReply</span>
     `;
-    btn.title = 'Сгенерировать ответ с MyReply';
+    btn.title = 'Ответить с учетом профиля бизнеса в MyReply';
     
     btn.addEventListener('click', (e) => {
       e.preventDefault();

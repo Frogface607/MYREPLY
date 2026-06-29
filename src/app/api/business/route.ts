@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createRequestClient, getRequestUser } from '@/lib/supabase/request';
 import type { BusinessType, ToneSettings, BusinessRules } from '@/types';
 
 const VALID_BUSINESS_TYPES: BusinessType[] = [
@@ -20,11 +20,11 @@ export interface BusinessProfileData {
 }
 
 // GET - получить бизнес-профиль
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createRequestClient(request);
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await getRequestUser(supabase, request);
     
     if (authError || !user) {
       console.error('Business GET auth error');
@@ -82,9 +82,9 @@ export async function GET() {
 // POST/PUT - сохранить бизнес-профиль
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createRequestClient(request);
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await getRequestUser(supabase, request);
     
     if (authError || !user) {
       console.error('Business POST auth error');

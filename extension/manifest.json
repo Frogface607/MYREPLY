@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MyReply — Ответы на отзывы",
-  "description": "Генерируйте профессиональные ответы на отзывы прямо на WB, Ozon и Яндекс.Маркете",
+  "description": "Генерируйте ответы на отзывы WB, Ozon и Яндекс.Маркета с учетом вашего продукта и бизнес-профиля",
   "version": "1.0.0",
   "icons": {
     "16": "icons/icon16.png",
@@ -24,7 +24,9 @@
   "host_permissions": [
     "https://seller.wildberries.ru/*",
     "https://seller.ozon.ru/*",
-    "https://partner.market.yandex.ru/*"
+    "https://partner.market.yandex.ru/*",
+    "https://myreply.vercel.app/*",
+    "https://my-reply.ru/*"
   ],
   "content_scripts": [
     {

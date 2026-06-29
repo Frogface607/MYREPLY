@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createRequestClient, getRequestUser } from '@/lib/supabase/request';
 import { generateResponses } from '@/lib/openrouter';
 import { PLAN_LIMITS } from '@/types';
 
@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
     // =====================
     // AUTH + ЛИМИТ ПРОВЕРКА
     // =====================
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const supabase = await createRequestClient(request);
+    const { data: { user }, error: authError } = await getRequestUser(supabase, request);
 
     if (authError || !user) {
       return NextResponse.json(

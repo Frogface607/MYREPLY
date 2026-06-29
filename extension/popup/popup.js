@@ -1,6 +1,6 @@
 // MyReply Chrome Extension - Popup Script
 
-const API_BASE = 'https://my-reply.ru';
+const API_BASE = 'https://myreply.vercel.app';
 
 // DOM Elements
 const authSection = document.getElementById('auth-section');
@@ -8,6 +8,8 @@ const mainSection = document.getElementById('main-section');
 const paywallSection = document.getElementById('paywall-section');
 const usageCounter = document.getElementById('usage-counter');
 const usageText = document.getElementById('usage-text');
+const businessStatus = document.getElementById('business-status');
+const businessStatusText = document.getElementById('business-status-text');
 const reviewText = document.getElementById('review-text');
 const contextInput = document.getElementById('context');
 const generateBtn = document.getElementById('generate-btn');
@@ -19,6 +21,7 @@ let selectedMode = 'all';
 let isLoading = false;
 let authToken = null;
 let subscription = null;
+let businessProfile = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
@@ -42,8 +45,13 @@ async function checkAuth() {
     
     if (stored.authToken) {
       authToken = stored.authToken;
-      await loadSubscription();
-      showMainSection();
+      await Promise.all([
+        loadSubscription(),
+        loadBusinessProfile(),
+      ]);
+      if (authToken) {
+        showMainSection();
+      }
     } else {
       showAuthSection();
     }
@@ -53,13 +61,15 @@ async function checkAuth() {
   }
 }
 
+function authHeaders() {
+  return authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+}
+
 // Load subscription info
 async function loadSubscription() {
   try {
     const response = await fetch(`${API_BASE}/api/subscription`, {
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-      },
+      headers: authHeaders(),
     });
     
     if (response.ok) {
@@ -72,11 +82,55 @@ async function loadSubscription() {
   }
 }
 
+async function loadBusinessProfile() {
+  try {
+    const response = await fetch(`${API_BASE}/api/business`, {
+      headers: authHeaders(),
+    });
+
+    if (response.status === 401) {
+      await chrome.storage.local.remove(['authToken']);
+      authToken = null;
+      businessProfile = null;
+      showAuthSection();
+      return;
+    }
+
+    if (!response.ok) {
+      businessProfile = null;
+      setBusinessStatus('warning', 'Профиль бизнеса не подключён');
+      return;
+    }
+
+    const data = await response.json();
+    businessProfile = data.profile || null;
+
+    if (businessProfile) {
+      setBusinessStatus('ready', `Бизнес-профиль: ${businessProfile.name}`);
+    } else {
+      setBusinessStatus('warning', 'Заполните профиль бизнеса на сайте');
+    }
+  } catch (error) {
+    console.error('Business profile load error:', error);
+    businessProfile = null;
+    setBusinessStatus('warning', 'Профиль бизнеса временно недоступен');
+  }
+}
+
+function setBusinessStatus(status, text) {
+  if (!businessStatus || !businessStatusText) return;
+
+  businessStatus.classList.remove('ready', 'warning');
+  businessStatus.classList.add(status);
+  businessStatusText.textContent = text;
+  businessStatus.classList.remove('hidden');
+}
+
 // Update usage counter
 function updateUsageCounter() {
   if (!subscription) return;
   
-  const { usage_count, usage_limit, plan } = subscription;
+  const { usage_count, usage_limit } = subscription;
   usageCounter.classList.remove('hidden');
   usageText.textContent = `${usage_count}/${usage_limit}`;
   
@@ -136,11 +190,12 @@ async function handleGenerate() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
+        ...authHeaders(),
       },
       body: JSON.stringify({
         reviewText: text,
         context: context || undefined,
+        businessSettings: businessProfile || undefined,
         includeHardcore,
       }),
     });
@@ -191,15 +246,15 @@ function displayResponses(responses) {
       <div class="response-header">
         <span class="response-accent ${response.accent}">${getAccentLabel(response.accent)}</span>
       </div>
-      <p class="response-text">${response.text}</p>
+      <p class="response-text">${escapeHtml(response.text)}</p>
       <div class="response-actions">
         <button class="btn-copy" data-text="${escapeHtml(response.text)}">
-          📋 Скопировать
+          Скопировать
         </button>
       </div>
       ${response.accent === 'hardcore' ? `
         <div class="hardcore-warning">
-          🔥 Только для развлечения! Не публикуйте.
+          Только для развлечения. Не публикуйте.
         </div>
       ` : ''}
     </div>
@@ -215,7 +270,7 @@ function displayResponses(responses) {
       btn.textContent = '✓ Скопировано';
       btn.classList.add('copied');
       setTimeout(() => {
-        btn.textContent = '📋 Скопировать';
+        btn.textContent = 'Скопировать';
         btn.classList.remove('copied');
       }, 2000);
     });
@@ -228,8 +283,8 @@ function getAccentLabel(accent) {
     'neutral': 'Нейтральный',
     'empathetic': 'Эмпатичный',
     'solution-focused': 'С решением',
-    'passive-aggressive': '🧊 Холодный',
-    'hardcore': '🔥 Дерзкий',
+    'passive-aggressive': 'Холодный',
+    'hardcore': 'Дерзкий',
   };
   return labels[accent] || accent;
 }

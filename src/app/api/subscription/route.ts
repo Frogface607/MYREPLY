@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createRequestClient, getRequestUser } from '@/lib/supabase/request';
 import { PLAN_LIMITS, type PlanType } from '@/types';
 
 // GET - получить подписку текущего пользователя
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createRequestClient(request);
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await getRequestUser(supabase, request);
     
     if (authError || !user) {
       // Для неавторизованных - возвращаем дефолтную free подписку
@@ -111,11 +111,11 @@ export async function GET() {
 }
 
 // POST - увеличить счетчик использования
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createRequestClient(request);
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await getRequestUser(supabase, request);
     
     if (authError || !user) {
       return NextResponse.json(

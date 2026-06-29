@@ -1,83 +1,55 @@
 # MyReply Chrome Extension
 
-Браузерное расширение для генерации ответов на отзывы прямо на площадках:
-- Wildberries (seller.wildberries.ru)
-- Ozon (seller.ozon.ru)
-- Яндекс.Маркет (partner.market.yandex.ru)
+Расширение добавляет MyReply прямо в кабинеты продавца:
 
-## Установка для разработки
+- Wildberries: `seller.wildberries.ru`
+- Ozon: `seller.ozon.ru`
+- Яндекс.Маркет: `partner.market.yandex.ru`
 
-1. Создай иконки PNG (см. `/icons/README.md`)
+Главное отличие от нативных AI-ответов маркетплейсов: MyReply не просто зеркалит текст отзыва. Расширение подтягивает бизнес-профиль из MyReply и генерирует ответ с учетом продукта, сильных сторон, типовых проблем, правил компенсаций и тона бренда.
 
-2. Открой Chrome → `chrome://extensions/`
+## Development Install
 
-3. Включи "Режим разработчика" (справа вверху)
+1. Открой Chrome -> `chrome://extensions/`.
+2. Включи Developer mode.
+3. Нажми Load unpacked.
+4. Выбери папку `extension`.
+5. Войди через `https://myreply.vercel.app/auth`.
 
-4. Нажми "Загрузить распакованное"
+## How It Works
 
-5. Выбери папку `/extension`
-
-## Структура
-
-```
-extension/
-├── manifest.json       # Конфиг расширения (Manifest V3)
-├── background.js       # Service Worker
-├── popup/
-│   ├── popup.html     # UI popup
-│   ├── popup.css      # Стили
-│   └── popup.js       # Логика
-├── content/
-│   ├── styles.css     # Общие стили для кнопок
-│   ├── wildberries.js # Content script для WB
-│   ├── ozon.js        # Content script для Ozon
-│   └── yandex-market.js # Content script для Я.Маркет
-└── icons/
-    └── README.md      # Инструкции по иконкам
-```
-
-## Как работает
-
-1. **Content Scripts** добавляют кнопку "MyReply" рядом с отзывами на площадках
-
-2. При клике на кнопку — текст отзыва сохраняется и открывается **Popup**
-
-3. В Popup пользователь может:
-   - Добавить контекст
-   - Выбрать режим ответа
-   - Сгенерировать ответы
-   - Скопировать понравившийся
-
-4. **Background Script** обрабатывает коммуникацию между компонентами
+1. Content scripts добавляют кнопку MyReply рядом с отзывами на WB, Ozon и Яндекс.Маркете.
+2. При клике текст отзыва передается в popup.
+3. Popup получает:
+   - access token пользователя из `chrome.storage.local`;
+   - лимиты через `GET /api/subscription`;
+   - бизнес-профиль через `GET /api/business`.
+4. Генерация идет через `POST /api/generate` с `businessSettings`, поэтому ответы учитывают профиль бизнеса.
 
 ## API Endpoints
 
-Расширение использует:
-- `POST /api/generate` — генерация ответов
-- `GET /api/subscription` — проверка лимитов
+- `GET /api/subscription` - лимиты и тариф.
+- `GET /api/business` - профиль бизнеса.
+- `POST /api/generate` - генерация ответов.
 
-## Авторизация
+Все endpoints поддерживают сайтовые cookies и `Authorization: Bearer <supabase_access_token>` для расширения.
 
-При первой установке расширение откроет страницу авторизации на my-reply.ru.
-После входа токен сохраняется в `chrome.storage.local`.
+## Positioning
 
-## Публикация
+Короткий тезис для запуска:
 
-1. Создать аккаунт разработчика в [Chrome Web Store](https://chrome.google.com/webstore/devconsole)
+> WB/Ozon AI отвечает как generic-помощник маркетплейса. MyReply отвечает как ваш менеджер: знает продукт, правила бизнеса, что можно обещать клиенту, а что нельзя.
 
-2. Заплатить $5 регистрационный сбор
+## Release Checklist
 
-3. Подготовить:
-   - ZIP архив с расширением
-   - Скриншоты (1280x800)
-   - Описание
-   - Политику конфиденциальности
+1. Проверить unpacked extension в Chrome.
+2. После публикации в Chrome Web Store прописать ID расширения в Vercel env `NEXT_PUBLIC_EXTENSION_ID`.
+3. Сделать 3-5 скриншотов:
+   - кнопка MyReply рядом с отзывом;
+   - popup с подключенным бизнес-профилем;
+   - варианты ответов;
+   - экран профиля бизнеса на сайте.
+4. Собрать ZIP из содержимого папки `extension`.
+5. Отправить в Chrome Web Store moderation.
 
-4. Загрузить и отправить на модерацию (1-3 дня)
-
-## Тестирование
-
-Для тестирования без публикации:
-1. Загрузи как "распакованное расширение"
-2. Открой seller.wildberries.ru / seller.ozon.ru
-3. Найди отзыв и проверь появление кнопки MyReply
+Пока домен `my-reply.ru` не восстановлен, расширение использует production URL `https://myreply.vercel.app`.

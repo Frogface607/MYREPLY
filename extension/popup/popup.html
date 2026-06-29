@@ -8,7 +8,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <header class="header">
       <div class="logo">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,62 +21,49 @@
       </div>
     </header>
 
-    <!-- Auth Section (hidden when logged in) -->
     <div id="auth-section" class="section auth-section">
-      <p>Войдите, чтобы использовать расширение</p>
-      <a href="https://my-reply.ru/auth" target="_blank" class="btn btn-primary">
+      <p>Войдите, чтобы отвечать на отзывы с учетом профиля вашего бизнеса, а не generic-шаблоном маркетплейса.</p>
+      <a href="https://myreply.vercel.app/auth" target="_blank" class="btn btn-primary">
         Войти в MyReply
       </a>
     </div>
 
-    <!-- Main Section -->
     <div id="main-section" class="section hidden">
-      <!-- Review Input -->
+      <div id="business-status" class="business-status hidden">
+        <span class="status-dot"></span>
+        <span id="business-status-text">Проверяем профиль бизнеса</span>
+      </div>
+
       <div class="input-group">
         <label for="review-text">Текст отзыва</label>
-        <textarea 
-          id="review-text" 
+        <textarea
+          id="review-text"
           placeholder="Вставьте текст отзыва или нажмите кнопку MyReply рядом с отзывом на площадке"
           rows="4"
         ></textarea>
       </div>
 
-      <!-- Context Input -->
       <div class="input-group">
-        <label for="context">Контекст (как было на самом деле)</label>
-        <input 
-          type="text" 
-          id="context" 
-          placeholder="Например: клиент сам забрал не тот заказ"
+        <label for="context">Контекст владельца или менеджера</label>
+        <input
+          type="text"
+          id="context"
+          placeholder="Например: клиент выбрал самовывоз, товар проверяли перед отправкой"
         >
       </div>
 
-      <!-- Mode Selector -->
       <div class="mode-selector">
         <label>Режим ответа</label>
         <div class="modes">
-          <button class="mode-btn active" data-mode="all">
-            Все режимы
-          </button>
-          <button class="mode-btn" data-mode="neutral">
-            Нейтральный
-          </button>
-          <button class="mode-btn" data-mode="empathetic">
-            Эмпатичный
-          </button>
-          <button class="mode-btn" data-mode="solution">
-            С решением
-          </button>
-          <button class="mode-btn" data-mode="passive">
-            🧊 Холодный
-          </button>
-          <button class="mode-btn" data-mode="hardcore">
-            🔥 Дерзкий
-          </button>
+          <button class="mode-btn active" data-mode="all">Все режимы</button>
+          <button class="mode-btn" data-mode="neutral">Нейтральный</button>
+          <button class="mode-btn" data-mode="empathetic">Эмпатичный</button>
+          <button class="mode-btn" data-mode="solution">С решением</button>
+          <button class="mode-btn" data-mode="passive">Холодный</button>
+          <button class="mode-btn" data-mode="hardcore">Дерзкий</button>
         </div>
       </div>
 
-      <!-- Generate Button -->
       <button id="generate-btn" class="btn btn-primary btn-block">
         <span class="btn-text">Сгенерировать ответы</span>
         <span class="btn-loader hidden">
@@ -87,25 +73,22 @@
         </span>
       </button>
 
-      <!-- Results -->
       <div id="results" class="results hidden">
         <div id="responses-list" class="responses-list"></div>
       </div>
     </div>
 
-    <!-- Paywall Section -->
     <div id="paywall-section" class="section paywall-section hidden">
-      <div class="paywall-icon">🔒</div>
+      <div class="paywall-icon">!</div>
       <h3>Лимит исчерпан</h3>
-      <p>Вы использовали все бесплатные ответы</p>
-      <a href="https://my-reply.ru/pricing" target="_blank" class="btn btn-primary">
+      <p>Вы использовали все бесплатные ответы.</p>
+      <a href="https://myreply.vercel.app/pricing" target="_blank" class="btn btn-primary">
         Выбрать тариф
       </a>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
-      <a href="https://my-reply.ru" target="_blank">my-reply.ru</a>
+      <a href="https://myreply.vercel.app" target="_blank">myreply.vercel.app</a>
     </footer>
   </div>
 
